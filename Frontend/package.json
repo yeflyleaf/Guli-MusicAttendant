@@ -1,0 +1,50 @@
+{
+  "name": "guli-music-attendant",
+  "version": "1.0.0",
+  "description": "本地音乐管理系统 - 基于 Electron + Vue 3 + TypeScript + Element Plus + SQLite",
+  "main": "./dist-electron/main/index.js",
+  "private": true,
+  "author": "Guli",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "postinstall": "electron-builder install-app-deps",
+    "build:win": "npm run build && electron-builder --win --config",
+    "build:mac": "npm run build && electron-builder --mac --config",
+    "build:linux": "npm run build && electron-builder --linux --config",
+    "lint": "eslint . --fix --cache",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@vueuse/core": "^14.1.0",
+    "better-sqlite3": "^11.5.0",
+    "electron-store": "^8.1.0",
+    "element-plus": "^2.5.3",
+    "music-metadata": "^7.14.0",
+    "pinia": "^2.1.7",
+    "sql.js": "^1.10.3",
+    "vue": "^3.4.15",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@electron-toolkit/utils": "^2.0.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^20.11.5",
+    "@types/sql.js": "^1.4.9",
+    "@vitejs/plugin-vue": "^5.0.3",
+    "@vue/tsconfig": "^0.5.1",
+    "electron": "^33.0.0",
+    "electron-builder": "^24.9.1",
+    "electron-vite": "^2.0.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.20.1",
+    "prettier": "^3.2.4",
+    "sass": "^1.70.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vue-tsc": "^1.8.27"
+  }
+}

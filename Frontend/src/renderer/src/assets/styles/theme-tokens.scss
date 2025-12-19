@@ -1,0 +1,112 @@
+/**
+ * 全局样式变量
+ */
+
+// ==================== 颜色系统 ====================
+// 主色调 - 炫彩紫粉渐变
+$primary-color: #8b5cf6; // 主紫色
+$primary-light: #a78bfa; // 浅紫色
+$primary-dark: #7c3aed; // 深紫色
+$accent-color: #ec4899; // 强调粉色
+$accent-light: #f472b6; // 浅粉色
+
+// 背景色 - 深色主题
+$bg-primary: #0f0f1a; // 主背景
+$bg-secondary: #1a1a2e; // 次要背景
+$bg-tertiary: #16213e; // 第三层背景
+$bg-card: rgba(30, 30, 60, 0.6); // 卡片背景
+$bg-hover: rgba(139, 92, 246, 0.1); // 悬停背景
+
+// 背景色 - 浅色主题
+$bg-primary-light: #ffffff;
+$bg-secondary-light: #f8fafc; // Slate 50
+$bg-tertiary-light: #f1f5f9; // Slate 100
+$bg-card-light: rgba(255, 255, 255, 0.8);
+$bg-hover-light: rgba(139, 92, 246, 0.1);
+
+// 文字颜色 - 深色主题
+$text-primary: #f8fafc; // 主文字
+$text-secondary: #94a3b8; // 次要文字
+$text-muted: #64748b; // 弱化文字
+$text-disabled: #475569; // 禁用文字
+
+// 文字颜色 - 浅色主题
+$text-primary-light: #0f172a; // Slate 900
+$text-secondary-light: #475569; // Slate 600
+$text-muted-light: #94a3b8; // Slate 400
+$text-disabled-light: #cbd5e1; // Slate 300
+
+// 边框颜色 - 深色主题
+$border-color: rgba(255, 255, 255, 0.1);
+$border-color-light: rgba(255, 255, 255, 0.05);
+$border-color-active: rgba(139, 92, 246, 0.5);
+
+// 边框颜色 - 浅色主题
+$border-color-light-theme: rgba(0, 0, 0, 0.1);
+$border-color-light-theme-light: rgba(0, 0, 0, 0.05);
+
+// 功能色
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$error-color: #ef4444;
+$info-color: #3b82f6;
+
+// ==================== 渐变 ====================
+$gradient-primary: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+$gradient-bg: linear-gradient(180deg, $bg-primary 0%, $bg-secondary 100%);
+$gradient-card: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+$gradient-glow: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+
+// ==================== 阴影 ====================
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+$shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+$shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+$shadow-glow: 0 0 20px rgba(139, 92, 246, 0.3);
+$shadow-glow-strong: 0 0 40px rgba(139, 92, 246, 0.5);
+
+// ==================== 尺寸 ====================
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 64px;
+$header-height: 60px;
+$player-height: 90px;
+$border-radius-sm: 6px;
+$border-radius-md: 12px;
+$border-radius-lg: 16px;
+$border-radius-xl: 24px;
+
+// ==================== 间距 ====================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// ==================== 字体 ====================
+$font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-base: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-xxl: 32px;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// ==================== 动画 ====================
+$transition-fast: 0.15s ease;
+$transition-normal: 0.25s ease;
+$transition-slow: 0.4s ease;
+$transition-bounce: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// ==================== Z-Index ====================
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
