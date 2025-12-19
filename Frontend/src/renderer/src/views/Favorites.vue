@@ -12,6 +12,12 @@
       </div>
       <div class="header-right">
         <SearchBar class="local-search" />
+        <el-button :type="isEditMode ? 'primary' : 'default'" @click="toggleEditMode">
+          <el-icon>
+            <Edit />
+          </el-icon>
+          {{ isEditMode ? '完成' : '编辑' }}
+        </el-button>
         <el-button type="primary" @click="handlePlayAll" :disabled="libraryStore.favorites.length === 0">
           <el-icon>
             <VideoPlay />
@@ -21,11 +27,29 @@
       </div>
     </div>
 
+    <!-- 编辑模式工具栏 -->
+    <div class="toolbar" v-if="isEditMode">
+      <div class="toolbar-left">
+        <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleSelectAll">
+          全选
+        </el-checkbox>
+        <el-button v-if="selectedIds.size > 0" text type="danger" @click="handleBatchUnfavorite">
+          取消收藏 ({{ selectedIds.size }})
+        </el-button>
+      </div>
+    </div>
+
     <!-- 歌曲列表 -->
     <div class="music-list" ref="scrollContainer" v-if="libraryStore.favorites.length > 0">
-      <div v-for="(song, index) in visibleFavorites" :key="song.id" class="list-item"
-        :class="{ active: playerStore.currentSong?.id === song.id }" @dblclick="handlePlay(index)">
-        <span class="col-index">{{ index + 1 }}</span>
+      <div v-for="(song, index) in visibleFavorites" :key="song.id" class="list-item" :class="{
+        active: playerStore.currentSong?.id === song.id,
+        selected: selectedIds.has(song.id)
+      }" @dblclick="handlePlay(index)">
+        <span class="col-index">
+          <el-checkbox v-if="isEditMode" :model-value="selectedIds.has(song.id)"
+            @change="handleSelect(song.id, $event as boolean)" @click.stop />
+          <span class="index-num" v-show="!isEditMode || !selectedIds.has(song.id)">{{ index + 1 }}</span>
+        </span>
 
         <div class="col-title">
           <div class="song-cover-small">
@@ -47,6 +71,18 @@
           <el-icon class="action-btn active" @click.stop="handleToggleFavorite(song.id)">
             <StarFilled />
           </el-icon>
+          <el-dropdown trigger="click" @command="(cmd: string) => handleCommand(cmd, song)">
+            <el-icon class="action-btn" @click.stop>
+              <MoreFilled />
+            </el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="play">播放</el-dropdown-item>
+                <el-dropdown-item command="addToQueue">添加到播放队列</el-dropdown-item>
+                <el-dropdown-item command="addToPlaylist">添加到歌单</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </div>
     </div>
@@ -59,15 +95,20 @@
       <p>暂无收藏的歌曲</p>
       <p class="empty-hint">点击歌曲旁边的爱心图标即可收藏</p>
     </div>
+
+    <!-- 添加到歌单对话框 -->
+    <AddToPlaylistDialog v-model="showAddToPlaylistDialog" :song="selectedSongForPlaylist" />
   </div>
 </template>
 
 <script setup lang="ts">
+import AddToPlaylistDialog from '@/components/Base/AddToPlaylistDialog.vue'
 import SearchBar from '@/components/Base/SearchBar.vue'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { formatDuration } from '@/utils/format'
-import { Headset, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
+import { Edit, Headset, MoreFilled, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, nextTick, onActivated, onMounted, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 
@@ -76,8 +117,74 @@ defineOptions({
   name: 'Favorites'
 })
 
+import type { Music } from '@/types/music'
+
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
+
+// 编辑模式
+const isEditMode = ref(false)
+const selectedIds = ref<Set<number>>(new Set())
+const selectAll = ref(false)
+
+const toggleEditMode = () => {
+  isEditMode.value = !isEditMode.value
+  if (!isEditMode.value) {
+    selectedIds.value = new Set()
+    selectAll.value = false
+  }
+}
+
+const isIndeterminate = computed(() => {
+  return selectedIds.value.size > 0 && selectedIds.value.size < libraryStore.favorites.length
+})
+
+const handleSelectAll = (checked: boolean) => {
+  if (checked) {
+    selectedIds.value = new Set(libraryStore.favorites.map(s => s.id))
+  } else {
+    selectedIds.value = new Set()
+  }
+}
+
+const handleSelect = (id: number, checked: boolean) => {
+  if (checked) {
+    selectedIds.value.add(id)
+  } else {
+    selectedIds.value.delete(id)
+  }
+  selectedIds.value = new Set(selectedIds.value)
+}
+
+const handleBatchUnfavorite = async () => {
+  if (selectedIds.value.size === 0) return
+
+  try {
+    await ElMessageBox.confirm(
+      `确定要取消收藏选中的 ${selectedIds.value.size} 首歌曲吗？`,
+      '确认取消收藏',
+      {
+        confirmButtonText: '取消收藏',
+        cancelButtonText: '返回',
+        type: 'warning'
+      }
+    )
+
+    for (const id of selectedIds.value) {
+      await libraryStore.toggleFavorite(id)
+    }
+
+    selectedIds.value = new Set()
+    selectAll.value = false
+    ElMessage.success('已取消收藏')
+  } catch {
+    // 用户取消
+  }
+}
+
+// 添加到歌单对话框状态
+const showAddToPlaylistDialog = ref(false)
+const selectedSongForPlaylist = ref<Music | null>(null)
 
 // 滚动容器引用和滚动位置保存
 const scrollContainer = ref<HTMLElement | null>(null)
@@ -137,6 +244,23 @@ const handlePlay = (index: number) => {
 const handleToggleFavorite = async (id: number) => {
   await libraryStore.toggleFavorite(id)
 }
+
+// 下拉菜单命令
+const handleCommand = (command: string, song: Music) => {
+  switch (command) {
+    case 'play':
+      playerStore.play(song)
+      break
+    case 'addToQueue':
+      playerStore.addToQueue(song)
+      ElMessage.success('已添加到播放队列')
+      break
+    case 'addToPlaylist':
+      selectedSongForPlaylist.value = song
+      showAddToPlaylistDialog.value = true
+      break
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -188,6 +312,22 @@ const handleToggleFavorite = async (id: number) => {
   }
 }
 
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: $border-radius-md;
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+}
+
 .music-list {
   flex: 1;
   overflow-y: auto;
@@ -218,12 +358,23 @@ const handleToggleFavorite = async (id: number) => {
       color: $primary-color;
     }
   }
+
+  &.selected {
+    background: rgba(var(--primary-color-rgb), 0.1);
+  }
 }
 
 .col-index {
-  width: 40px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
   color: $text-muted;
   font-size: $font-size-sm;
+
+  .index-num {
+    color: $text-muted;
+  }
 }
 
 .col-title {
@@ -276,25 +427,34 @@ const handleToggleFavorite = async (id: number) => {
 }
 
 .col-actions {
-  width: 60px;
+  width: 80px;
   display: flex;
   justify-content: flex-end;
+  gap: $spacing-xs;
 
   .action-btn {
-    font-size: 18px;
+    font-size: 20px;
     color: $text-muted;
     cursor: pointer;
     padding: 6px;
     border-radius: 50%;
+    opacity: 0;
+    transition: all $transition-fast;
 
     &.active {
       color: $accent-color;
+      // opacity: 1; // 移除此行，让收藏状态默认也隐藏
     }
 
     &:hover {
+      color: $text-primary;
       background: rgba(255, 255, 255, 0.1);
     }
   }
+}
+
+.list-item:hover .col-actions .action-btn {
+  opacity: 1;
 }
 
 .empty-state {

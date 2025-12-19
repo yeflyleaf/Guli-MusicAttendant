@@ -20,6 +20,12 @@
           </el-icon>
           添加文件夹
         </el-button>
+        <el-button :type="isEditMode ? 'primary' : 'default'" @click="toggleEditMode">
+          <el-icon>
+            <Edit />
+          </el-icon>
+          {{ isEditMode ? '完成' : '编辑' }}
+        </el-button>
         <el-button type="primary" @click="handlePlayAll" :disabled="musicList.length === 0">
           <el-icon>
             <VideoPlay />
@@ -29,8 +35,8 @@
       </div>
     </div>
 
-    <!-- 工具栏 -->
-    <div class="toolbar">
+    <!-- 编辑模式工具栏 -->
+    <div class="toolbar" v-if="isEditMode">
       <div class="toolbar-left">
         <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleSelectAll">
           全选
@@ -38,15 +44,6 @@
         <el-button v-if="selectedIds.size > 0" text type="danger" @click="handleDeleteSelected">
           删除选中 ({{ selectedIds.size }})
         </el-button>
-      </div>
-      <div class="toolbar-right">
-        <el-select v-model="sortBy" placeholder="排序方式" style="width: 120px">
-          <el-option label="添加时间" value="created_at" />
-          <el-option label="歌曲名" value="title" />
-          <el-option label="歌手" value="artist" />
-          <el-option label="时长" value="duration" />
-          <el-option label="播放次数" value="play_count" />
-        </el-select>
       </div>
     </div>
 
@@ -56,20 +53,47 @@
       <div class="list-content" ref="scrollContainer">
         <div class="list-header">
           <span class="col-index">#</span>
-          <span class="col-title">歌曲</span>
-          <span class="col-artist">歌手</span>
+          <span class="col-title sortable" :class="{ active: sortBy === 'title' }" @click="handleSort('title')">
+            歌曲
+            <el-icon v-if="sortBy === 'title'" class="sort-icon">
+              <ArrowUp v-if="sortOrder === 'ASC'" />
+              <ArrowDown v-else />
+            </el-icon>
+          </span>
+          <span class="col-artist sortable" :class="{ active: sortBy === 'artist' }" @click="handleSort('artist')">
+            歌手
+            <el-icon v-if="sortBy === 'artist'" class="sort-icon">
+              <ArrowUp v-if="sortOrder === 'ASC'" />
+              <ArrowDown v-else />
+            </el-icon>
+          </span>
           <span class="col-album">专辑</span>
-          <span class="col-duration">时长</span>
-          <span class="col-actions">操作</span>
+          <span class="col-duration sortable" :class="{ active: sortBy === 'duration' }"
+            @click="handleSort('duration')">
+            时长
+            <el-icon v-if="sortBy === 'duration'" class="sort-icon">
+              <ArrowUp v-if="sortOrder === 'ASC'" />
+              <ArrowDown v-else />
+            </el-icon>
+          </span>
+          <span class="col-created sortable" :class="{ active: sortBy === 'created_at' }"
+            @click="handleSort('created_at')">
+            添加时间
+            <el-icon v-if="sortBy === 'created_at'" class="sort-icon">
+              <ArrowUp v-if="sortOrder === 'ASC'" />
+              <ArrowDown v-else />
+            </el-icon>
+          </span>
+          <span class="col-actions"></span>
         </div>
         <div v-for="(song, index) in visibleMusicList" :key="song.id" class="list-item" :class="{
           active: playerStore.currentSong?.id === song.id,
           selected: selectedIds.has(song.id)
         }" @dblclick="handlePlay(song, index)">
           <span class="col-index">
-            <el-checkbox :model-value="selectedIds.has(song.id)" @change="handleSelect(song.id, $event as boolean)"
-              @click.stop />
-            <span class="index-num" v-show="!selectedIds.has(song.id)">
+            <el-checkbox v-if="isEditMode" :model-value="selectedIds.has(song.id)"
+              @change="handleSelect(song.id, $event as boolean)" @click.stop />
+            <span class="index-num" v-show="!isEditMode || !selectedIds.has(song.id)">
               <el-icon v-if="playerStore.currentSong?.id === song.id && playerStore.isPlaying">
                 <MusicPlay />
               </el-icon>
@@ -93,6 +117,7 @@
           <span class="col-artist truncate" :title="song.artist">{{ song.artist }}</span>
           <span class="col-album truncate" :title="song.album">{{ song.album }}</span>
           <span class="col-duration">{{ formatDuration(song.duration) }}</span>
+          <span class="col-created">{{ formatRelativeTime(song.created_at) }}</span>
 
           <div class="col-actions">
             <el-icon class="action-btn" :class="{ active: song.is_favorite }"
@@ -127,18 +152,25 @@
         </div>
       </div>
     </div>
+
+    <!-- 添加到歌单对话框 -->
+    <AddToPlaylistDialog v-model="showAddToPlaylistDialog" :song="selectedSongForPlaylist" />
   </div>
 </template>
 
 <script setup lang="ts">
+import AddToPlaylistDialog from '@/components/Base/AddToPlaylistDialog.vue'
 import SearchBar from '@/components/Base/SearchBar.vue'
 import { useIpc } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import type { Music } from '@/types/music'
 import { throttle } from '@/utils/debounce'
-import { formatDuration } from '@/utils/format'
+import { formatDuration, formatRelativeTime } from '@/utils/format'
 import {
+  ArrowDown,
+  ArrowUp,
+  Edit,
   FolderAdd,
   FolderOpened,
   Headset,
@@ -194,32 +226,96 @@ onActivated(() => {
 
 // 排序
 const sortBy = ref('created_at')
+const sortOrder = ref<'ASC' | 'DESC'>('DESC')
+
+// 处理排序点击
+const handleSort = (field: string) => {
+  if (sortBy.value === field) {
+    // 同一列点击切换排序方向
+    sortOrder.value = sortOrder.value === 'ASC' ? 'DESC' : 'ASC'
+  } else {
+    // 不同列点击，设置新的排序字段，根据字段类型设置默认排序方向
+    sortBy.value = field
+    // 时间类型默认降序，其他默认升序
+    sortOrder.value = field === 'created_at' ? 'DESC' : 'ASC'
+  }
+}
 
 // 选择状态
 const selectedIds = ref<Set<number>>(new Set())
 const selectAll = ref(false)
+
+// 编辑模式
+const isEditMode = ref(false)
+const toggleEditMode = () => {
+  isEditMode.value = !isEditMode.value
+  if (!isEditMode.value) {
+    // 退出编辑模式时清空选择
+    selectedIds.value = new Set()
+    selectAll.value = false
+  }
+}
+
+// 添加到歌单对话框状态
+const showAddToPlaylistDialog = ref(false)
+const selectedSongForPlaylist = ref<Music | null>(null)
 const isIndeterminate = computed(() => {
   return selectedIds.value.size > 0 && selectedIds.value.size < musicList.value.length
 })
 
-// 音乐列表（根据排序方式排序）
+/**
+ * 英文优先排序比较函数
+ * 英文字符排在中文字符前面
+ */
+const compareWithEnglishFirst = (strA: string, strB: string): number => {
+  const a = strA || ''
+  const b = strB || ''
+
+  // 判断首字符是否为ASCII（英文/数字/符号）
+  const aIsAscii = a.charCodeAt(0) < 128
+  const bIsAscii = b.charCodeAt(0) < 128
+
+  // 如果一个是英文一个是中文，英文优先
+  if (aIsAscii && !bIsAscii) return -1
+  if (!aIsAscii && bIsAscii) return 1
+
+  // 同类型使用 localeCompare 比较
+  return a.localeCompare(b, 'zh-CN')
+}
+
+// 音乐列表（根据排序方式和排序方向排序）
 const musicList = computed(() => {
   const list = [...libraryStore.displayMusic]
+  const isAsc = sortOrder.value === 'ASC'
 
-  // 客户端排序，不再请求数据库
+  // 客户端排序，支持升序/降序，英文优先
   switch (sortBy.value) {
     case 'title':
-      return list.sort((a, b) => a.title.localeCompare(b.title))
+      return list.sort((a, b) => {
+        const cmp = compareWithEnglishFirst(a.title, b.title)
+        return isAsc ? cmp : -cmp
+      })
     case 'artist':
-      return list.sort((a, b) => (a.artist || '').localeCompare(b.artist || ''))
+      return list.sort((a, b) => {
+        const cmp = compareWithEnglishFirst(a.artist || '', b.artist || '')
+        return isAsc ? cmp : -cmp
+      })
     case 'duration':
-      return list.sort((a, b) => (a.duration || 0) - (b.duration || 0))
+      return list.sort((a, b) => {
+        const cmp = (a.duration || 0) - (b.duration || 0)
+        return isAsc ? cmp : -cmp
+      })
     case 'play_count':
-      return list.sort((a, b) => (b.play_count || 0) - (a.play_count || 0))
+      return list.sort((a, b) => {
+        const cmp = (a.play_count || 0) - (b.play_count || 0)
+        return isAsc ? cmp : -cmp
+      })
     case 'created_at':
     default:
-      // 默认按添加时间倒序（最新的在前面）
-      return list.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+      return list.sort((a, b) => {
+        const cmp = new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()
+        return isAsc ? cmp : -cmp
+      })
   }
 })
 
@@ -367,8 +463,8 @@ const handleCommand = async (command: string, song: Music) => {
       ElMessage.success('已添加到播放队列')
       break
     case 'addToPlaylist':
-      // TODO: 显示歌单选择对话框
-      ElMessage.info('功能开发中')
+      selectedSongForPlaylist.value = song
+      showAddToPlaylistDialog.value = true
       break
     case 'showInFolder':
       showInFolder(song.file_path)
@@ -461,6 +557,27 @@ const handleCommand = async (command: string, song: Music) => {
   background: $bg-secondary;
   z-index: 10;
   flex-shrink: 0;
+
+  .sortable {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color $transition-fast;
+    user-select: none;
+
+    &:hover {
+      color: $text-primary;
+    }
+
+    &.active {
+      color: $primary-color;
+    }
+
+    .sort-icon {
+      font-size: 12px;
+    }
+  }
 }
 
 .list-item {
@@ -560,6 +677,15 @@ const handleCommand = async (command: string, song: Music) => {
 .col-duration {
   width: 80px;
   text-align: center;
+  justify-content: center;
+  color: $text-muted;
+  font-size: $font-size-sm;
+}
+
+.col-created {
+  width: 100px;
+  text-align: center;
+  justify-content: center;
   color: $text-muted;
   font-size: $font-size-sm;
 }
@@ -587,7 +713,7 @@ const handleCommand = async (command: string, song: Music) => {
 
     &.active {
       color: $accent-color;
-      opacity: 1;
+      // opacity: 1; // 移除此行，让收藏状态默认也隐藏
     }
   }
 }

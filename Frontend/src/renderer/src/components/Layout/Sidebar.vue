@@ -36,9 +36,13 @@
       <div class="playlist-list">
         <router-link v-for="playlist in libraryStore.playlists" :key="playlist.id" :to="`/playlist/${playlist.id}`"
           class="nav-item playlist-item" :class="{ active: $route.path === `/playlist/${playlist.id}` }">
-          <el-icon class="nav-icon">
-            <Tickets />
-          </el-icon>
+          <div class="playlist-cover-small">
+            <img v-if="playlist.first_cover && playlist.first_cover.length > 5"
+              :src="`local-image://${playlist.first_cover.replace(/\\\\/g, '/')}`" alt="" loading="lazy" />
+            <el-icon v-else class="nav-icon">
+              <Tickets />
+            </el-icon>
+          </div>
           <span class="nav-text truncate" :title="playlist.name">{{ playlist.name }}</span>
           <span class="nav-count">{{ playlist.song_count }}</span>
         </router-link>
@@ -240,6 +244,29 @@ const confirmCreatePlaylist = async () => {
     flex: 1;
     overflow-y: auto;
     padding-bottom: $spacing-md;
+  }
+}
+
+.playlist-cover-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-tertiary;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .nav-icon {
+    font-size: 16px;
+    color: $text-muted;
   }
 }
 

@@ -10,6 +10,7 @@ export interface Playlist {
   song_count: number
   created_at: string
   updated_at: string
+  first_cover?: string | null  // 歌单第一首歌的封面
 }
 
 export interface PlaylistCreateDTO {

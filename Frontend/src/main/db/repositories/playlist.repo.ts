@@ -10,9 +10,9 @@ import { execute, queryAll, queryOne, transaction } from '../index'
  */
 export function getAllPlaylists(): Playlist[] {
   return queryAll<Playlist>(`
-    SELECT p.*, 
+    SELECT p.*,
            (SELECT COUNT(*) FROM playlist_music pm WHERE pm.playlist_id = p.id) as song_count
-    FROM playlist p 
+    FROM playlist p
     ORDER BY p.created_at DESC
   `)
 }
@@ -22,9 +22,9 @@ export function getAllPlaylists(): Playlist[] {
  */
 export function getPlaylistById(id: number): Playlist | undefined {
   return queryOne<Playlist>(`
-    SELECT p.*, 
+    SELECT p.*,
            (SELECT COUNT(*) FROM playlist_music pm WHERE pm.playlist_id = p.id) as song_count
-    FROM playlist p 
+    FROM playlist p
     WHERE p.id = ?
   `, [id])
 }
@@ -34,7 +34,7 @@ export function getPlaylistById(id: number): Playlist | undefined {
  */
 export function createPlaylist(data: PlaylistCreateDTO): number {
   const result = execute(`
-    INSERT INTO playlist (name, description, cover_path) 
+    INSERT INTO playlist (name, description, cover_path)
     VALUES (?, ?, ?)
   `, [data.name, data.description || null, data.coverPath || null])
   return result.lastInsertRowid
@@ -46,7 +46,7 @@ export function createPlaylist(data: PlaylistCreateDTO): number {
 export function updatePlaylist(id: number, data: Partial<PlaylistCreateDTO>): boolean {
   const fields: string[] = []
   const values: unknown[] = []
-  
+
   if (data.name !== undefined) {
     fields.push('name = ?')
     values.push(data.name)
@@ -59,14 +59,14 @@ export function updatePlaylist(id: number, data: Partial<PlaylistCreateDTO>): bo
     fields.push('cover_path = ?')
     values.push(data.coverPath)
   }
-  
+
   if (fields.length === 0) {
     return false
   }
-  
+
   fields.push("updated_at = datetime('now', 'localtime')")
   values.push(id)
-  
+
   const result = execute(`UPDATE playlist SET ${fields.join(', ')} WHERE id = ?`, values)
   return result.changes > 0
 }
@@ -101,7 +101,7 @@ export function addMusicToPlaylist(playlistId: number, musicId: number): boolean
     [playlistId]
   )
   const newOrder = (maxResult?.max_order || 0) + 1
-  
+
   try {
     execute(`
       INSERT OR IGNORE INTO playlist_music (playlist_id, music_id, sort_order)
@@ -124,7 +124,7 @@ export function addMusicBatchToPlaylist(playlistId: number, musicIds: number[]):
     )
     let currentOrder = (maxResult?.max_order || 0) + 1
     let addedCount = 0
-    
+
     for (const musicId of musicIds) {
       try {
         const result = execute(`
@@ -138,7 +138,7 @@ export function addMusicBatchToPlaylist(playlistId: number, musicIds: number[]):
         // 忽略
       }
     }
-    
+
     return addedCount
   })
 }
@@ -166,7 +166,7 @@ export function updatePlaylistOrder(playlistId: number, musicIds: number[]): boo
   return transaction(() => {
     musicIds.forEach((musicId, index) => {
       execute(`
-        UPDATE playlist_music SET sort_order = ? 
+        UPDATE playlist_music SET sort_order = ?
         WHERE playlist_id = ? AND music_id = ?
       `, [index, playlistId, musicId])
     })
@@ -178,9 +178,42 @@ export function updatePlaylistOrder(playlistId: number, musicIds: number[]): boo
  * 检查歌曲是否在歌单中
  */
 export function isMusicInPlaylist(playlistId: number, musicId: number): boolean {
-  const result = queryOne<{ exists: number }>(
-    'SELECT 1 as exists FROM playlist_music WHERE playlist_id = ? AND music_id = ? LIMIT 1',
+  const result = queryOne<{ found: number }>(
+    'SELECT 1 as found FROM playlist_music WHERE playlist_id = ? AND music_id = ? LIMIT 1',
     [playlistId, musicId]
   )
   return !!result
 }
+
+/**
+ * 获取歌单第一首歌的封面路径
+ */
+export function getPlaylistFirstCover(playlistId: number): string | null {
+  const result = queryOne<{ cover_path: string | null }>(
+    `SELECT m.cover_path FROM music m
+     INNER JOIN playlist_music pm ON m.id = pm.music_id
+     WHERE pm.playlist_id = ? AND m.cover_path IS NOT NULL AND m.cover_path != ''
+     ORDER BY pm.sort_order ASC, pm.added_at ASC
+     LIMIT 1`,
+    [playlistId]
+  )
+  return result?.cover_path || null
+}
+
+/**
+ * 获取所有歌单及其第一首歌封面
+ */
+export function getAllPlaylistsWithCovers(): (Playlist & { first_cover: string | null })[] {
+  return queryAll<Playlist & { first_cover: string | null }>(`
+    SELECT p.*,
+           (SELECT COUNT(*) FROM playlist_music pm WHERE pm.playlist_id = p.id) as song_count,
+           (SELECT m.cover_path FROM music m
+            INNER JOIN playlist_music pm2 ON m.id = pm2.music_id
+            WHERE pm2.playlist_id = p.id AND m.cover_path IS NOT NULL AND m.cover_path != ''
+            ORDER BY pm2.sort_order ASC, pm2.added_at ASC
+            LIMIT 1) as first_cover
+    FROM playlist p
+    ORDER BY p.created_at DESC
+  `)
+}
+
