@@ -19,6 +19,7 @@
     "isolatedModules": true,
     "outDir": "./dist-electron",
     "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@main/*": ["src/main/*"]
     }

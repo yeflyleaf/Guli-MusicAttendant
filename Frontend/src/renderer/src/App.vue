@@ -15,7 +15,7 @@
       <main class="app-content">
         <router-view v-slot="{ Component }">
           <keep-alive :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']" :max="10">
-            <component :is="Component" :key="$route.fullPath" />
+            <component :is="Component" :key="route.fullPath" />
           </keep-alive>
         </router-view>
       </main>
@@ -42,7 +42,9 @@ import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import { useShortcuts } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
 import Lyrics from '@/views/Lyrics.vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const playerStore = usePlayerStore()
 
 // 设置全局快捷键监听
@@ -78,10 +80,10 @@ useShortcuts()
 
 .lyrics-overlay {
   position: absolute;
-  top: 0;
+  top: $header-height;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% - $header-height);
   z-index: 1010;
   /* Below FooterPlayer (1020) but above everything else */
   background: $bg-primary;

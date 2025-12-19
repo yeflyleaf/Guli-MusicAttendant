@@ -285,7 +285,7 @@ watch(() => playerStore.currentTime, updateCurrentLine)
 .back-btn {
   position: absolute;
   left: $spacing-lg;
-  bottom: calc(var(--player-height) + $spacing-lg);
+  bottom: $spacing-lg;
   z-index: 2;
 }
 
