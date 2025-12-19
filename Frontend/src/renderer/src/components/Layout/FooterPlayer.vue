@@ -72,8 +72,7 @@
         <el-popover trigger="hover" placement="top" :width="40">
           <template #reference>
             <el-icon class="control-btn small" @click="playerStore.toggleMute">
-              <Mute v-if="playerStore.isMuted || playerStore.volume === 0" />
-              <component v-else :is="volumeIcon" />
+              <component :is="volumeIcon" />
             </el-icon>
           </template>
           <div class="volume-slider">
@@ -137,6 +136,7 @@
 </template>
 
 <script setup lang="ts">
+import { VolumeHigh, VolumeLow, VolumeMedium, VolumeMute } from '@/components/Icons/VolumeIcons'
 import { useAudio } from '@/hooks/useAudio'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
@@ -149,8 +149,8 @@ import {
   Expand,
   Headset,
   List,
-  Mute,
   Reading,
+  Refresh,
   RefreshRight,
   Sort,
   Star,
@@ -223,8 +223,8 @@ const volumePercent = computed({
 const playModeIcon = computed(() => {
   switch (playerStore.playMode) {
     case 'sequence': return Sort
-    case 'loop': return RefreshRight
-    case 'single': return 'RefreshRight'
+    case 'loop': return Refresh
+    case 'single': return RefreshRight
     case 'random': return Switch
     default: return Sort
   }
@@ -243,8 +243,11 @@ const playModeText = computed(() => {
 
 // 音量图标
 const volumeIcon = computed(() => {
-  if (playerStore.volume > 0.5) return 'Headset'
-  return 'Mute'
+  const vol = playerStore.volume * 100
+  if (vol === 0 || playerStore.isMuted) return VolumeMute
+  if (vol < 30) return VolumeLow
+  if (vol < 70) return VolumeMedium
+  return VolumeHigh
 })
 
 // 处理音量变化

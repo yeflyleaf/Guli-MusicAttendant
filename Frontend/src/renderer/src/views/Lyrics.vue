@@ -20,9 +20,9 @@
       </div>
 
       <!-- 歌词显示 -->
-      <div class="lyrics-content" ref="lyricsContainerRef">
-        <div v-if="lyrics.length > 0" class="lyrics-scroll" :style="{ transform: `translateY(${scrollOffset}px)` }">
-          <div v-for="(line, index) in lyrics" :key="index" class="lyric-line"
+      <div class="lyrics-content" ref="lyricsContainerRef" @scroll="handleScroll">
+        <div v-if="lyrics.length > 0" class="lyrics-scroll">
+          <div v-for="(line, index) in lyrics" :key="index" class="lyric-line" :ref="(el) => setLyricLineRef(el, index)"
             :class="{ active: index === currentLineIndex }" @click="handleSeekToLine(line.time)">
             {{ line.text }}
           </div>
@@ -35,12 +35,7 @@
         </div>
       </div>
 
-      <!-- 返回按钮 -->
-      <el-button class="back-btn" circle @click="handleClose">
-        <el-icon>
-          <ArrowDown />
-        </el-icon>
-      </el-button>
+
     </div>
 
     <!-- 无歌曲状态 -->
@@ -57,7 +52,7 @@
 import { useAudio } from '@/hooks/useAudio'
 import { usePlayerStore } from '@/store/player.store'
 import { parseLrc, type LyricLine } from '@/utils/lrc-parser'
-import { ArrowDown, Document, Headset } from '@element-plus/icons-vue'
+import { Document, Headset } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
 
 const playerStore = usePlayerStore()
@@ -67,23 +62,56 @@ const lyricsContainerRef = ref<HTMLElement | null>(null)
 const lyrics = ref<LyricLine[]>([])
 const currentLineIndex = ref(-1)
 
-// 歌词滚动偏移
-const scrollOffset = computed(() => {
-  if (currentLineIndex.value < 0 || !lyricsContainerRef.value) return 0
+const lyricLineRefs = ref<HTMLElement[]>([])
+const isUserScrolling = ref(false)
+let scrollTimeout: NodeJS.Timeout | null = null
+let isAutoScrolling = false
 
-  // 每行高度约 50px (根据 CSS 调整)，让当前行居中
-  // 容器高度的一半
-  const containerHeight = lyricsContainerRef.value.clientHeight
+// 设置歌词行 ref
+const setLyricLineRef = (el: any, index: number) => {
+  if (el) {
+    lyricLineRefs.value[index] = el as HTMLElement
+  }
+}
 
-  // 列表顶部的内边距 (CSS 中定义的 padding-top: 200px)
-  const paddingTop = 200
+// 滚动到当前行
+const scrollToCurrentLine = () => {
+  if (isUserScrolling.value || !lyricsContainerRef.value || currentLineIndex.value < 0) return
 
-  // 目标位置：paddingTop + 当前行索引 * 行高 + 行高的一半
-  const targetPos = paddingTop + currentLineIndex.value * 50 + 25
+  const activeLine = lyricLineRefs.value[currentLineIndex.value]
+  if (activeLine) {
+    const container = lyricsContainerRef.value
+    const containerHeight = container.clientHeight
+    const lineTop = activeLine.offsetTop
+    const lineHeight = activeLine.clientHeight
 
-  // 偏移量 = 容器中心 - 目标位置
-  return (containerHeight / 2) - targetPos
-})
+    // 计算目标滚动位置，使当前行居中
+    const targetScrollTop = lineTop - containerHeight / 2 + lineHeight / 2
+
+    isAutoScrolling = true
+    container.scrollTo({
+      top: targetScrollTop,
+      behavior: 'smooth'
+    })
+
+    // 滚动结束后重置自动滚动标志
+    setTimeout(() => {
+      isAutoScrolling = false
+    }, 500)
+  }
+}
+
+// 处理滚动事件
+const handleScroll = () => {
+  if (isAutoScrolling) return
+
+  isUserScrolling.value = true
+  if (scrollTimeout) clearTimeout(scrollTimeout)
+
+  scrollTimeout = setTimeout(() => {
+    isUserScrolling.value = false
+  }, 2000) // 停止滚动 2 秒后恢复自动滚动
+}
 
 // 封面背景样式
 const coverBgStyle = computed(() => {
@@ -100,6 +128,7 @@ const coverBgStyle = computed(() => {
 const loadLyrics = async () => {
   lyrics.value = []
   currentLineIndex.value = -1
+  lyricLineRefs.value = []
 
   if (!playerStore.currentSong?.lyrics_path) {
     return
@@ -132,6 +161,7 @@ const updateCurrentLine = (time: number) => {
 
   if (index !== currentLineIndex.value) {
     currentLineIndex.value = index
+    scrollToCurrentLine()
   }
 }
 
@@ -144,10 +174,7 @@ const handleSeekToLine = (time: number) => {
   }
 }
 
-// 关闭歌词页
-const handleClose = () => {
-  playerStore.showLyrics = false
-}
+
 
 // 监听歌曲变化
 watch(() => playerStore.currentSong, loadLyrics, { immediate: true })
@@ -229,22 +256,31 @@ watch(() => playerStore.currentTime, updateCurrentLine)
   flex: 1;
   display: flex;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   z-index: 1;
   mask-image: linear-gradient(to bottom,
       transparent 0%,
-      black 20%,
-      black 80%,
+      black 15%,
+      black 85%,
       transparent 100%);
+
+  /* 隐藏滚动条但保留功能 */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none;
 }
 
 .lyrics-scroll {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease-out;
-  padding: 200px 0;
+  width: 100%;
+  padding: 50vh 0;
+  /* 上下留白，确保第一行和最后一行能居中 */
 }
 
 .lyric-line {
@@ -282,12 +318,7 @@ watch(() => playerStore.currentTime, updateCurrentLine)
   }
 }
 
-.back-btn {
-  position: absolute;
-  left: $spacing-lg;
-  bottom: $spacing-lg;
-  z-index: 2;
-}
+
 
 .empty-state {
   display: flex;

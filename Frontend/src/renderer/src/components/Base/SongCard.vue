@@ -2,8 +2,8 @@
   <div class="song-card" @click="handlePlay" @contextmenu.prevent="showContextMenu">
     <!-- 封面 -->
     <div class="card-cover">
-      <img v-if="song.cover_path" :src="`local-image://${song.cover_path.replace(/\\\\/g, '/')}`" alt="封面"
-        loading="lazy" />
+      <img v-if="song.cover_path && song.cover_path.length > 5"
+        :src="`local-image://${song.cover_path.replace(/\\\\/g, '/')}`" alt="封面" loading="lazy" />
       <div v-else class="cover-placeholder">
         <el-icon>
           <Headset />

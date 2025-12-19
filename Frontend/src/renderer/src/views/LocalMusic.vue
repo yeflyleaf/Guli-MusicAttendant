@@ -79,8 +79,8 @@
 
           <div class="col-title">
             <div class="song-cover-small">
-              <img v-if="song.cover_path" :src="`local-image://${song.cover_path.replace(/\\\\/g, '/')}`" alt=""
-                loading="lazy" />
+              <img v-if="song.cover_path && song.cover_path.length > 5"
+                :src="`local-image://${song.cover_path.replace(/\\\\/g, '/')}`" alt="" loading="lazy" />
               <el-icon v-else>
                 <Headset />
               </el-icon>
