@@ -374,11 +374,11 @@ $queue-width: 320px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background: $border-color;
+        background: var(--scrollbar-thumb);
         border-radius: 3px;
 
         &:hover {
-            background: $text-muted;
+            background: var(--scrollbar-thumb-hover);
         }
     }
 }
