@@ -7,18 +7,29 @@
         </el-icon>
         <div>
           <h1 class="page-title">最近播放</h1>
-          <span class="music-count">共 {{ libraryStore.recentlyPlayed.length }} 首</span>
+          <span class="music-count">共 {{ displayedRecentlyPlayed.length }} / {{ libraryStore.recentlyPlayed.length }}
+            首</span>
         </div>
       </div>
       <div class="header-right">
-        <SearchBar class="local-search" />
+        <!-- 本地搜索框 -->
+        <div class="local-search-box">
+          <el-icon class="search-icon">
+            <Search />
+          </el-icon>
+          <input v-model="localSearchKeyword" type="text" class="search-input" placeholder="搜索最近播放..."
+            @input="handleLocalSearch" />
+          <el-icon v-if="localSearchKeyword" class="search-clear" @click="clearLocalSearch">
+            <Close />
+          </el-icon>
+        </div>
         <el-button :type="isEditMode ? 'primary' : 'default'" @click="toggleEditMode">
           <el-icon>
             <Edit />
           </el-icon>
           {{ isEditMode ? '完成' : '编辑' }}
         </el-button>
-        <el-button type="primary" @click="handlePlayAll" :disabled="libraryStore.recentlyPlayed.length === 0">
+        <el-button type="primary" @click="handlePlayAll" :disabled="displayedRecentlyPlayed.length === 0">
           <el-icon>
             <VideoPlay />
           </el-icon>
@@ -40,7 +51,7 @@
     </div>
 
     <!-- 歌曲列表 -->
-    <div class="music-list" ref="scrollContainer" v-if="libraryStore.recentlyPlayed.length > 0">
+    <div class="music-list" ref="scrollContainer" v-if="displayedRecentlyPlayed.length > 0">
       <div v-for="(song, index) in visibleRecentlyPlayed" :key="song.id" class="list-item" :class="{
         active: playerStore.currentSong?.id === song.id,
         selected: selectedIds.has(song.id)
@@ -105,11 +116,10 @@
 
 <script setup lang="ts">
 import AddToPlaylistDialog from '@/components/Base/AddToPlaylistDialog.vue'
-import SearchBar from '@/components/Base/SearchBar.vue'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { formatDuration, formatRelativeTime } from '@/utils/format'
-import { Clock, Edit, Headset, MoreFilled, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
+import { Clock, Close, Edit, Headset, MoreFilled, Search, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, nextTick, onActivated, onMounted, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
@@ -123,6 +133,32 @@ import type { Music } from '@/types/music'
 
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
+
+// ==================== 本地搜索功能 ====================
+const localSearchKeyword = ref('')
+
+// 根据搜索关键词过滤最近播放歌曲
+const displayedRecentlyPlayed = computed(() => {
+  const keyword = localSearchKeyword.value.trim().toLowerCase()
+  if (!keyword) {
+    return libraryStore.recentlyPlayed
+  }
+  return libraryStore.recentlyPlayed.filter(song =>
+    song.title.toLowerCase().includes(keyword) ||
+    song.artist?.toLowerCase().includes(keyword) ||
+    song.album?.toLowerCase().includes(keyword)
+  )
+})
+
+// 处理本地搜索（输入时自动搜索）
+const handleLocalSearch = () => {
+  // 搜索逻辑已在 computed 中实现，无需额外操作
+}
+
+// 清除本地搜索
+const clearLocalSearch = () => {
+  localSearchKeyword.value = ''
+}
 
 // 编辑模式
 const isEditMode = ref(false)
@@ -138,12 +174,12 @@ const toggleEditMode = () => {
 }
 
 const isIndeterminate = computed(() => {
-  return selectedIds.value.size > 0 && selectedIds.value.size < libraryStore.recentlyPlayed.length
+  return selectedIds.value.size > 0 && selectedIds.value.size < displayedRecentlyPlayed.value.length
 })
 
 const handleSelectAll = (checked: boolean) => {
   if (checked) {
-    selectedIds.value = new Set(libraryStore.recentlyPlayed.map(s => s.id))
+    selectedIds.value = new Set(displayedRecentlyPlayed.value.map(s => s.id))
   } else {
     selectedIds.value = new Set()
   }
@@ -196,13 +232,13 @@ onActivated(() => {
 // 先渲染少量数据，然后异步渲染剩余数据
 const renderLimit = ref(10)
 const visibleRecentlyPlayed = computed(() => {
-  return libraryStore.recentlyPlayed.slice(0, renderLimit.value)
+  return displayedRecentlyPlayed.value.slice(0, renderLimit.value)
 })
 
 onMounted(() => {
   // 延迟执行全量渲染，确保页面切换动画（通常300-500ms）完全结束
   setTimeout(() => {
-    const total = libraryStore.recentlyPlayed.length
+    const total = displayedRecentlyPlayed.value.length
     const batchSize = 50 // 每帧渲染的数量
 
     const renderNextBatch = () => {
@@ -217,13 +253,13 @@ onMounted(() => {
 })
 
 const handlePlayAll = () => {
-  if (libraryStore.recentlyPlayed.length > 0) {
-    playerStore.setQueue(libraryStore.recentlyPlayed, 0)
+  if (displayedRecentlyPlayed.value.length > 0) {
+    playerStore.setQueue(displayedRecentlyPlayed.value, 0)
   }
 }
 
 const handlePlay = (index: number) => {
-  playerStore.setQueue(libraryStore.recentlyPlayed, index)
+  playerStore.setQueue(displayedRecentlyPlayed.value, index)
 }
 
 const handleToggleFavorite = async (id: number) => {
@@ -268,9 +304,59 @@ const handleCommand = (command: string, song: Music) => {
     display: flex;
     align-items: center;
     gap: $spacing-md;
+  }
 
-    .local-search {
-      width: 200px;
+  // 本地搜索框样式
+  .local-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 200px;
+    height: 36px;
+    padding: 0 $spacing-md;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid $border-color;
+    border-radius: 18px;
+    transition: all $transition-fast;
+
+    &:focus-within {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: $border-color-active;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    }
+
+    .search-icon {
+      color: $text-muted;
+      font-size: 16px;
+      margin-right: $spacing-sm;
+    }
+
+    .search-input {
+      flex: 1;
+      height: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: $text-primary;
+      font-size: $font-size-base;
+
+      &::placeholder {
+        color: $text-muted;
+      }
+    }
+
+    .search-clear {
+      color: $text-muted;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all $transition-fast;
+
+      &:hover {
+        color: $text-primary;
+        background: rgba(255, 255, 255, 0.1);
+      }
     }
   }
 

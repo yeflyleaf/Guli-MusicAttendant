@@ -101,36 +101,14 @@
       </el-icon>
 
       <!-- 播放队列 -->
-      <el-popover trigger="click" placement="top-end" :width="350">
-        <template #reference>
+      <el-tooltip :content="`播放队列 (${playerStore.queueLength})`" placement="top">
+        <div class="queue-btn" :class="{ active: playerStore.showQueue }" @click="playerStore.toggleQueue">
           <el-icon class="func-btn">
             <List />
           </el-icon>
-        </template>
-        <div class="queue-panel">
-          <div class="queue-header">
-            <span>播放队列 ({{ playerStore.queueLength }})</span>
-            <el-button text size="small" @click="playerStore.clearQueue">清空</el-button>
-          </div>
-          <div class="queue-list">
-            <div v-for="(song, index) in playerStore.queue" :key="song.id" class="queue-item"
-              :class="{ active: playerStore.currentSong?.id === song.id }" @click="playerStore.play(song, false)">
-              <span class="queue-index">{{ index + 1 }}</span>
-              <div class="queue-info">
-                <div class="queue-title truncate" :title="song.title">{{ song.title }}</div>
-                <div class="queue-artist truncate" :title="song.artist">{{ song.artist }}</div>
-              </div>
-              <span class="queue-duration">{{ formatDuration(song.duration) }}</span>
-              <el-icon class="queue-remove" @click.stop="playerStore.removeFromQueue(song.id)">
-                <Close />
-              </el-icon>
-            </div>
-            <div v-if="playerStore.queueLength === 0" class="queue-empty">
-              播放队列为空
-            </div>
-          </div>
+          <span v-if="playerStore.queueLength > 0" class="queue-badge">{{ playerStore.queueLength }}</span>
         </div>
-      </el-popover>
+      </el-tooltip>
     </div>
   </footer>
 </template>
@@ -145,7 +123,6 @@ import { formatDuration } from '@/utils/format'
 import {
   CaretLeft,
   CaretRight,
-  Close,
   Expand,
   Headset,
   List,
@@ -643,89 +620,46 @@ onUnmounted(() => {
   }
 }
 
-.queue-panel {
-  .queue-header {
+.queue-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $bg-hover;
+
+    .func-btn {
+      color: $text-primary;
+    }
+  }
+
+  &.active {
+    background: rgba($primary-color, 0.1);
+
+    .func-btn {
+      color: $primary-color;
+    }
+  }
+
+  .queue-badge {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: $font-weight-medium;
+    color: white;
+    background: $primary-color;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $border-color;
-    margin-bottom: $spacing-sm;
-  }
-
-  .queue-list {
-    max-height: 300px;
-    overflow-y: auto;
-  }
-
-  .queue-item {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm;
-    border-radius: $border-radius-sm;
-    cursor: pointer;
-    transition: background $transition-fast;
-
-    &:hover {
-      background: $bg-hover;
-
-      .queue-remove {
-        opacity: 1;
-      }
-    }
-
-    &.active {
-      background: $gradient-card;
-
-      .queue-title {
-        color: $primary-color;
-      }
-    }
-  }
-
-  .queue-index {
-    width: 24px;
-    font-size: $font-size-xs;
-    color: $text-muted;
-    text-align: center;
-  }
-
-  .queue-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .queue-title {
-    font-size: $font-size-sm;
-    color: $text-primary;
-  }
-
-  .queue-artist {
-    font-size: $font-size-xs;
-    color: $text-muted;
-  }
-
-  .queue-duration {
-    font-size: $font-size-xs;
-    color: $text-muted;
-  }
-
-  .queue-remove {
-    font-size: 14px;
-    color: $text-muted;
-    opacity: 0;
-    transition: opacity $transition-fast;
-
-    &:hover {
-      color: $error-color;
-    }
-  }
-
-  .queue-empty {
-    padding: $spacing-lg;
-    text-align: center;
-    color: $text-muted;
+    justify-content: center;
   }
 }
 

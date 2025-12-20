@@ -9,7 +9,7 @@
     <!-- 主内容区域 -->
     <div class="app-main">
       <!-- 页面内容 -->
-      <main class="app-content">
+      <main class="app-content" :class="{ 'queue-visible': playerStore.showQueue }">
         <router-view v-slot="{ Component }">
           <keep-alive :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']" :max="10">
             <component :is="Component" :key="route.fullPath" />
@@ -17,6 +17,8 @@
         </router-view>
       </main>
 
+      <!-- 播放队列侧边栏 -->
+      <PlayQueue />
     </div>
 
     <!-- 底部播放控制栏 -->
@@ -34,6 +36,7 @@
 <script setup lang="ts">
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'
+import PlayQueue from '@/components/Layout/PlayQueue.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import { useShortcuts } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
@@ -72,6 +75,11 @@ useShortcuts()
   overflow-x: hidden;
   padding: $spacing-lg;
   background: linear-gradient(180deg, $bg-secondary 0%, $bg-primary 100%);
+  transition: margin-right 0.3s ease;
+
+  &.queue-visible {
+    margin-right: 320px;
+  }
 }
 
 .lyrics-overlay {

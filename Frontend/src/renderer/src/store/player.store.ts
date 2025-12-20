@@ -31,6 +31,8 @@ interface PlayerState {
   playHistory: number[]
   // 是否显示歌词
   showLyrics: boolean
+  // 是否显示播放队列侧边栏
+  showQueue: boolean
 }
 
 export const usePlayerStore = defineStore('player', {
@@ -45,7 +47,8 @@ export const usePlayerStore = defineStore('player', {
     queue: [],
     currentIndex: -1,
     playHistory: [],
-    showLyrics: false
+    showLyrics: false,
+    showQueue: false
   }),
 
   getters: {
@@ -345,7 +348,22 @@ export const usePlayerStore = defineStore('player', {
      * 切换歌词显示
      */
     toggleLyrics() {
+      // 打开歌词时关闭队列
+      if (!this.showLyrics) {
+        this.showQueue = false
+      }
       this.showLyrics = !this.showLyrics
+    },
+
+    /**
+     * 切换播放队列侧边栏显示
+     */
+    toggleQueue() {
+      // 打开队列时关闭歌词
+      if (!this.showQueue) {
+        this.showLyrics = false
+      }
+      this.showQueue = !this.showQueue
     },
 
     /**

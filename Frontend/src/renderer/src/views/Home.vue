@@ -10,7 +10,7 @@
         <p class="welcome-subtitle">让音乐充满你的每一天</p>
       </div>
       <div class="welcome-stats">
-        <div class="stat-card glass">
+        <div class="stat-card glass clickable" @click="router.push('/local-music')">
           <el-icon class="stat-icon">
             <Headset />
           </el-icon>
@@ -19,22 +19,22 @@
             <span class="stat-label">首歌曲</span>
           </div>
         </div>
-        <div class="stat-card glass">
-          <el-icon class="stat-icon">
-            <Tickets />
-          </el-icon>
-          <div class="stat-info">
-            <span class="stat-value">{{ libraryStore.playlistCount }}</span>
-            <span class="stat-label">个歌单</span>
-          </div>
-        </div>
-        <div class="stat-card glass">
+        <div class="stat-card glass clickable" @click="router.push('/favorites')">
           <el-icon class="stat-icon">
             <Star />
           </el-icon>
           <div class="stat-info">
             <span class="stat-value">{{ libraryStore.favoriteCount }}</span>
             <span class="stat-label">首收藏</span>
+          </div>
+        </div>
+        <div class="stat-card glass clickable" @click="router.push('/playlists')">
+          <el-icon class="stat-icon">
+            <Tickets />
+          </el-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ libraryStore.playlistCount }}</span>
+            <span class="stat-label">个歌单</span>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@
         </router-link>
       </div>
       <div class="song-grid">
-        <SongCard v-for="song in libraryStore.recentlyPlayed.slice(0, displayCount)" :key="song.id" :song="song"
+        <SongCard v-for="song in libraryStore.recentlyPlayed.slice(0, songDisplayCount)" :key="song.id" :song="song"
           @play="handlePlay" />
       </div>
     </section>
@@ -84,7 +84,7 @@
         </router-link>
       </div>
       <div class="song-grid">
-        <SongCard v-for="song in libraryStore.favorites.slice(0, displayCount)" :key="song.id" :song="song"
+        <SongCard v-for="song in libraryStore.favorites.slice(0, songDisplayCount)" :key="song.id" :song="song"
           @play="handlePlay" />
       </div>
     </section>
@@ -93,14 +93,31 @@
     <section class="section" v-if="libraryStore.playlists.length > 0">
       <div class="section-header">
         <h2 class="section-title">我的歌单</h2>
+        <router-link to="/playlists" class="section-more">
+          查看全部 <el-icon>
+            <ArrowRight />
+          </el-icon>
+        </router-link>
       </div>
       <div class="playlist-grid">
-        <div v-for="playlist in libraryStore.playlists.slice(0, 4)" :key="playlist.id" class="playlist-card glass"
-          @click="$router.push(`/playlist/${playlist.id}`)">
+        <div v-for="playlist in libraryStore.playlists.slice(0, playlistDisplayCount)" :key="playlist.id"
+          class="playlist-card glass" @click="$router.push(`/playlist/${playlist.id}`)">
+          <!-- 封面 -->
           <div class="playlist-cover">
-            <el-icon>
-              <Tickets />
-            </el-icon>
+            <img v-if="playlist.first_cover && playlist.first_cover.length > 5"
+              :src="`local-image://${playlist.first_cover.replace(/\\\\/g, '/')}`" alt="" loading="lazy"
+              class="cover-image" />
+            <div v-else class="cover-placeholder">
+              <el-icon>
+                <Tickets />
+              </el-icon>
+            </div>
+            <!-- 悬停遗罩 -->
+            <div class="cover-overlay">
+              <el-icon class="play-icon">
+                <VideoPlay />
+              </el-icon>
+            </div>
           </div>
           <div class="playlist-info">
             <div class="playlist-name truncate" :title="playlist.name">{{ playlist.name }}</div>
@@ -119,9 +136,12 @@ import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
 import type { Music } from '@/types/music'
-import { ArrowRight, FolderAdd, Headset, Plus, Star, Tickets } from '@element-plus/icons-vue'
+import { ArrowRight, FolderAdd, Headset, Plus, Star, Tickets, VideoPlay } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
@@ -131,8 +151,11 @@ const { selectFolder, scanFolder } = useIpc()
 // 响应式全屏状态
 const isFullscreen = ref(false)
 
-// 根据全屏状态计算显示数量：默认5个，全屏7个
-const displayCount = computed(() => isFullscreen.value ? 7 : 5)
+// 根据全屏状态计算歌曲显示数量：默认5个，全屏8个
+const songDisplayCount = computed(() => isFullscreen.value ? 8 : 5)
+
+// 根据全屏状态计算歌单显示数量：默认5个，全屏6个
+const playlistDisplayCount = computed(() => isFullscreen.value ? 6 : 5)
 
 // 检查是否全屏
 const checkFullscreen = () => {
@@ -248,10 +271,30 @@ const handlePlay = (song: Music) => {
   padding: $spacing-md $spacing-lg;
   border-radius: $border-radius-lg;
   min-width: 140px;
+  transition: all $transition-fast;
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: $bg-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+      .stat-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
 
   .stat-icon {
     font-size: 28px;
     color: $primary-color;
+    transition: transform $transition-fast;
   }
 
   .stat-info {
@@ -336,34 +379,107 @@ const handlePlay = (song: Music) => {
 
 .playlist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: $spacing-md;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $spacing-sm;
+
+  // 全屏/大窗口时使用更大的卡片
+  @media (min-width: 1400px) {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: $spacing-md;
+  }
 }
 
 .playlist-card {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-md;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
   border-radius: $border-radius-lg;
   cursor: pointer;
   transition: all $transition-fast;
 
+  // 全屏/大窗口时使用更大的间距
+  @media (min-width: 1400px) {
+    gap: $spacing-md;
+    padding: $spacing-md;
+  }
+
   &:hover {
     background: $bg-hover;
     transform: translateY(-2px);
+
+    .cover-overlay {
+      opacity: 1;
+    }
+
+    .cover-image,
+    .cover-placeholder {
+      transform: scale(1.05);
+    }
   }
 
   .playlist-cover {
-    width: 56px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: $gradient-primary;
+    position: relative;
+    width: 48px;
+    height: 48px;
     border-radius: $border-radius-md;
-    color: white;
-    font-size: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    // 全屏/大窗口时使用更大的封面
+    @media (min-width: 1400px) {
+      width: 56px;
+      height: 56px;
+    }
+
+    .cover-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform $transition-fast;
+    }
+
+    .cover-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $gradient-primary;
+      color: white;
+      font-size: 20px;
+      transition: transform $transition-fast;
+
+      // 全屏/大窗口时使用更大的图标
+      @media (min-width: 1400px) {
+        font-size: 24px;
+      }
+    }
+
+    .cover-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transition: opacity $transition-fast;
+
+      .play-icon {
+        font-size: 20px;
+        color: white;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+
+        // 全屏/大窗口时使用更大的图标
+        @media (min-width: 1400px) {
+          font-size: 24px;
+        }
+      }
+    }
   }
 
   .playlist-info {
