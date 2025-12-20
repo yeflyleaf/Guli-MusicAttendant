@@ -152,6 +152,22 @@
               </div>
               <el-switch v-model="autoScan" @change="handleAutoScanChange" />
             </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.behavior.disableSplashScreen') }}</span>
+                <span class="setting-desc">{{ $t('settings.behavior.disableSplashScreenDesc') }}</span>
+              </div>
+              <el-switch v-model="disableSplashScreen" @change="handleDisableSplashScreenChange" />
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.behavior.showSplashScreen') }}</span>
+                <span class="setting-desc">{{ $t('settings.behavior.showSplashScreenDesc') }}</span>
+              </div>
+              <el-button @click="handleShowSplashScreen">{{ $t('settings.behavior.showSplashScreenBtn') }}</el-button>
+            </div>
           </div>
         </div>
       </el-tab-pane>
@@ -294,6 +310,7 @@ const visualizationFrameRate = ref(60)
 const rememberPlaybackStatus = ref(true)
 const gaplessPlayback = ref(false)
 const autoScan = ref(true)
+const disableSplashScreen = ref(false)
 
 // 初始化设置值
 onMounted(() => {
@@ -308,6 +325,7 @@ onMounted(() => {
   rememberPlaybackStatus.value = settingsStore.rememberPlaybackStatus
   gaplessPlayback.value = settingsStore.gaplessPlayback
   autoScan.value = settingsStore.autoScan
+  disableSplashScreen.value = settingsStore.disableSplashScreen
 })
 
 // --- 外观设置处理 ---
@@ -352,6 +370,14 @@ const handleGaplessPlaybackChange = async (value: boolean) => {
 
 const handleAutoScanChange = async (value: boolean) => {
   await settingsStore.saveSettings({ autoScan: value })
+}
+
+const handleDisableSplashScreenChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ disableSplashScreen: value })
+}
+
+const handleShowSplashScreen = () => {
+  window.dispatchEvent(new CustomEvent('show-splash-screen'))
 }
 
 // --- 音乐库设置处理 ---

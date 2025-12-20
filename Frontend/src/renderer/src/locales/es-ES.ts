@@ -76,7 +76,12 @@ export default {
       gaplessPlayback: 'Sin pausas',
       gaplessPlaybackDesc: 'Eliminar pausas',
       autoScan: 'Escaneo automático',
-      autoScanDesc: 'Escanear al iniciar'
+      autoScanDesc: 'Escanear al iniciar',
+      disableSplashScreen: 'Desactivar pantalla de inicio en el próximo arranque',
+      disableSplashScreenDesc: 'Si está activado, la aplicación omitirá la animación de apertura en el próximo lanzamiento',
+      showSplashScreen: 'Mostrar pantalla de inicio inmediatamente',
+      showSplashScreenDesc: 'Reproducir la animación de apertura una vez más',
+      showSplashScreenBtn: 'Mostrar inmediatamente'
     },
     library: {
       title: 'Biblioteca',

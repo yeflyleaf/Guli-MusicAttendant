@@ -24,6 +24,7 @@ export const useSettingsStore = defineStore('settings', {
     musicFolders: [],
     autoScan: true,
     visualizerEnabled: true,
+    disableSplashScreen: false,
     isLoaded: false
   }),
 
@@ -48,6 +49,7 @@ export const useSettingsStore = defineStore('settings', {
         this.musicFolders = settings.musicFolders
         this.autoScan = settings.autoScan
         this.visualizerEnabled = settings.visualizerEnabled
+        this.disableSplashScreen = settings.disableSplashScreen ?? false
         this.isLoaded = true
 
         // 应用主题和外观

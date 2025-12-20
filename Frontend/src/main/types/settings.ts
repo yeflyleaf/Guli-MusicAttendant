@@ -23,6 +23,7 @@ export type SettingKey =
   | 'musicFolders'
   | 'autoScan'
   | 'visualizerEnabled'
+  | 'disableSplashScreen'
 
 // 完整设置对象
 export interface Settings {
@@ -39,4 +40,5 @@ export interface Settings {
   musicFolders: string[]     // 音乐文件夹列表
   autoScan: boolean          // 启动时自动扫描
   visualizerEnabled: boolean // 启用可视化
+  disableSplashScreen: boolean // 下次启动时关闭过场动画
 }

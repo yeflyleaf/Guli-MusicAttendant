@@ -23,7 +23,8 @@ export function getAllSettings(): Settings {
     gaplessPlayback: false,
     musicFolders: [],
     autoScan: true,
-    visualizerEnabled: true
+    visualizerEnabled: true,
+    disableSplashScreen: false
   }
 
   for (const row of rows) {
@@ -74,6 +75,9 @@ export function getAllSettings(): Settings {
         break
       case 'visualizerEnabled':
         settings.visualizerEnabled = row.value === 'true'
+        break
+      case 'disableSplashScreen':
+        settings.disableSplashScreen = row.value === 'true'
         break
     }
   }
@@ -188,7 +192,8 @@ export function resetSettings(): boolean {
     ['gaplessPlayback', 'false'],
     ['musicFolders', '[]'],
     ['autoScan', 'true'],
-    ['visualizerEnabled', 'true']
+    ['visualizerEnabled', 'true'],
+    ['disableSplashScreen', 'false']
   ]
 
   return transaction(() => {

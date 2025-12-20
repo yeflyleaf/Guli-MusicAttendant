@@ -84,7 +84,12 @@ export default {
       gaplessPlayback: 'Gapless Playback',
       gaplessPlaybackDesc: 'Eliminate gaps when switching songs',
       autoScan: 'Auto Scan on Startup',
-      autoScanDesc: 'Automatically scan music folders for new songs on each startup'
+      autoScanDesc: 'Automatically scan music folders for new songs on each startup',
+      disableSplashScreen: 'Disable splash screen on next startup',
+      disableSplashScreenDesc: 'When enabled, the application will skip the opening animation on the next launch',
+      showSplashScreen: 'Show splash screen immediately',
+      showSplashScreenDesc: 'Play the opening animation once again',
+      showSplashScreenBtn: 'Show Immediately'
     },
     // Library
     library: {

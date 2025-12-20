@@ -1,6 +1,8 @@
 <template>
   <!-- 启动屏幕 -->
-  <SplashScreen />
+  <!-- 启动屏幕 -->
+  <SplashScreen v-if="showSplash" :disabled="isStartup && settingsStore.disableSplashScreen"
+    @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -43,12 +45,26 @@ import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
 import { debounce } from '@/utils/debounce'
 import Lyrics from '@/views/Lyrics.vue'
-import { onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
+
+// 启动屏幕控制
+const showSplash = ref(true)
+const isStartup = ref(true)
+
+const handleSplashFinish = () => {
+  showSplash.value = false
+  isStartup.value = false
+}
+
+// 监听显示启动屏幕事件
+window.addEventListener('show-splash-screen', () => {
+  showSplash.value = true
+})
 
 // 设置全局快捷键监听
 useShortcuts()

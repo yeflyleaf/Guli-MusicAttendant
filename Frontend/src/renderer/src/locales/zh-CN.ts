@@ -84,7 +84,12 @@ export default {
       gaplessPlayback: '无缝播放',
       gaplessPlaybackDesc: '歌曲切换时消除间隙',
       autoScan: '启动时自动扫描',
-      autoScanDesc: '每次启动时自动扫描音乐文件夹的新增歌曲'
+      autoScanDesc: '每次启动时自动扫描音乐文件夹的新增歌曲',
+      disableSplashScreen: '下次启动时关闭过场动画',
+      disableSplashScreenDesc: '开启后，下次启动应用将跳过开场动画',
+      showSplashScreen: '立即显示过场动画',
+      showSplashScreenDesc: '重新播放一次开场动画',
+      showSplashScreenBtn: '立即显示'
     },
     // 音乐库设置
     library: {

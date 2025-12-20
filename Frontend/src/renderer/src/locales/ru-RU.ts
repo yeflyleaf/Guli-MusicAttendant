@@ -76,7 +76,12 @@ export default {
       gaplessPlayback: 'Бесшовное',
       gaplessPlaybackDesc: 'Без пауз',
       autoScan: 'Автосканирование',
-      autoScanDesc: 'Сканировать при запуске'
+      autoScanDesc: 'Сканировать при запуске',
+      disableSplashScreen: 'Отключить заставку при следующем запуске',
+      disableSplashScreenDesc: 'Если включено, приложение пропустит начальную анимацию при следующем запуске',
+      showSplashScreen: 'Показать заставку немедленно',
+      showSplashScreenDesc: 'Проиграть начальную анимацию еще раз',
+      showSplashScreenBtn: 'Показать немедленно'
     },
     library: {
       title: 'Библиотека',

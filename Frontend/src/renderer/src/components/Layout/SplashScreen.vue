@@ -120,7 +120,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+
+const props = defineProps<{
+  disabled?: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'finished'): void
+}>()
 
 const visible = ref(true)
 const isWarping = ref(false)
@@ -370,6 +378,15 @@ onMounted(async () => {
     }
   }
 
+  // 如果禁用了过场动画，直接退出
+  if (props.disabled) {
+    visible.value = false
+    setTimeout(() => {
+      emit('finished')
+    }, 500) // 等待淡出动画
+    return
+  }
+
   // 确保至少显示最小时间
   const elapsed = Date.now() - startTime
   const remaining = Math.max(0, minDisplayTime - elapsed)
@@ -386,6 +403,11 @@ onMounted(async () => {
 
   visible.value = false
   console.log('[SplashScreen] Hidden after', Date.now() - startTime, 'ms')
+
+  // 等待淡出动画后通知父组件
+  setTimeout(() => {
+    emit('finished')
+  }, 500)
 })
 
 onUnmounted(() => {
@@ -397,7 +419,7 @@ onUnmounted(() => {
   }
 })
 
-// 暴露 visible 状态供父组件使用
+// 暴露 visible 状态供父组件使用 (保留以兼容旧代码，虽然后续可能不再需要)
 defineExpose({ visible })
 </script>
 

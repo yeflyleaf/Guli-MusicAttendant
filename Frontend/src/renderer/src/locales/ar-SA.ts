@@ -85,7 +85,12 @@ export default {
       gaplessPlayback: 'تشغيل بدون فجوات',
       gaplessPlaybackDesc: 'إزالة الفجوات عند تبديل الأغاني',
       autoScan: 'مسح تلقائي عند بدء التشغيل',
-      autoScanDesc: 'مسح مجلدات الموسيقى تلقائياً للأغاني الجديدة عند كل بدء تشغيل'
+      autoScanDesc: 'مسح مجلدات الموسيقى تلقائياً للأغاني الجديدة عند كل بدء تشغيل',
+      disableSplashScreen: 'تعطيل شاشة البداية عند بدء التشغيل التالي',
+      disableSplashScreenDesc: 'عند التمكين، سيتخطى التطبيق الرسوم المتحركة الافتتاحية عند التشغيل التالي',
+      showSplashScreen: 'إظهار شاشة البداية فوراً',
+      showSplashScreenDesc: 'تشغيل الرسوم المتحركة الافتتاحية مرة أخرى',
+      showSplashScreenBtn: 'إظهار فوراً'
     },
     // Library
     library: {

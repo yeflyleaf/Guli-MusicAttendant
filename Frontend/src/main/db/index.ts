@@ -307,6 +307,7 @@ function getSchema(): string {
         ('musicFolders', '[]'),
         ('autoScan', 'true'),
         ('visualizerEnabled', 'true'),
+        ('disableSplashScreen', 'false'),
         ('lastScannedAt', '');
   `
 }

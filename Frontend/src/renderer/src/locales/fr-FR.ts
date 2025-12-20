@@ -85,7 +85,12 @@ export default {
       gaplessPlayback: 'Lecture sans interruption',
       gaplessPlaybackDesc: 'Éliminer les pauses lors du changement de chanson',
       autoScan: 'Analyse auto au démarrage',
-      autoScanDesc: 'Analyser automatiquement les dossiers de musique pour les nouvelles chansons à chaque démarrage'
+      autoScanDesc: 'Analyser automatiquement les dossiers de musique pour les nouvelles chansons à chaque démarrage',
+      disableSplashScreen: 'Désactiver l\'écran de démarrage au prochain lancement',
+      disableSplashScreenDesc: 'Si activé, l\'application sautera l\'animation d\'ouverture au prochain lancement',
+      showSplashScreen: 'Afficher l\'écran de démarrage immédiatement',
+      showSplashScreenDesc: 'Rejouer l\'animation d\'ouverture une fois de plus',
+      showSplashScreenBtn: 'Afficher immédiatement'
     },
     // Library
     library: {
