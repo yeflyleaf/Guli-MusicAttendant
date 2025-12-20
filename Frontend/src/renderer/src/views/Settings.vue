@@ -63,14 +63,6 @@
 
         <div class="setting-item">
           <div class="setting-label">
-            <span>显示歌词</span>
-            <span class="setting-desc">播放时在底部显示歌词</span>
-          </div>
-          <el-switch v-model="showLyrics" @change="handleShowLyricsChange" />
-        </div>
-
-        <div class="setting-item">
-          <div class="setting-label">
             <span>启用音频可视化</span>
             <span class="setting-desc">播放时显示音频频谱可视化效果</span>
           </div>
@@ -165,14 +157,12 @@ const { selectFolder, resetAndScanAllFolders, confirm } = useIpc()
 
 const isScanning = ref(false)
 const autoScan = ref(true)
-const showLyrics = ref(true)
 const visualizerEnabled = ref(true)
 const theme = ref<Theme>('dark')
 
 // 初始化设置值
 onMounted(() => {
   autoScan.value = settingsStore.autoScan
-  showLyrics.value = settingsStore.showLyrics
   visualizerEnabled.value = settingsStore.visualizerEnabled
   theme.value = settingsStore.theme
 })
@@ -221,10 +211,7 @@ const handleAutoScanChange = async (value: boolean) => {
   await settingsStore.saveSettings({ autoScan: value })
 }
 
-// 切换歌词显示
-const handleShowLyricsChange = async (value: boolean) => {
-  await settingsStore.saveSettings({ showLyrics: value })
-}
+
 
 // 切换可视化
 const handleVisualizerChange = async (value: boolean) => {
@@ -249,7 +236,6 @@ const handleResetSettings = async () => {
 
     // 更新本地状态
     autoScan.value = settingsStore.autoScan
-    showLyrics.value = settingsStore.showLyrics
     visualizerEnabled.value = settingsStore.visualizerEnabled
     theme.value = settingsStore.theme
 

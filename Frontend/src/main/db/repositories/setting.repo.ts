@@ -9,7 +9,7 @@ import { execute, queryAll, queryOne, transaction } from '../index';
  */
 export function getAllSettings(): Settings {
   const rows = queryAll<{ key: string; value: string }>('SELECT key, value FROM settings')
-  
+
   const settings: Settings = {
     theme: 'dark',
     volume: 0.7,
@@ -17,10 +17,9 @@ export function getAllSettings(): Settings {
     language: 'zh-CN',
     musicFolders: [],
     autoScan: true,
-    showLyrics: true,
     visualizerEnabled: true
   }
-  
+
   for (const row of rows) {
     switch (row.key) {
       case 'theme':
@@ -45,15 +44,12 @@ export function getAllSettings(): Settings {
       case 'autoScan':
         settings.autoScan = row.value === 'true'
         break
-      case 'showLyrics':
-        settings.showLyrics = row.value === 'true'
-        break
       case 'visualizerEnabled':
         settings.visualizerEnabled = row.value === 'true'
         break
     }
   }
-  
+
   return settings
 }
 
@@ -70,9 +66,9 @@ export function getSetting(key: SettingKey): string | null {
  */
 export function setSetting(key: SettingKey, value: string): boolean {
   const result = execute(`
-    INSERT INTO settings (key, value, updated_at) 
+    INSERT INTO settings (key, value, updated_at)
     VALUES (?, ?, datetime('now', 'localtime'))
-    ON CONFLICT(key) DO UPDATE SET 
+    ON CONFLICT(key) DO UPDATE SET
       value = excluded.value,
       updated_at = datetime('now', 'localtime')
   `, [key, value])
@@ -93,11 +89,11 @@ export function setSettings(settings: Partial<Settings>): boolean {
       } else {
         strValue = String(value)
       }
-      
+
       execute(`
-        INSERT INTO settings (key, value, updated_at) 
+        INSERT INTO settings (key, value, updated_at)
         VALUES (?, ?, datetime('now', 'localtime'))
-        ON CONFLICT(key) DO UPDATE SET 
+        ON CONFLICT(key) DO UPDATE SET
           value = excluded.value,
           updated_at = datetime('now', 'localtime')
       `, [key, strValue])
@@ -112,7 +108,7 @@ export function setSettings(settings: Partial<Settings>): boolean {
 export function getMusicFolders(): string[] {
   const value = getSetting('musicFolders')
   if (!value) return []
-  
+
   try {
     return JSON.parse(value)
   } catch {
@@ -150,7 +146,7 @@ export function removeMusicFolder(folder: string): boolean {
  */
 export function resetSettings(): boolean {
   execute('DELETE FROM settings')
-  
+
   const defaults = [
     ['theme', 'dark'],
     ['volume', '0.7'],
@@ -158,10 +154,9 @@ export function resetSettings(): boolean {
     ['language', 'zh-CN'],
     ['musicFolders', '[]'],
     ['autoScan', 'true'],
-    ['showLyrics', 'true'],
     ['visualizerEnabled', 'true']
   ]
-  
+
   return transaction(() => {
     for (const [key, value] of defaults) {
       execute('INSERT INTO settings (key, value) VALUES (?, ?)', [key, value])

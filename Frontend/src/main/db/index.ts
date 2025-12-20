@@ -320,7 +320,6 @@ function getSchema(): string {
         ('language', 'zh-CN'),
         ('musicFolders', '[]'),
         ('autoScan', 'true'),
-        ('showLyrics', 'true'),
         ('visualizerEnabled', 'true'),
         ('lastScannedAt', '');
   `

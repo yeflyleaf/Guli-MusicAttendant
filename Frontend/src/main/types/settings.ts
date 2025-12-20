@@ -9,14 +9,13 @@ export type PlayMode = 'sequence' | 'loop' | 'single' | 'random'
 export type Theme = 'dark' | 'light'
 
 // 设置键名
-export type SettingKey = 
+export type SettingKey =
   | 'theme'
   | 'volume'
   | 'playMode'
   | 'language'
   | 'musicFolders'
   | 'autoScan'
-  | 'showLyrics'
   | 'visualizerEnabled'
 
 // 完整设置对象
@@ -27,6 +26,5 @@ export interface Settings {
   language: string           // 语言
   musicFolders: string[]     // 音乐文件夹列表
   autoScan: boolean          // 启动时自动扫描
-  showLyrics: boolean        // 显示歌词
   visualizerEnabled: boolean // 启用可视化
 }

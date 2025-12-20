@@ -16,7 +16,6 @@ export const useSettingsStore = defineStore('settings', {
     language: 'zh-CN',
     musicFolders: [],
     autoScan: true,
-    showLyrics: true,
     visualizerEnabled: true,
     isLoaded: false
   }),
@@ -28,20 +27,19 @@ export const useSettingsStore = defineStore('settings', {
     async loadSettings() {
       try {
         const settings = await window.electron.settings.getAll()
-        
+
         this.theme = settings.theme
         this.volume = settings.volume
         this.playMode = settings.playMode
         this.language = settings.language
         this.musicFolders = settings.musicFolders
         this.autoScan = settings.autoScan
-        this.showLyrics = settings.showLyrics
         this.visualizerEnabled = settings.visualizerEnabled
         this.isLoaded = true
-        
+
         // 应用主题
         this.applyTheme()
-        
+
       } catch (error) {
         console.error('[Settings] 加载设置失败:', error)
       }
@@ -53,15 +51,15 @@ export const useSettingsStore = defineStore('settings', {
     async saveSettings(settings: Partial<Settings>) {
       try {
         await window.electron.settings.setMultiple(settings)
-        
+
         // 更新本地状态
         Object.assign(this, settings)
-        
+
         // 如果更改了主题，应用主题
         if (settings.theme) {
           this.applyTheme()
         }
-        
+
         return true
       } catch (error) {
         console.error('[Settings] 保存设置失败:', error)
@@ -84,7 +82,7 @@ export const useSettingsStore = defineStore('settings', {
     applyTheme() {
       document.documentElement.classList.remove('light', 'dark')
       document.documentElement.classList.add(this.theme)
-      
+
       // Element Plus 暗色模式
       if (this.theme === 'dark') {
         document.documentElement.classList.add('dark')
