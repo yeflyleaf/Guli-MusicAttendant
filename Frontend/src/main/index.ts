@@ -17,23 +17,10 @@ import { createMainWindow, getMainWindow } from './services/window.service'
 // 设置应用名称
 app.setName('故里音乐助手')
 
-// 生产模式下重定向 userData 到安装目录，避免写入 C 盘
+// 生产模式下使用 C 盘默认的 userData 路径
+// 路径通常为: C:\Users\<用户名>\AppData\Roaming\GL_Music
 if (app.isPackaged) {
-  const path = require('path')
-  const fs = require('fs')
-  const exeDir = path.dirname(app.getPath('exe'))
-  const userDataPath = path.join(exeDir, 'data', 'user_data')
-
-  try {
-    if (!fs.existsSync(userDataPath)) {
-      fs.mkdirSync(userDataPath, { recursive: true })
-    }
-    app.setPath('userData', userDataPath)
-    console.log('[Main] User data path redirected to:', userDataPath)
-  } catch (error) {
-    console.error('[Main] Failed to redirect user data path:', error)
-    // 如果无法创建目录（例如没有权限），则回退到默认路径（C盘），但这是最后的手段
-  }
+  console.log('[Main] User data path:', app.getPath('userData'))
 }
 
 // 注册自定义协议 scheme（必须在 app.ready 之前调用）

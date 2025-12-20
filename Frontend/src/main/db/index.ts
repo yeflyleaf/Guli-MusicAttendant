@@ -78,6 +78,8 @@ export const CACHE_KEYS = {
 
 /**
  * 获取数据库存储路径
+ * 开发环境：项目根目录 /data
+ * 生产环境：C盘用户数据目录 (AppData/Roaming/故里音乐助手/data)
  */
 function getDatabasePath(): string {
   const isDev = !app.isPackaged
@@ -88,26 +90,10 @@ function getDatabasePath(): string {
     // 开发环境：项目根目录
     dataPath = path.join(app.getAppPath(), 'data')
   } else {
-    // 生产环境：优先使用可执行文件目录，如果没有权限则回退到用户数据目录
-    const exeDir = path.dirname(app.getPath('exe'))
-    const exeDataPath = path.join(exeDir, 'data')
-
-    try {
-      // 尝试在可执行文件目录创建数据文件夹
-      if (!fs.existsSync(exeDataPath)) {
-        fs.mkdirSync(exeDataPath, { recursive: true })
-      }
-      // 测试是否有写入权限
-      const testFile = path.join(exeDataPath, '.write_test')
-      fs.writeFileSync(testFile, 'test')
-      fs.unlinkSync(testFile)
-      dataPath = exeDataPath
-      console.log('[Database] Using installation directory for data:', dataPath)
-    } catch {
-      // 无权限，使用用户数据目录
-      dataPath = path.join(app.getPath('userData'), 'data')
-      console.log('[Database] Using user data directory for data:', dataPath)
-    }
+    // 生产环境：使用 C 盘用户数据目录
+    // 路径通常为: C:\Users\<用户名>\AppData\Roaming\GL_Music\data
+    dataPath = path.join(app.getPath('userData'), 'data')
+    console.log('[Database] Using user data directory for data:', dataPath)
   }
 
   // 确保目录存在
