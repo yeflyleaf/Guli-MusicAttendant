@@ -85,6 +85,11 @@ if (!gotTheLock) {
         // 异步执行扫描，不阻塞启动
         scanAllFolders().then(result => {
           console.log(`[Main] Auto-scan complete: Added ${result.added} songs`)
+          // 扫描完成后通知渲染进程刷新数据
+          const mainWindow = getMainWindow()
+          if (mainWindow) {
+            mainWindow.webContents.send('scan:complete', result)
+          }
         }).catch(err => {
           console.error('[Main] Auto-scan failed:', err)
         })

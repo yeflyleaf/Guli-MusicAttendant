@@ -40,13 +40,13 @@ export const useLibraryStore = defineStore('library', {
   getters: {
     // 歌曲总数
     musicCount: (state): number => state.allMusic.length,
-    
+
     // 歌单总数
     playlistCount: (state): number => state.playlists.length,
-    
+
     // 收藏数量
     favoriteCount: (state): number => state.favorites.length,
-    
+
     // 显示的歌曲列表（搜索筛选后）
     displayMusic: (state): Music[] => {
       if (!state.searchKeyword.trim()) {
@@ -62,10 +62,10 @@ export const useLibraryStore = defineStore('library', {
      */
     async loadAll() {
       if (this.isLoading) return
-      
+
       this.isLoading = true
       console.time('[Library] loadAll')
-      
+
       try {
         // 并行加载所有数据
         console.time('[Library] IPC calls')
@@ -76,15 +76,15 @@ export const useLibraryStore = defineStore('library', {
           window.electron.music.getRecentlyPlayed(50)
         ])
         console.timeEnd('[Library] IPC calls')
-        
+
         this.allMusic = allMusic
         this.playlists = playlists
         this.favorites = favorites
         this.recentlyPlayed = recentlyPlayed
         this.isLoaded = true
-        
+
         console.log(`[Library] Loaded ${allMusic.length} songs`)
-        
+
       } catch (error) {
         console.error('[Library] 加载数据失败:', error)
       } finally {
@@ -132,12 +132,12 @@ export const useLibraryStore = defineStore('library', {
      */
     async search(keyword: string) {
       this.searchKeyword = keyword
-      
+
       if (!keyword.trim()) {
         this.filteredMusic = []
         return
       }
-      
+
       try {
         const params: MusicQueryParams = { keyword }
         this.filteredMusic = await window.electron.music.getAll(params)
@@ -161,12 +161,12 @@ export const useLibraryStore = defineStore('library', {
     async toggleFavorite(musicId: number) {
       try {
         await window.electron.music.toggleFavorite(musicId)
-        
+
         // 更新本地状态
         const music = this.allMusic.find(m => m.id === musicId)
         if (music) {
           music.is_favorite = music.is_favorite === 1 ? 0 : 1
-          
+
           // 更新收藏列表
           if (music.is_favorite === 1) {
             if (!this.favorites.find(m => m.id === musicId)) {
@@ -176,7 +176,7 @@ export const useLibraryStore = defineStore('library', {
             this.favorites = this.favorites.filter(m => m.id !== musicId)
           }
         }
-        
+
         return true
       } catch (error) {
         console.error('[Library] 切换收藏失败:', error)
@@ -190,13 +190,13 @@ export const useLibraryStore = defineStore('library', {
     async deleteMusic(musicId: number) {
       try {
         await window.electron.music.delete(musicId)
-        
+
         // 更新本地状态
         this.allMusic = this.allMusic.filter(m => m.id !== musicId)
         this.favorites = this.favorites.filter(m => m.id !== musicId)
         this.recentlyPlayed = this.recentlyPlayed.filter(m => m.id !== musicId)
         this.filteredMusic = this.filteredMusic.filter(m => m.id !== musicId)
-        
+
         return true
       } catch (error) {
         console.error('[Library] 删除歌曲失败:', error)
@@ -210,13 +210,13 @@ export const useLibraryStore = defineStore('library', {
     async deleteMusicBatch(musicIds: number[]) {
       try {
         await window.electron.music.deleteBatch(musicIds)
-        
+
         const idSet = new Set(musicIds)
         this.allMusic = this.allMusic.filter(m => !idSet.has(m.id))
         this.favorites = this.favorites.filter(m => !idSet.has(m.id))
         this.recentlyPlayed = this.recentlyPlayed.filter(m => !idSet.has(m.id))
         this.filteredMusic = this.filteredMusic.filter(m => !idSet.has(m.id))
-        
+
         return true
       } catch (error) {
         console.error('[Library] 批量删除失败:', error)
@@ -230,10 +230,10 @@ export const useLibraryStore = defineStore('library', {
     async createPlaylist(name: string, description?: string) {
       try {
         const id = await window.electron.playlist.create({ name, description })
-        
+
         // 刷新歌单列表
         await this.refreshPlaylists()
-        
+
         return id
       } catch (error) {
         console.error('[Library] 创建歌单失败:', error)

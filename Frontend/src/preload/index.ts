@@ -190,6 +190,7 @@ const electronAPI = {
     // 白名单：只允许监听特定频道
     const validChannels = [
       'scan:progress',
+      'scan:complete',
       'shortcut:playPause',
       'shortcut:next',
       'shortcut:previous',

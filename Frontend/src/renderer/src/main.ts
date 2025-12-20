@@ -47,6 +47,17 @@ const preloadPromise = Promise.all([
 // 导出 preloadPromise 供其他组件等待（如果需要）
 ;(window as any).__preloadPromise = preloadPromise
 
+// 监听后台自动扫描完成事件，自动刷新音乐库
+// 这确保了在过场动画期间完成扫描后，用户无需手动刷新即可看到最新的音乐列表
+window.electron.on('scan:complete', async (result: any) => {
+  console.log('[Main] Received scan:complete event:', result)
+  if (result && result.added > 0) {
+    console.log(`[Main] Auto-scan added ${result.added} songs, refreshing library...`)
+    await libraryStore.refreshMusic()
+    console.log('[Main] Library refreshed after auto-scan')
+  }
+})
+
 // 挂载应用（与数据加载并行）
 app.mount('#app')
 
