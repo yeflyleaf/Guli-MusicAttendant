@@ -68,7 +68,7 @@
         </router-link>
       </div>
       <div class="song-grid">
-        <SongCard v-for="song in libraryStore.recentlyPlayed.slice(0, 6)" :key="song.id" :song="song"
+        <SongCard v-for="song in libraryStore.recentlyPlayed.slice(0, displayCount)" :key="song.id" :song="song"
           @play="handlePlay" />
       </div>
     </section>
@@ -84,7 +84,8 @@
         </router-link>
       </div>
       <div class="song-grid">
-        <SongCard v-for="song in libraryStore.favorites.slice(0, 6)" :key="song.id" :song="song" @play="handlePlay" />
+        <SongCard v-for="song in libraryStore.favorites.slice(0, displayCount)" :key="song.id" :song="song"
+          @play="handlePlay" />
       </div>
     </section>
 
@@ -120,11 +121,39 @@ import { useSettingsStore } from '@/store/settings.store'
 import type { Music } from '@/types/music'
 import { ArrowRight, FolderAdd, Headset, Plus, Star, Tickets } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
 const { selectFolder, scanFolder } = useIpc()
+
+// 响应式全屏状态
+const isFullscreen = ref(false)
+
+// 根据全屏状态计算显示数量：默认5个，全屏7个
+const displayCount = computed(() => isFullscreen.value ? 7 : 5)
+
+// 检查是否全屏
+const checkFullscreen = () => {
+  // 检查窗口是否最大化（接近屏幕尺寸）
+  const screenWidth = window.screen.availWidth
+  const screenHeight = window.screen.availHeight
+  const windowWidth = window.outerWidth
+  const windowHeight = window.outerHeight
+
+  // 如果窗口尺寸接近屏幕可用尺寸，认为是全屏/最大化状态
+  isFullscreen.value = windowWidth >= screenWidth - 50 && windowHeight >= screenHeight - 50
+}
+
+onMounted(() => {
+  checkFullscreen()
+  window.addEventListener('resize', checkFullscreen)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkFullscreen)
+})
 
 // 添加音乐文件夹
 const handleAddFolder = async () => {

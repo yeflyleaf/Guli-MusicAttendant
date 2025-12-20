@@ -65,38 +65,48 @@
 
     <!-- 歌曲列表 -->
     <div class="songs-list" ref="scrollContainer" v-if="songs.length > 0">
-      <div v-for="(song, index) in visibleSongs" :key="song.id" class="list-item" :class="{
-        active: playerStore.currentSong?.id === song.id,
-        selected: selectedIds.has(song.id)
-      }" @dblclick="handlePlay(index)">
-        <span class="col-index">
-          <el-checkbox v-if="isEditMode" :model-value="selectedIds.has(song.id)"
-            @change="(checked: boolean) => handleSelect(song.id, checked)" @click.stop />
-          <span class="index-num" v-show="!isEditMode || !selectedIds.has(song.id)">{{ index + 1 }}</span>
-        </span>
-
-        <div class="col-title">
-          <div class="song-cover-small">
-            <img v-if="song.cover_path && song.cover_path.length > 5"
-              :src="`local-image://${song.cover_path.replace(/\\\\/g, '/')}`" alt="" />
-            <el-icon v-else>
-              <Headset />
+      <div ref="sortableList" class="sortable-container">
+        <div v-for="(song, index) in songs" :key="song.id" :data-id="song.id" class="list-item" :class="{
+          active: playerStore.currentSong?.id === song.id,
+          selected: selectedIds.has(song.id),
+          'is-draggable': isEditMode
+        }" @dblclick="handlePlay(index)">
+          <!-- 拖拽手柄 -->
+          <span class="col-drag" v-if="isEditMode">
+            <el-icon class="drag-handle">
+              <Menu />
             </el-icon>
-          </div>
-          <div class="song-info">
-            <div class="song-name truncate" :title="song.title">{{ song.title }}</div>
-            <div class="song-artist truncate" :title="song.artist">{{ song.artist }}</div>
-          </div>
-        </div>
+          </span>
 
-        <span class="col-duration">{{ formatDuration(song.duration) }}</span>
+          <span class="col-index">
+            <el-checkbox v-if="isEditMode" :model-value="selectedIds.has(song.id)"
+              @change="(checked: boolean) => handleSelect(song.id, checked)" @click.stop />
+            <span class="index-num" v-show="!isEditMode || !selectedIds.has(song.id)">{{ index + 1 }}</span>
+          </span>
 
-        <div class="col-actions">
-          <el-tooltip content="从歌单移除" placement="top">
-            <el-icon class="action-btn remove-btn" @click.stop="handleRemoveSong(song.id)">
-              <Delete />
-            </el-icon>
-          </el-tooltip>
+          <div class="col-title">
+            <div class="song-cover-small">
+              <img v-if="song.cover_path && song.cover_path.length > 5"
+                :src="`local-image://${song.cover_path.replace(/\\\\/g, '/')}`" alt="" />
+              <el-icon v-else>
+                <Headset />
+              </el-icon>
+            </div>
+            <div class="song-info">
+              <div class="song-name truncate" :title="song.title">{{ song.title }}</div>
+              <div class="song-artist truncate" :title="song.artist">{{ song.artist }}</div>
+            </div>
+          </div>
+
+          <span class="col-duration">{{ formatDuration(song.duration) }}</span>
+
+          <div class="col-actions">
+            <el-tooltip content="从歌单移除" placement="top">
+              <el-icon class="action-btn remove-btn" @click.stop="handleRemoveSong(song.id)">
+                <Delete />
+              </el-icon>
+            </el-tooltip>
+          </div>
         </div>
       </div>
     </div>
@@ -194,9 +204,10 @@ import { usePlayerStore } from '@/store/player.store'
 import type { Music } from '@/types/music'
 import type { Playlist } from '@/types/playlist'
 import { formatDate, formatDuration } from '@/utils/format'
-import { Delete, Edit, Headset, Loading, Plus, Search, Setting, Tickets, VideoPlay } from '@element-plus/icons-vue'
+import { Delete, Edit, Headset, Loading, Menu, Plus, Search, Setting, Tickets, VideoPlay } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { computed, nextTick, onActivated, onMounted, ref, watch } from 'vue'
+import Sortable from 'sortablejs'
+import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 
 // 定义组件名称，用于 keep-alive 的 include 匹配
@@ -241,6 +252,10 @@ const toggleEditMode = () => {
 const scrollContainer = ref<HTMLElement | null>(null)
 const savedScrollTop = ref(0)
 
+// Sortable.js 相关引用
+const sortableList = ref<HTMLElement | null>(null)
+let sortableInstance: Sortable | null = null
+
 // 路由离开前保存滚动位置
 onBeforeRouteLeave((_to, _from, next) => {
   if (scrollContainer.value) {
@@ -258,35 +273,63 @@ onActivated(() => {
   })
 })
 
-// 渐进式渲染
-const renderLimit = ref(10)
-const visibleSongs = computed(() => {
-  return songs.value.slice(0, renderLimit.value)
-})
+// 初始化 Sortable 实例
+const initSortable = () => {
+  if (!sortableList.value) return
 
-// 获取第一首歌的封面
-const firstSongCover = computed(() => {
-  const firstSong = songs.value.find(s => s.cover_path && s.cover_path.length > 5)
-  return firstSong?.cover_path || null
-})
+  // 如果已存在实例，先销毁
+  if (sortableInstance) {
+    sortableInstance.destroy()
+  }
 
-const startProgressiveRendering = () => {
-  renderLimit.value = 10 // 重置为初始值
-
-  setTimeout(() => {
-    const total = songs.value.length
-    const batchSize = 50
-
-    const renderNextBatch = () => {
-      if (renderLimit.value < total) {
-        renderLimit.value = Math.min(renderLimit.value + batchSize, total)
-        requestAnimationFrame(renderNextBatch)
-      }
-    }
-
-    requestAnimationFrame(renderNextBatch)
-  }, 300) // 稍微延迟一点，等待 DOM 更新
+  sortableInstance = Sortable.create(sortableList.value, {
+    animation: 150,
+    handle: '.drag-handle',
+    ghostClass: 'drag-ghost',
+    chosenClass: 'drag-chosen',
+    dragClass: 'drag-item',
+    disabled: !isEditMode.value,
+    onEnd: handleDragEnd
+  })
 }
+
+// 销毁 Sortable 实例
+const destroySortable = () => {
+  if (sortableInstance) {
+    sortableInstance.destroy()
+    sortableInstance = null
+  }
+}
+
+// 监听编辑模式变化，启用/禁用 Sortable
+watch(isEditMode, (newValue) => {
+  if (sortableInstance) {
+    sortableInstance.option('disabled', !newValue)
+  }
+})
+
+// 监听歌曲列表变化，重新初始化 Sortable
+watch(() => songs.value.length, () => {
+  nextTick(() => {
+    if (songs.value.length > 0 && sortableList.value) {
+      initSortable()
+    }
+  })
+})
+
+// 组件卸载时销毁 Sortable 实例
+onBeforeUnmount(() => {
+  destroySortable()
+})
+
+// 获取第一首歌的封面（调整顺序后立即更新）
+const firstSongCover = computed(() => {
+  const firstSong = songs.value[0]
+  if (firstSong && firstSong.cover_path && firstSong.cover_path.length > 5) {
+    return firstSong.cover_path
+  }
+  return null
+})
 
 // 加载歌单数据
 const loadPlaylist = async () => {
@@ -301,8 +344,6 @@ const loadPlaylist = async () => {
       name: playlist.value.name,
       description: playlist.value.description || ''
     }
-    // 开始渐进式渲染
-    startProgressiveRendering()
   }
 }
 
@@ -316,6 +357,28 @@ const handlePlayAll = () => {
 // 播放单曲
 const handlePlay = (index: number) => {
   playerStore.setQueue(songs.value, index)
+}
+
+// 拖拽排序完成后保存新顺序
+const handleDragEnd = async (evt: Sortable.SortableEvent) => {
+  if (!playlist.value) return
+  const { oldIndex, newIndex } = evt
+  if (oldIndex === undefined || newIndex === undefined || oldIndex === newIndex) return
+
+  // 更新本地 songs 数组顺序
+  const movedItem = songs.value.splice(oldIndex, 1)[0]
+  songs.value.splice(newIndex, 0, movedItem)
+
+  // 获取新的歌曲ID顺序
+  const musicIds = songs.value.map(song => song.id)
+
+  // 保存到数据库
+  await window.electron.playlist.updateOrder(playlist.value.id, musicIds)
+
+  // 刷新歌单列表（更新侧边栏的封面显示）
+  await libraryStore.refreshPlaylists()
+
+  ElMessage.success('歌曲顺序已更新')
 }
 
 // 删除歌单
@@ -626,10 +689,56 @@ const handleImportSongs = async () => {
   &.selected {
     background: rgba(var(--primary-color-rgb), 0.1);
   }
+
+  // 可拖拽状态
+  &.is-draggable {
+    cursor: move;
+  }
+}
+
+// 拖拽手柄列
+.col-drag {
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .drag-handle {
+    font-size: 18px;
+    color: $text-muted;
+    cursor: grab;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $primary-color;
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+// 拖拽样式
+.drag-ghost {
+  opacity: 0.5;
+  background: rgba(var(--primary-color-rgb), 0.1) !important;
+}
+
+.drag-chosen {
+  background: $bg-hover !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.drag-item {
+  background: $bg-secondary;
+  border-radius: $border-radius-sm;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .col-index {
-  width: 60px;
+  width: 50px;
   display: flex;
   align-items: center;
   gap: $spacing-sm;

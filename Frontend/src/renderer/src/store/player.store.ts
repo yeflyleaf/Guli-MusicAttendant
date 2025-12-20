@@ -96,13 +96,13 @@ export const usePlayerStore = defineStore('player', {
           this.currentIndex = index
         }
       }
-      
+
       this.currentSong = song
       this.isPlaying = true
       this.currentTime = 0
-      
-      // 记录播放次数
-      window.electron?.music?.incrementPlayCount(song.id)
+
+      // 记录播放并刷新最近播放列表
+      this._recordPlay(song.id)
     },
 
     /**
@@ -146,16 +146,18 @@ export const usePlayerStore = defineStore('player', {
      */
     previous() {
       if (this.queue.length === 0) return
-      
+
       if (this.playMode === 'random' && this.playHistory.length > 0) {
         // 随机模式下，返回历史记录
         const prevIndex = this.playHistory.pop()!
         this.currentIndex = prevIndex
         this.currentSong = this.queue[prevIndex]
         this.isPlaying = true
+        // 记录播放并刷新最近播放
+        this._recordPlay(this.currentSong.id)
         return
       }
-      
+
       if (this.currentIndex > 0) {
         this.currentIndex--
       } else if (this.playMode === 'loop') {
@@ -164,10 +166,12 @@ export const usePlayerStore = defineStore('player', {
       } else {
         return
       }
-      
+
       this.currentSong = this.queue[this.currentIndex]
       this.isPlaying = true
       this.currentTime = 0
+      // 记录播放并刷新最近播放
+      this._recordPlay(this.currentSong.id)
     },
 
     /**
@@ -175,7 +179,7 @@ export const usePlayerStore = defineStore('player', {
      */
     next() {
       if (this.queue.length === 0) return
-      
+
       // 记录当前位置到历史
       if (this.currentIndex >= 0) {
         this.playHistory.push(this.currentIndex)
@@ -184,14 +188,14 @@ export const usePlayerStore = defineStore('player', {
           this.playHistory.shift()
         }
       }
-      
+
       if (this.playMode === 'random') {
         // 随机播放
         let randomIndex: number
         do {
           randomIndex = Math.floor(Math.random() * this.queue.length)
         } while (randomIndex === this.currentIndex && this.queue.length > 1)
-        
+
         this.currentIndex = randomIndex
       } else if (this.playMode === 'single') {
         // 单曲循环，保持当前歌曲
@@ -210,10 +214,12 @@ export const usePlayerStore = defineStore('player', {
           return
         }
       }
-      
+
       this.currentSong = this.queue[this.currentIndex]
       this.isPlaying = true
       this.currentTime = 0
+      // 记录播放并刷新最近播放
+      this._recordPlay(this.currentSong.id)
     },
 
     /**
@@ -223,7 +229,7 @@ export const usePlayerStore = defineStore('player', {
       this.queue = [...songs]
       this.currentIndex = startIndex
       this.playHistory = []
-      
+
       if (songs.length > 0 && startIndex < songs.length) {
         this.play(songs[startIndex], false)
       }
@@ -255,9 +261,9 @@ export const usePlayerStore = defineStore('player', {
     removeFromQueue(songId: number) {
       const index = this.queue.findIndex(s => s.id === songId)
       if (index === -1) return
-      
+
       this.queue.splice(index, 1)
-      
+
       // 更新当前索引
       if (index < this.currentIndex) {
         this.currentIndex--
@@ -351,13 +357,26 @@ export const usePlayerStore = defineStore('player', {
           ...this.currentSong,
           is_favorite: isFavorite ? 1 : 0
         }
-        
+
         // 同步更新队列中的歌曲
         const index = this.queue.findIndex(s => s.id === this.currentSong?.id)
         if (index !== -1) {
           this.queue[index] = { ...this.queue[index], is_favorite: isFavorite ? 1 : 0 }
         }
       }
+    },
+
+    /**
+     * 记录播放并刷新最近播放列表（内部辅助方法）
+     */
+    _recordPlay(musicId: number) {
+      window.electron?.music?.incrementPlayCount(musicId).then(() => {
+        // 延迟导入避免循环依赖
+        import('@/store/library.store').then(({ useLibraryStore }) => {
+          const libraryStore = useLibraryStore()
+          libraryStore.refreshRecentlyPlayed()
+        })
+      })
     }
   }
 })

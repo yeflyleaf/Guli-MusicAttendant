@@ -19,12 +19,14 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@types/sortablejs": "^1.15.9",
     "@vueuse/core": "^14.1.0",
     "better-sqlite3": "^11.5.0",
     "electron-store": "^8.1.0",
     "element-plus": "^2.5.3",
     "music-metadata": "^7.14.0",
     "pinia": "^2.1.7",
+    "sortablejs": "^1.15.6",
     "sql.js": "^1.10.3",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
