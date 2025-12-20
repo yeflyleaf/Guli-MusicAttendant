@@ -108,7 +108,7 @@ export default {
       sectionTitle: 'حول',
       appName: 'مساعد الموسيقى قولي',
       version: 'الإصدار',
-      description: 'نظام إدارة الموسيقى المحلية الاحترافي، مبني باستخدام Electron + Vue 3 + TypeScript.',
+      description: 'نظام إدارة الموسيقى المحلية، مبني باستخدام Electron + Vue 3 + TypeScript.',
       resetSettings: 'إعادة تعيين الإعدادات',
       resetSettingsDesc: 'استعادة جميع الإعدادات إلى القيم الافتراضية',
       confirmReset: 'هل أنت متأكد من استعادة جميع الإعدادات إلى القيم الافتراضية؟',

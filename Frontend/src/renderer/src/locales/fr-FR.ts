@@ -108,7 +108,7 @@ export default {
       sectionTitle: 'À propos',
       appName: 'Assistant Musique Guli',
       version: 'Version',
-      description: 'Système professionnel de gestion de musique locale, construit avec Electron + Vue 3 + TypeScript.',
+      description: 'Système de gestion de musique locale, construit avec Electron + Vue 3 + TypeScript.',
       resetSettings: 'Réinitialiser les paramètres',
       resetSettingsDesc: 'Restaurer tous les paramètres aux valeurs par défaut',
       confirmReset: 'Êtes-vous sûr de vouloir restaurer tous les paramètres aux valeurs par défaut ?',

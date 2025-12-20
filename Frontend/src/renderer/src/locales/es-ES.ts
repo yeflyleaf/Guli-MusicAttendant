@@ -97,7 +97,7 @@ export default {
       sectionTitle: 'Acerca de',
       appName: 'Guli Music',
       version: 'Versión',
-      description: 'Gestor de música local profesional',
+      description: 'Gestor de música local',
       resetSettings: 'Restablecer',
       resetSettingsDesc: 'Restaurar valores predeterminados',
       confirmReset: '¿Restablecer configuración?',

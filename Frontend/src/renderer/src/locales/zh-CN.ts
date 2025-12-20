@@ -107,7 +107,7 @@ export default {
       sectionTitle: '关于',
       appName: '故里音乐助手',
       version: '版本',
-      description: '专业级本地音乐管理系统，基于 Electron + Vue 3 + TypeScript 构建。',
+      description: '本地音乐管理系统，基于 Electron + Vue 3 + TypeScript 构建。',
       resetSettings: '重置设置',
       resetSettingsDesc: '将所有设置恢复为默认值',
       confirmReset: '确定要将所有设置恢复为默认值吗？',
