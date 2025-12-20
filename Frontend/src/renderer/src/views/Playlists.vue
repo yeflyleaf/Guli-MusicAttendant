@@ -3,9 +3,10 @@
     <!-- 页面头部 -->
     <div class="page-header">
       <h1 class="page-title">
-        <span class="gradient-text">我的歌单</span>
+        <span class="gradient-text">{{ $t('playlist.title') }}</span>
       </h1>
-      <p class="page-subtitle">共 {{ displayedPlaylists.length }} / {{ libraryStore.playlists.length }} 个歌单</p>
+      <p class="page-subtitle">{{ $t('common.total') }} {{ displayedPlaylists.length }} / {{
+        libraryStore.playlists.length }} {{ $t('common.playlists') }}</p>
     </div>
 
     <!-- 操作栏 -->
@@ -15,8 +16,8 @@
         <el-icon class="search-icon">
           <Search />
         </el-icon>
-        <input v-model="localSearchKeyword" type="text" class="search-input" placeholder="搜索歌单..."
-          @input="handleLocalSearch" />
+        <input v-model="localSearchKeyword" type="text" class="search-input"
+          :placeholder="$t('playlist.searchPlaceholder')" @input="handleLocalSearch" />
         <el-icon v-if="localSearchKeyword" class="search-clear" @click="clearLocalSearch">
           <Close />
         </el-icon>
@@ -25,7 +26,7 @@
         <el-icon>
           <Plus />
         </el-icon>
-        新建歌单
+        {{ $t('playlist.createNew') }}
       </el-button>
     </div>
 
@@ -51,7 +52,7 @@
           </div>
           <!-- 歌曲数量标签 -->
           <div class="song-count-badge">
-            {{ playlist.song_count }} 首
+            {{ playlist.song_count }} {{ $t('common.songs') }}
           </div>
         </div>
 
@@ -80,30 +81,25 @@
       <el-icon class="empty-icon">
         <Tickets />
       </el-icon>
-      <h3>还没有歌单</h3>
-      <p>创建你的第一个歌单，开始收藏喜欢的音乐</p>
+      <h3>{{ $t('playlist.noPlaylists') }}</h3>
       <el-button type="primary" size="large" @click="handleCreatePlaylist">
         <el-icon>
           <Plus />
         </el-icon>
-        创建歌单
+        {{ $t('playlist.createNew') }}
       </el-button>
     </div>
 
     <!-- 创建歌单对话框 -->
-    <el-dialog v-model="showCreateDialog" title="创建歌单" width="400px" :close-on-click-modal="false">
+    <el-dialog v-model="showCreateDialog" :title="$t('playlist.createNew')" width="400px" :close-on-click-modal="false">
       <el-form :model="newPlaylist" label-width="80px">
-        <el-form-item label="歌单名称">
-          <el-input v-model="newPlaylist.name" placeholder="请输入歌单名称" maxlength="50" />
-        </el-form-item>
-        <el-form-item label="歌单描述">
-          <el-input v-model="newPlaylist.description" type="textarea" placeholder="添加简介（可选）" :rows="3"
-            maxlength="200" />
+        <el-form-item :label="$t('playlist.playlistName')">
+          <el-input v-model="newPlaylist.name" :placeholder="$t('playlist.playlistName')" maxlength="50" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showCreateDialog = false">取消</el-button>
-        <el-button type="primary" @click="confirmCreatePlaylist">创建</el-button>
+        <el-button @click="showCreateDialog = false">{{ $t('common.cancel') }}</el-button>
+        <el-button type="primary" @click="confirmCreatePlaylist">{{ $t('common.confirm') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -261,7 +257,7 @@ const formatDate = (dateStr: string): string => {
 
     .search-icon {
       color: $text-muted;
-      font-size: 16px;
+      font-size: $font-size-md;
       margin-right: $spacing-sm;
     }
 
@@ -281,7 +277,7 @@ const formatDate = (dateStr: string): string => {
 
     .search-clear {
       color: $text-muted;
-      font-size: 14px;
+      font-size: 1rem;
       cursor: pointer;
       padding: 4px;
       border-radius: 50%;
@@ -432,7 +428,7 @@ const formatDate = (dateStr: string): string => {
       color: $text-muted;
 
       .el-icon {
-        font-size: 14px;
+        font-size: 1rem;
       }
     }
   }

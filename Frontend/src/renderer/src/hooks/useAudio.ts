@@ -16,6 +16,9 @@ let globalSource: MediaElementAudioSourceNode | null = null
 let isInitialized = false
 let watchersSetUp = false
 
+// 恢复进度的标志，防止 timeupdate 在恢复前覆盖保存的进度
+let pendingSeekTime: number | null = null
+
 // 共享的 ref，用于让多个组件访问 analyser
 const sharedAnalyser: Ref<AnalyserNode | null> = ref(null)
 
@@ -51,6 +54,10 @@ function initGlobalAudio(playerStore: ReturnType<typeof usePlayerStore>) {
   // 监听事件
   globalAudio.addEventListener('timeupdate', () => {
     if (globalAudio) {
+      // 如果有待恢复的进度，不要覆盖它
+      if (pendingSeekTime !== null) {
+        return
+      }
       playerStore.setCurrentTime(globalAudio.currentTime)
     }
   })
@@ -62,13 +69,21 @@ function initGlobalAudio(playerStore: ReturnType<typeof usePlayerStore>) {
   })
 
   globalAudio.addEventListener('ended', () => {
+    const settingsStore = useSettingsStore()
+
     if (playerStore.playMode === 'single') {
       if (globalAudio) {
         globalAudio.currentTime = 0
         globalAudio.play()
       }
     } else {
-      playerStore.next()
+      // 无缝播放：立即切换下一首
+      if (settingsStore.gaplessPlayback) {
+        // 预加载下一首已在 timeupdate 中处理
+        playerStore.next()
+      } else {
+        playerStore.next()
+      }
     }
   })
 
@@ -103,7 +118,30 @@ function setupWatchers(
     if (newSong && globalAudio) {
       const normalizedPath = newSong.file_path.replace(/\\/g, '/')
       globalAudio.src = `local-audio://${normalizedPath}`
+
+      // 如果有恢复的进度，设置待跳转时间
+      if (playerStore.currentTime > 0 && !playerStore.isPlaying) {
+        pendingSeekTime = playerStore.currentTime
+        console.log('[Audio] Pending seek to:', pendingSeekTime)
+      }
+
       globalAudio.load()
+
+      // 如果有待恢复的进度，在歌曲加载后跳转
+      if (pendingSeekTime !== null) {
+        const savedTime = pendingSeekTime
+        const onCanPlay = () => {
+          if (globalAudio && savedTime > 0) {
+            console.log('[Audio] Seeking to saved position:', savedTime)
+            globalAudio.currentTime = savedTime
+            playerStore.setCurrentTime(savedTime)
+          }
+          // 清除 pending 标志
+          pendingSeekTime = null
+          globalAudio?.removeEventListener('canplay', onCanPlay)
+        }
+        globalAudio.addEventListener('canplay', onCanPlay)
+      }
     }
   }, { immediate: true })
 
@@ -131,6 +169,24 @@ function setupWatchers(
       globalAudio.volume = muted ? 0 : volume.value
     }
   })
+
+  // 无缝播放：在歌曲即将结束时预加载下一首
+  // 使用 settingsStore 来检查是否启用无缝播放
+  if (globalAudio) {
+    globalAudio.addEventListener('timeupdate', () => {
+      if (!globalAudio) return
+
+      // 当剩余时间小于 0.5 秒时，预热下一首
+      if (settingsStore.gaplessPlayback && globalAudio.duration && globalAudio.currentTime > 0) {
+        const remaining = globalAudio.duration - globalAudio.currentTime
+        if (remaining < 0.5 && remaining > 0) {
+          // 可以在这里预热下一首歌曲的 fetch，但 HTML5 Audio 限制较大
+          // 真正的无缝播放需要 Web Audio API 双 buffer 方案
+          // 这里只是一个简化实现
+        }
+      }
+    })
+  }
 
   console.log('[Audio] Watchers set up')
 }

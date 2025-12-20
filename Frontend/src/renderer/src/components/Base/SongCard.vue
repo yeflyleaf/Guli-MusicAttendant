@@ -143,7 +143,7 @@ const showContextMenu = (event: MouseEvent) => {
     background: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
     color: #FFD700;
-    font-size: 14px;
+    font-size: 1rem;
   }
 }
 

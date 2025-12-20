@@ -10,6 +10,7 @@ import { createApp } from 'vue'
 
 import App from './App.vue'
 import './assets/styles/main.scss'
+import i18n from './locales'
 import router from './router'
 
 // 创建 Vue 应用
@@ -24,6 +25,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 const pinia = createPinia()
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 app.use(ElementPlus, { size: 'default', zIndex: 3000 })
 
 // 在挂载前就开始预加载数据（与渲染并行）

@@ -88,6 +88,15 @@ VALUES ('theme', 'dark'),
     ('volume', '0.7'),
     ('playMode', 'sequence'),
     ('language', 'zh-CN'),
+    ('fontSize', '14'),
+    (
+        'localMusicHeaders',
+        '["title","artist","album","duration","created_at"]'
+    ),
+    ('visualizationStyle', 'bars'),
+    ('visualizationFrameRate', '60'),
+    ('rememberPlaybackStatus', 'true'),
+    ('gaplessPlayback', 'false'),
     ('musicFolders', '[]'),
     ('autoScan', 'true'),
     ('visualizerEnabled', 'true');

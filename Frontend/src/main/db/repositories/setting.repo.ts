@@ -15,6 +15,12 @@ export function getAllSettings(): Settings {
     volume: 0.7,
     playMode: 'sequence',
     language: 'zh-CN',
+    fontSize: 14,
+    localMusicHeaders: ['title', 'artist', 'album', 'duration', 'created_at'],
+    visualizationStyle: 'bars',
+    visualizationFrameRate: 60,
+    rememberPlaybackStatus: true,
+    gaplessPlayback: false,
     musicFolders: [],
     autoScan: true,
     visualizerEnabled: true
@@ -33,6 +39,28 @@ export function getAllSettings(): Settings {
         break
       case 'language':
         settings.language = row.value
+        break
+      case 'fontSize':
+        settings.fontSize = parseInt(row.value) || 14
+        break
+      case 'localMusicHeaders':
+        try {
+          settings.localMusicHeaders = JSON.parse(row.value)
+        } catch {
+          settings.localMusicHeaders = ['title', 'artist', 'album', 'duration', 'created_at']
+        }
+        break
+      case 'visualizationStyle':
+        settings.visualizationStyle = row.value
+        break
+      case 'visualizationFrameRate':
+        settings.visualizationFrameRate = parseInt(row.value) || 60
+        break
+      case 'rememberPlaybackStatus':
+        settings.rememberPlaybackStatus = row.value === 'true'
+        break
+      case 'gaplessPlayback':
+        settings.gaplessPlayback = row.value === 'true'
         break
       case 'musicFolders':
         try {
@@ -152,6 +180,12 @@ export function resetSettings(): boolean {
     ['volume', '0.7'],
     ['playMode', 'sequence'],
     ['language', 'zh-CN'],
+    ['fontSize', '14'],
+    ['localMusicHeaders', '["title","artist","album","duration","created_at"]'],
+    ['visualizationStyle', 'bars'],
+    ['visualizationFrameRate', '60'],
+    ['rememberPlaybackStatus', 'true'],
+    ['gaplessPlayback', 'false'],
     ['musicFolders', '[]'],
     ['autoScan', 'true'],
     ['visualizerEnabled', 'true']

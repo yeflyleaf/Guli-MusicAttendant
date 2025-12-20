@@ -264,7 +264,7 @@ const drawVisualizer = () => {
   const bufferLength = analyser.value.frequencyBinCount
   const dataArray = new Uint8Array(bufferLength)
 
-  const FPS = 30
+  const FPS = settingsStore.visualizationFrameRate || 30
   const INTERVAL = 1000 / FPS
   let lastTime = 0
 
@@ -282,29 +282,184 @@ const drawVisualizer = () => {
     lastTime = timestamp - (elapsed % INTERVAL)
 
     if (analyser.value) {
-      analyser.value.getByteFrequencyData(dataArray)
+      if (settingsStore.visualizationStyle === 'wave') {
+        analyser.value.getByteTimeDomainData(dataArray)
+      } else {
+        analyser.value.getByteFrequencyData(dataArray)
+      }
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // 只绘制低频到中频部分，视觉效果更好
-    const barsToDraw = Math.floor(bufferLength * 0.6)
-    const barWidth = (canvas.width / barsToDraw)
-    let barHeight
-    let x = 0
+    const width = canvas.width
+    const height = canvas.height
+    const style = settingsStore.visualizationStyle || 'bars'
 
-    for (let i = 0; i < barsToDraw; i++) {
-      barHeight = (dataArray[i] / 255) * canvas.height
+    if (style === 'bars') {
+      // 柱状图
+      const barsToDraw = Math.floor(bufferLength * 0.6)
+      const barWidth = (width / barsToDraw)
+      let barHeight
+      let x = 0
 
-      // 渐变色 (使用实际颜色值，Canvas 不支持 CSS 变量)
-      const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight)
-      gradient.addColorStop(0, 'rgba(139, 92, 246, 0.2)')  // 主紫色透明
-      gradient.addColorStop(1, 'rgba(139, 92, 246, 0.6)')  // 主紫清晰
+      for (let i = 0; i < barsToDraw; i++) {
+        barHeight = (dataArray[i] / 255) * height
+
+        const gradient = ctx.createLinearGradient(0, height, 0, height - barHeight)
+        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.2)')
+        gradient.addColorStop(1, 'rgba(139, 92, 246, 0.6)')
+
+        ctx.fillStyle = gradient
+        ctx.fillRect(x, height - barHeight, barWidth - 1, barHeight)
+
+        x += barWidth
+      }
+    } else if (style === 'wave') {
+      // 波形图
+      ctx.lineWidth = 2
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.8)'
+      ctx.beginPath()
+
+      const sliceWidth = width * 1.0 / bufferLength
+      let x = 0
+
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0
+        const y = v * height / 2
+
+        if (i === 0) {
+          ctx.moveTo(x, y)
+        } else {
+          ctx.lineTo(x, y)
+        }
+
+        x += sliceWidth
+      }
+
+      ctx.lineTo(canvas.width, canvas.height / 2)
+      ctx.stroke()
+    } else if (style === 'spectrum') {
+      // 频谱渐变 - 彩虹色频谱柱状图
+      const barsToDraw = Math.floor(bufferLength * 0.5)
+      const barWidth = width / barsToDraw
+      let x = 0
+
+      for (let i = 0; i < barsToDraw; i++) {
+        const barHeight = (dataArray[i] / 255) * height
+        const hue = (i / barsToDraw) * 280 + 200 // 从蓝色到紫色到粉色
+        const saturation = 80
+        const lightness = 50 + (dataArray[i] / 255) * 20
+
+        ctx.fillStyle = `hsla(${hue}, ${saturation}%, ${lightness}%, 0.7)`
+        ctx.fillRect(x, height - barHeight, barWidth - 1, barHeight)
+
+        // 添加顶部高光
+        ctx.fillStyle = `hsla(${hue}, ${saturation}%, ${lightness + 20}%, 0.9)`
+        ctx.fillRect(x, height - barHeight, barWidth - 1, 2)
+
+        x += barWidth
+      }
+    } else if (style === 'mirror') {
+      // 对称柱状 - 上下镜像效果
+      const barsToDraw = Math.floor(bufferLength * 0.5)
+      const barWidth = width / barsToDraw
+      const centerY = height / 2
+      let x = 0
+
+      for (let i = 0; i < barsToDraw; i++) {
+        const barHeight = (dataArray[i] / 255) * (height / 2) * 0.9
+        const percent = dataArray[i] / 255
+
+        // 上半部分渐变
+        const gradientUp = ctx.createLinearGradient(0, centerY, 0, centerY - barHeight)
+        gradientUp.addColorStop(0, `rgba(139, 92, 246, ${0.3 + percent * 0.4})`)
+        gradientUp.addColorStop(1, `rgba(236, 72, 153, ${0.5 + percent * 0.5})`)
+
+        // 下半部分渐变
+        const gradientDown = ctx.createLinearGradient(0, centerY, 0, centerY + barHeight)
+        gradientDown.addColorStop(0, `rgba(139, 92, 246, ${0.3 + percent * 0.4})`)
+        gradientDown.addColorStop(1, `rgba(59, 130, 246, ${0.4 + percent * 0.4})`)
+
+        // 绘制上半部分
+        ctx.fillStyle = gradientUp
+        ctx.fillRect(x, centerY - barHeight, barWidth - 1, barHeight)
+
+        // 绘制下半部分
+        ctx.fillStyle = gradientDown
+        ctx.fillRect(x, centerY, barWidth - 1, barHeight)
+
+        x += barWidth
+      }
+
+      // 中心线
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.3)'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(0, centerY)
+      ctx.lineTo(width, centerY)
+      ctx.stroke()
+    } else if (style === 'mountain') {
+      // 山脉曲线 - 平滑的填充波形
+      const points = Math.floor(bufferLength * 0.4)
+      const segmentWidth = width / (points - 1)
+
+      // 创建平滑曲线的控制点
+      const getY = (index: number) => {
+        const value = dataArray[Math.floor((index / points) * bufferLength)]
+        return height - (value / 255) * height * 0.85
+      }
+
+      // 绘制填充渐变
+      const gradient = ctx.createLinearGradient(0, 0, 0, height)
+      gradient.addColorStop(0, 'rgba(139, 92, 246, 0.6)')
+      gradient.addColorStop(0.5, 'rgba(139, 92, 246, 0.3)')
+      gradient.addColorStop(1, 'rgba(139, 92, 246, 0.05)')
 
       ctx.fillStyle = gradient
-      ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight)
+      ctx.beginPath()
+      ctx.moveTo(0, height)
 
-      x += barWidth
+      // 使用贝塞尔曲线创建平滑路径
+      for (let i = 0; i < points; i++) {
+        const x = i * segmentWidth
+        const y = getY(i)
+
+        if (i === 0) {
+          ctx.lineTo(x, y)
+        } else {
+          const prevX = (i - 1) * segmentWidth
+          const prevY = getY(i - 1)
+          const cpX = (prevX + x) / 2
+          ctx.quadraticCurveTo(prevX, prevY, cpX, (prevY + y) / 2)
+        }
+      }
+
+      ctx.lineTo(width, getY(points - 1))
+      ctx.lineTo(width, height)
+      ctx.closePath()
+      ctx.fill()
+
+      // 绘制顶部轮廓线
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.8)'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+
+      for (let i = 0; i < points; i++) {
+        const x = i * segmentWidth
+        const y = getY(i)
+
+        if (i === 0) {
+          ctx.moveTo(x, y)
+        } else {
+          const prevX = (i - 1) * segmentWidth
+          const prevY = getY(i - 1)
+          const cpX = (prevX + x) / 2
+          ctx.quadraticCurveTo(prevX, prevY, cpX, (prevY + y) / 2)
+        }
+      }
+
+      ctx.lineTo(width, getY(points - 1))
+      ctx.stroke()
     }
   }
 
@@ -543,7 +698,7 @@ onUnmounted(() => {
   gap: $spacing-sm;
 
   .time-text {
-    font-size: 14px;
+    font-size: 1rem;
     color: $text-muted;
     min-width: 45px;
     text-align: center;

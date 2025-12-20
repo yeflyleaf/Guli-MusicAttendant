@@ -3,8 +3,8 @@
     <!-- 页面标题和操作栏 -->
     <div class="page-header">
       <div class="header-left">
-        <h1 class="page-title">本地音乐</h1>
-        <span class="music-count">共 {{ libraryStore.musicCount }} 首</span>
+        <h1 class="page-title">{{ $t('localMusic.title') }}</h1>
+        <span class="music-count">{{ $t('common.total') }} {{ libraryStore.musicCount }} {{ $t('common.songs') }}</span>
       </div>
       <div class="header-right">
         <SearchBar class="local-search" />
@@ -12,25 +12,25 @@
           <el-icon>
             <Refresh />
           </el-icon>
-          刷新
+          {{ $t('common.refresh') || '刷新' }}
         </el-button>
         <el-button @click="handleScanFolder">
           <el-icon>
             <FolderAdd />
           </el-icon>
-          添加文件夹
+          {{ $t('settings.library.addFolder') }}
         </el-button>
         <el-button :type="isEditMode ? 'primary' : 'default'" @click="toggleEditMode">
           <el-icon>
             <Edit />
           </el-icon>
-          {{ isEditMode ? '完成' : '编辑' }}
+          {{ isEditMode ? $t('common.done') : $t('common.edit') }}
         </el-button>
         <el-button type="primary" @click="handlePlayAll" :disabled="musicList.length === 0">
           <el-icon>
             <VideoPlay />
           </el-icon>
-          播放全部
+          {{ $t('localMusic.playAll') }}
         </el-button>
       </div>
     </div>
@@ -39,10 +39,10 @@
     <div class="toolbar" v-if="isEditMode">
       <div class="toolbar-left">
         <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleSelectAll">
-          全选
+          {{ $t('common.selectAll') }}
         </el-checkbox>
         <el-button v-if="selectedIds.size > 0" text type="danger" @click="handleDeleteSelected">
-          删除选中 ({{ selectedIds.size }})
+          {{ $t('localMusic.removeSelected') }} ({{ selectedIds.size }})
         </el-button>
       </div>
     </div>
@@ -53,32 +53,35 @@
       <div class="list-content" ref="scrollContainer">
         <div class="list-header">
           <span class="col-index">#</span>
-          <span class="col-title sortable" :class="{ active: sortBy === 'title' }" @click="handleSort('title')">
-            歌曲
+          <span class="col-title sortable" :class="{ active: sortBy === 'title' }" @click="handleSort('title')"
+            v-if="settingsStore.localMusicHeaders.includes('title')">
+            {{ $t('settings.appearance.headerTitle') }}
             <el-icon v-if="sortBy === 'title'" class="sort-icon">
               <ArrowUp v-if="sortOrder === 'ASC'" />
               <ArrowDown v-else />
             </el-icon>
           </span>
-          <span class="col-artist sortable" :class="{ active: sortBy === 'artist' }" @click="handleSort('artist')">
-            歌手
+          <span class="col-artist sortable" :class="{ active: sortBy === 'artist' }" @click="handleSort('artist')"
+            v-if="settingsStore.localMusicHeaders.includes('artist')">
+            {{ $t('settings.appearance.headerArtist') }}
             <el-icon v-if="sortBy === 'artist'" class="sort-icon">
               <ArrowUp v-if="sortOrder === 'ASC'" />
               <ArrowDown v-else />
             </el-icon>
           </span>
-          <span class="col-album">专辑</span>
-          <span class="col-duration sortable" :class="{ active: sortBy === 'duration' }"
-            @click="handleSort('duration')">
-            时长
+          <span class="col-album" v-if="settingsStore.localMusicHeaders.includes('album')">{{
+            $t('settings.appearance.headerAlbum') }}</span>
+          <span class="col-duration sortable" :class="{ active: sortBy === 'duration' }" @click="handleSort('duration')"
+            v-if="settingsStore.localMusicHeaders.includes('duration')">
+            {{ $t('settings.appearance.headerDuration') }}
             <el-icon v-if="sortBy === 'duration'" class="sort-icon">
               <ArrowUp v-if="sortOrder === 'ASC'" />
               <ArrowDown v-else />
             </el-icon>
           </span>
           <span class="col-created sortable" :class="{ active: sortBy === 'created_at' }"
-            @click="handleSort('created_at')">
-            添加时间
+            @click="handleSort('created_at')" v-if="settingsStore.localMusicHeaders.includes('created_at')">
+            {{ $t('settings.appearance.headerCreatedAt') }}
             <el-icon v-if="sortBy === 'created_at'" class="sort-icon">
               <ArrowUp v-if="sortOrder === 'ASC'" />
               <ArrowDown v-else />
@@ -101,7 +104,7 @@
             </span>
           </span>
 
-          <div class="col-title">
+          <div class="col-title" v-if="settingsStore.localMusicHeaders.includes('title')">
             <div class="song-cover-small">
               <img v-if="song.cover_path && song.cover_path.length > 5"
                 :src="`local-image://${song.cover_path.replace(/\\\\/g, '/')}`" alt="" loading="lazy" />
@@ -114,10 +117,14 @@
             </div>
           </div>
 
-          <span class="col-artist truncate" :title="song.artist">{{ song.artist }}</span>
-          <span class="col-album truncate" :title="song.album">{{ song.album }}</span>
-          <span class="col-duration">{{ formatDuration(song.duration) }}</span>
-          <span class="col-created">{{ formatRelativeTime(song.created_at) }}</span>
+          <span class="col-artist truncate" :title="song.artist"
+            v-if="settingsStore.localMusicHeaders.includes('artist')">{{ song.artist }}</span>
+          <span class="col-album truncate" :title="song.album"
+            v-if="settingsStore.localMusicHeaders.includes('album')">{{ song.album }}</span>
+          <span class="col-duration" v-if="settingsStore.localMusicHeaders.includes('duration')">{{
+            formatDuration(song.duration) }}</span>
+          <span class="col-created" v-if="settingsStore.localMusicHeaders.includes('created_at')">{{
+            formatRelativeTime(song.created_at) }}</span>
 
           <div class="col-actions">
             <el-icon class="action-btn" :class="{ active: song.is_favorite }"
@@ -131,11 +138,12 @@
               </el-icon>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="play">播放</el-dropdown-item>
-                  <el-dropdown-item command="addToQueue">添加到播放队列</el-dropdown-item>
-                  <el-dropdown-item command="addToPlaylist">添加到歌单</el-dropdown-item>
-                  <el-dropdown-item command="showInFolder">在文件夹中显示</el-dropdown-item>
-                  <el-dropdown-item command="delete" divided>删除</el-dropdown-item>
+                  <el-dropdown-item command="play">{{ $t('player.play') || '播放' }}</el-dropdown-item>
+                  <el-dropdown-item command="addToQueue">{{ $t('player.addToQueue') }}</el-dropdown-item>
+                  <el-dropdown-item command="addToPlaylist">{{ $t('playlist.addToPlaylist') }}</el-dropdown-item>
+                  <el-dropdown-item command="showInFolder">{{ $t('localMusic.showInFolder') || '在文件夹中显示'
+                    }}</el-dropdown-item>
+                  <el-dropdown-item command="delete" divided>{{ $t('common.delete') }}</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -147,8 +155,7 @@
           <el-icon class="empty-icon">
             <FolderOpened />
           </el-icon>
-          <p>暂无音乐</p>
-          <p class="empty-hint">点击"添加文件夹"导入您的本地音乐</p>
+          <p>{{ $t('localMusic.noMusic') }}</p>
         </div>
       </div>
     </div>
@@ -164,6 +171,7 @@ import SearchBar from '@/components/Base/SearchBar.vue'
 import { useIpc } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
+import { useSettingsStore } from '@/store/settings.store'
 import type { Music } from '@/types/music'
 import { throttle } from '@/utils/debounce'
 import { formatDuration, formatRelativeTime } from '@/utils/format'
@@ -201,6 +209,7 @@ const MusicPlay = {
 
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
+const settingsStore = useSettingsStore()
 const { selectFolder, scanFolder, scanAllFolders, addMusicFolder, showInFolder, confirm } = useIpc()
 
 // 滚动容器引用和滚动位置保存
@@ -575,7 +584,7 @@ const handleCommand = async (command: string, song: Music) => {
     }
 
     .sort-icon {
-      font-size: 12px;
+      font-size: $font-size-xs;
     }
   }
 }

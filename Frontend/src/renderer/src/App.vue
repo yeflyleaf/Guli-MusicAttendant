@@ -40,14 +40,91 @@ import PlayQueue from '@/components/Layout/PlayQueue.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import { useShortcuts } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
+import { useSettingsStore } from '@/store/settings.store'
+import { debounce } from '@/utils/debounce'
 import Lyrics from '@/views/Lyrics.vue'
+import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const playerStore = usePlayerStore()
+const settingsStore = useSettingsStore()
 
 // 设置全局快捷键监听
 useShortcuts()
+
+// 恢复播放状态（需要等待settings加载完成）
+onMounted(async () => {
+  // 等待预加载完成
+  const preloadPromise = (window as any).__preloadPromise
+  if (preloadPromise) {
+    await preloadPromise
+  }
+
+  // 现在 settingsStore.isLoaded 应该为 true
+  if (settingsStore.rememberPlaybackStatus) {
+    console.log('[App] Restoring playback status...')
+    await playerStore.restorePlaybackStatus()
+  }
+})
+
+// 自动保存播放状态
+const saveStatus = debounce(() => {
+  if (settingsStore.rememberPlaybackStatus) {
+    console.log('[App] Saving playback status...')
+    playerStore.savePlaybackStatus()
+  }
+}, 2000)
+
+// 监听播放状态变化
+watch(
+  () => playerStore.queue.length,
+  () => {
+    saveStatus()
+  }
+)
+
+watch(
+  () => playerStore.currentIndex,
+  () => {
+    saveStatus()
+  }
+)
+
+watch(
+  () => playerStore.playMode,
+  () => {
+    saveStatus()
+  }
+)
+
+// 每30秒保存一次进度（如果在播放）
+let progressSaveInterval: number | null = null
+watch(
+  () => playerStore.isPlaying,
+  (isPlaying) => {
+    if (isPlaying && settingsStore.rememberPlaybackStatus) {
+      progressSaveInterval = window.setInterval(() => {
+        playerStore.savePlaybackStatus()
+      }, 30000) // 每30秒保存一次
+    } else if (progressSaveInterval) {
+      clearInterval(progressSaveInterval)
+      progressSaveInterval = null
+      // 暂停时立即保存一次
+      if (settingsStore.rememberPlaybackStatus && playerStore.currentSong) {
+        playerStore.savePlaybackStatus()
+      }
+    }
+  }
+)
+
+// 窗口关闭时保存播放状态
+window.addEventListener('beforeunload', () => {
+  if (settingsStore.rememberPlaybackStatus && playerStore.currentSong) {
+    console.log('[App] Saving playback status before unload...')
+    playerStore.savePlaybackStatus()
+  }
+})
 
 // 注意：数据预加载已移至 main.ts 中，在应用挂载后立即开始
 // 启动屏幕显示 1.5 秒，为数据加载提供缓冲时间

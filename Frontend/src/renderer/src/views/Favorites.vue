@@ -6,8 +6,9 @@
           <StarFilled />
         </el-icon>
         <div>
-          <h1 class="page-title">我喜欢的音乐</h1>
-          <span class="music-count">共 {{ displayedFavorites.length }} / {{ libraryStore.favoriteCount }} 首</span>
+          <h1 class="page-title">{{ $t('favoriteMusic.title') }}</h1>
+          <span class="music-count">{{ $t('common.total') }} {{ displayedFavorites.length }} / {{
+            libraryStore.favoriteCount }} {{ $t('common.songs') }}</span>
         </div>
       </div>
       <div class="header-right">
@@ -16,8 +17,8 @@
           <el-icon class="search-icon">
             <Search />
           </el-icon>
-          <input v-model="localSearchKeyword" type="text" class="search-input" placeholder="搜索收藏的歌曲..."
-            @input="handleLocalSearch" />
+          <input v-model="localSearchKeyword" type="text" class="search-input"
+            :placeholder="$t('favoriteMusic.searchPlaceholder')" @input="handleLocalSearch" />
           <el-icon v-if="localSearchKeyword" class="search-clear" @click="clearLocalSearch">
             <Close />
           </el-icon>
@@ -26,13 +27,13 @@
           <el-icon>
             <Edit />
           </el-icon>
-          {{ isEditMode ? '完成' : '编辑' }}
+          {{ isEditMode ? $t('common.done') : $t('common.edit') }}
         </el-button>
         <el-button type="primary" @click="handlePlayAll" :disabled="displayedFavorites.length === 0">
           <el-icon>
             <VideoPlay />
           </el-icon>
-          播放全部
+          {{ $t('localMusic.playAll') }}
         </el-button>
       </div>
     </div>
@@ -41,10 +42,10 @@
     <div class="toolbar" v-if="isEditMode">
       <div class="toolbar-left">
         <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleSelectAll">
-          全选
+          {{ $t('common.selectAll') }}
         </el-checkbox>
         <el-button v-if="selectedIds.size > 0" text type="danger" @click="handleBatchUnfavorite">
-          取消收藏 ({{ selectedIds.size }})
+          {{ $t('favoriteMusic.unfavoriteSelected') }} ({{ selectedIds.size }})
         </el-button>
       </div>
     </div>
@@ -87,9 +88,9 @@
             </el-icon>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="play">播放</el-dropdown-item>
-                <el-dropdown-item command="addToQueue">添加到播放队列</el-dropdown-item>
-                <el-dropdown-item command="addToPlaylist">添加到歌单</el-dropdown-item>
+                <el-dropdown-item command="play">{{ $t('player.play') || '播放' }}</el-dropdown-item>
+                <el-dropdown-item command="addToQueue">{{ $t('player.addToQueue') }}</el-dropdown-item>
+                <el-dropdown-item command="addToPlaylist">{{ $t('playlist.addToPlaylist') }}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -102,8 +103,7 @@
       <el-icon class="empty-icon">
         <Star />
       </el-icon>
-      <p>暂无收藏的歌曲</p>
-      <p class="empty-hint">点击歌曲旁边的爱心图标即可收藏</p>
+      <p>{{ $t('favoriteMusic.noFavorites') }}</p>
     </div>
 
     <!-- 添加到歌单对话框 -->
@@ -341,7 +341,7 @@ const handleCommand = (command: string, song: Music) => {
 
     .search-icon {
       color: $text-muted;
-      font-size: 16px;
+      font-size: $font-size-md;
       margin-right: $spacing-sm;
     }
 
@@ -361,7 +361,7 @@ const handleCommand = (command: string, song: Music) => {
 
     .search-clear {
       color: $text-muted;
-      font-size: 14px;
+      font-size: 1rem;
       cursor: pointer;
       padding: 4px;
       border-radius: 50%;

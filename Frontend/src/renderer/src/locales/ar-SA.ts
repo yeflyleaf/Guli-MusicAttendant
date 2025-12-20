@@ -1,0 +1,218 @@
+/**
+ * Arabic Language Pack
+ * حزمة اللغة العربية
+ */
+export default {
+  // Common
+  common: {
+    confirm: 'تأكيد',
+    cancel: 'إلغاء',
+    save: 'حفظ',
+    delete: 'حذف',
+    edit: 'تعديل',
+    done: 'تم',
+    add: 'إضافة',
+    remove: 'إزالة',
+    search: 'بحث',
+    reset: 'إعادة تعيين',
+    refresh: 'تحديث',
+    loading: 'جاري التحميل...',
+    noData: 'لا توجد بيانات',
+    success: 'نجاح',
+    error: 'خطأ',
+    warning: 'تحذير',
+    info: 'معلومات',
+    selectAll: 'تحديد الكل',
+    total: 'المجموع',
+    songs: 'أغنية',
+    playlists: 'قائمة تشغيل',
+    favorites: 'المفضلة'
+  },
+
+  // Navigation
+  nav: {
+    home: 'الرئيسية',
+    localMusic: 'الموسيقى المحلية',
+    favorites: 'المفضلة',
+    recentlyPlayed: 'تم تشغيلها مؤخراً',
+    playlists: 'قوائم التشغيل',
+    settings: 'الإعدادات'
+  },
+
+  // Settings Page
+  settings: {
+    title: 'الإعدادات',
+    // Appearance
+    appearance: {
+      title: 'المظهر',
+      sectionTitle: 'إعدادات المظهر',
+      theme: 'السمة',
+      themeDesc: 'اختر سمة مظهر التطبيق',
+      themeDark: 'الوضع الداكن',
+      themeLight: 'الوضع الفاتح',
+      language: 'اللغة',
+      languageDesc: 'اختر لغة التطبيق',
+      fontSize: 'حجم الخط',
+      fontSizeDesc: 'ضبط حجم خط التطبيق',
+      page: 'الصفحة',
+      localMusicHeaders: 'عناوين قائمة الموسيقى المحلية',
+      localMusicHeadersDesc: 'اختر الأعمدة المراد عرضها في قائمة الموسيقى المحلية',
+      headerTitle: 'العنوان',
+      headerArtist: 'الفنان',
+      headerAlbum: 'الألبوم',
+      headerDuration: 'المدة',
+      headerCreatedAt: 'تاريخ الإضافة',
+      // Audio Visualization
+      visualization: 'تصور الصوت',
+      visualizerEnabled: 'تفعيل التصور',
+      visualizerEnabledDesc: 'عرض تصور طيف الصوت أثناء التشغيل',
+      visualizerStyle: 'النمط',
+      visualizerStyleDesc: 'اختر نمط تأثير التصور',
+      styleBars: 'أعمدة',
+      styleWave: 'موجة',
+      styleSpectrum: 'طيف متدرج',
+      styleMirror: 'أعمدة معكوسة',
+      styleMountain: 'منحنى جبلي',
+      visualizerFrameRate: 'معدل الإطارات',
+      visualizerFrameRateDesc: 'ضبط معدل إطارات الرسوم المتحركة للتصور'
+    },
+    // Behavior
+    behavior: {
+      title: 'السلوك',
+      sectionTitle: 'إعدادات السلوك',
+      rememberPlaybackStatus: 'حالة التشغيل',
+      rememberPlaybackStatusDesc: 'تذكر حالة التشغيل بعد إعادة التشغيل (القائمة، التقدم، التكرار، العشوائي)',
+      gaplessPlayback: 'تشغيل بدون فجوات',
+      gaplessPlaybackDesc: 'إزالة الفجوات عند تبديل الأغاني',
+      autoScan: 'مسح تلقائي عند بدء التشغيل',
+      autoScanDesc: 'مسح مجلدات الموسيقى تلقائياً للأغاني الجديدة عند كل بدء تشغيل'
+    },
+    // Library
+    library: {
+      title: 'المكتبة',
+      sectionTitle: 'مجلدات الموسيقى',
+      addFolder: 'إضافة مجلد',
+      scanAll: 'مسح جميع المجلدات',
+      emptyFolders: 'لم تتم إضافة مجلدات موسيقى بعد',
+      folderAdded: 'تمت إضافة المجلد',
+      folderRemoved: 'تمت إزالة المجلد',
+      confirmRemoveFolder: 'هل أنت متأكد من إزالة المجلد "{folder}"؟\n(لن يتم حذف بيانات الأغاني)',
+      addFolderFirst: 'الرجاء إضافة مجلد موسيقى أولاً',
+      scanning: 'جاري مسح ملفات الموسيقى...',
+      scanComplete: 'اكتمل المسح: تمت إضافة {count} أغنية جديدة',
+      scanFailed: 'فشل المسح'
+    },
+    // About
+    about: {
+      title: 'حول',
+      sectionTitle: 'حول',
+      appName: 'مساعد الموسيقى قولي',
+      version: 'الإصدار',
+      description: 'نظام إدارة الموسيقى المحلية الاحترافي، مبني باستخدام Electron + Vue 3 + TypeScript.',
+      resetSettings: 'إعادة تعيين الإعدادات',
+      resetSettingsDesc: 'استعادة جميع الإعدادات إلى القيم الافتراضية',
+      confirmReset: 'هل أنت متأكد من استعادة جميع الإعدادات إلى القيم الافتراضية؟',
+      resetTitle: 'إعادة تعيين الإعدادات',
+      resetSuccess: 'تمت إعادة تعيين الإعدادات'
+    }
+  },
+
+  // Home Page
+  home: {
+    welcome: 'مرحباً بعودتك',
+    statistics: 'إحصائيات الموسيقى',
+    recentlyPlayed: 'تم تشغيلها مؤخراً',
+    myFavorites: 'المفضلة',
+    myPlaylists: 'قوائم التشغيل الخاصة بي',
+    viewAll: 'عرض الكل',
+    noRecentlyPlayed: 'لا يوجد سجل تشغيل',
+    noFavorites: 'لا توجد مفضلات بعد',
+    noPlaylists: 'لا توجد قوائم تشغيل بعد'
+  },
+
+  // Local Music
+  localMusic: {
+    title: 'الموسيقى المحلية',
+    playAll: 'تشغيل الكل',
+    addAll: 'إضافة الكل',
+    searchPlaceholder: 'البحث...',
+    noMusic: 'لا توجد موسيقى',
+    noSearchResult: 'لم يتم العثور',
+    confirmDelete: 'هل أنت متأكد من حذف {count} أغنية محددة؟',
+    deleteSuccess: 'تم حذف {count} أغنية',
+    removeSelected: 'إزالة المحدد',
+    showInFolder: 'عرض في المجلد'
+  },
+
+  // Favorites
+  favoriteMusic: {
+    title: 'المفضلة',
+    searchPlaceholder: 'البحث في المفضلة...',
+    noFavorites: 'لا توجد أغاني مفضلة بعد',
+    noSearchResult: 'لم يتم العثور على أغاني مطابقة',
+    confirmUnfavorite: 'هل أنت متأكد من إلغاء تفضيل {count} أغنية محددة؟',
+    unfavoriteSuccess: 'تم إلغاء تفضيل {count} أغنية',
+    unfavoriteSelected: 'إلغاء تفضيل المحدد'
+  },
+
+  // Recently Played
+  recentlyPlayed: {
+    title: 'تم تشغيلها مؤخراً',
+    searchPlaceholder: 'البحث في التشغيل الأخير...',
+    noHistory: 'لا يوجد سجل تشغيل',
+    noSearchResult: 'لم يتم العثور على أغاني مطابقة',
+    confirmRemove: 'هل أنت متأكد من إزالة {count} أغنية محددة من السجل؟',
+    removeSuccess: 'تمت إزالة {count} أغنية من السجل',
+    removeSelected: 'إزالة المحدد',
+    clearAll: 'مسح السجل',
+    confirmClearAll: 'هل أنت متأكد من مسح جميع سجلات التشغيل؟',
+    clearSuccess: 'تم مسح سجل التشغيل'
+  },
+
+  // Playlist
+  playlist: {
+    title: 'قوائم التشغيل الخاصة بي',
+    searchPlaceholder: 'البحث في قوائم التشغيل...',
+    createNew: 'إنشاء قائمة تشغيل',
+    noPlaylists: 'لا توجد قوائم تشغيل بعد',
+    noSearchResult: 'لم يتم العثور على قوائم تشغيل مطابقة',
+    playlistName: 'اسم قائمة التشغيل',
+    confirmDelete: 'هل أنت متأكد من حذف قائمة التشغيل "{name}"؟',
+    deleteSuccess: 'تم حذف قائمة التشغيل',
+    createSuccess: 'تم إنشاء قائمة التشغيل',
+    renameSuccess: 'تمت إعادة تسمية قائمة التشغيل',
+    addToPlaylist: 'إضافة إلى قائمة التشغيل',
+    addSuccess: 'تمت الإضافة إلى قائمة التشغيل',
+    removeFromPlaylist: 'إزالة من قائمة التشغيل',
+    removeSuccess: 'تمت الإزالة من قائمة التشغيل',
+    songCount: '{count} أغنية'
+  },
+
+  // Player
+  player: {
+    play: 'تشغيل',
+    pause: 'إيقاف مؤقت',
+    previous: 'السابق',
+    next: 'التالي',
+    playQueue: 'قائمة التشغيل',
+    clearQueue: 'مسح القائمة',
+    emptyQueue: 'قائمة التشغيل فارغة',
+    addToQueue: 'إضافة إلى القائمة',
+    nowPlaying: 'يتم التشغيل الآن',
+    noLyrics: 'لا تتوفر كلمات',
+    playModeSequence: 'تسلسلي',
+    playModeLoop: 'تكرار الكل',
+    playModeSingle: 'تكرار واحد',
+    playModeRandom: 'عشوائي'
+  },
+
+  // Language Names
+  languages: {
+    'zh-CN': '简体中文',
+    'en-US': 'English',
+    'ar-SA': 'العربية',
+    'fr-FR': 'Français',
+    'ru-RU': 'Русский',
+    'es-ES': 'Español'
+  }
+}

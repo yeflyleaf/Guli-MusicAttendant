@@ -395,6 +395,120 @@ export const usePlayerStore = defineStore('player', {
           libraryStore.refreshRecentlyPlayed()
         })
       })
+    },
+
+    /**
+     * 保存播放状态
+     */
+    savePlaybackStatus() {
+      // 限制保存的队列长度，防止 localStorage 溢出
+      const queueToSave = this.queue.length > 1000 ? this.queue.slice(0, 1000) : this.queue
+
+      const status = {
+        queue: queueToSave,
+        currentIndex: this.currentIndex,
+        currentTime: this.currentTime,
+        playMode: this.playMode
+      }
+      try {
+        localStorage.setItem('player_status', JSON.stringify(status))
+        console.log('[Player] Saved playback status:', {
+          queueLength: queueToSave.length,
+          currentIndex: this.currentIndex,
+          currentTime: this.currentTime,
+          playMode: this.playMode
+        })
+      } catch (e) {
+        console.error('[Player] Failed to save playback status', e)
+      }
+    },
+
+    /**
+     * 恢复播放状态
+     */
+    async restorePlaybackStatus() {
+      const statusStr = localStorage.getItem('player_status')
+      console.log('[Player] Attempting to restore playback status, found:', !!statusStr)
+
+      // 获取 libraryStore 来访问最近播放
+      const { useLibraryStore } = await import('@/store/library.store')
+      const libraryStore = useLibraryStore()
+
+      if (!statusStr) {
+        // 没有保存的状态，尝试使用最近播放的第一首歌
+        if (libraryStore.recentlyPlayed.length > 0) {
+          const recentSong = libraryStore.recentlyPlayed[0]
+          this.currentSong = recentSong
+          this.queue = [recentSong]
+          this.currentIndex = 0
+          this.currentTime = 0
+          console.log('[Player] No saved status, using most recent song:', recentSong.title)
+        }
+        return
+      }
+
+      try {
+        const status = JSON.parse(statusStr)
+        console.log('[Player] Parsed status:', {
+          queueLength: status.queue?.length,
+          currentIndex: status.currentIndex,
+          currentTime: status.currentTime,
+          playMode: status.playMode
+        })
+
+        if (status.playMode) {
+          this.playMode = status.playMode
+        }
+
+        if (status.queue && Array.isArray(status.queue) && status.queue.length > 0) {
+          // 验证当前歌曲是否仍然存在于音乐库中
+          const currentSongFromQueue = status.queue[status.currentIndex]
+          if (currentSongFromQueue) {
+            // 检查这首歌是否还在音乐库中（通过 ID 查找）
+            const songExists = libraryStore.allMusic.some(m => m.id === currentSongFromQueue.id)
+
+            if (songExists) {
+              this.queue = status.queue
+              this.currentIndex = status.currentIndex
+              this.currentSong = currentSongFromQueue
+
+              // 恢复进度
+              if (typeof status.currentTime === 'number') {
+                this.currentTime = status.currentTime
+              }
+
+              console.log('[Player] Restored playback status successfully:', {
+                currentSong: this.currentSong?.title,
+                currentTime: this.currentTime
+              })
+              return
+            } else {
+              console.log('[Player] Saved song no longer exists in library')
+            }
+          }
+        }
+
+        // 保存的状态无效，回退到最近播放
+        if (libraryStore.recentlyPlayed.length > 0) {
+          const recentSong = libraryStore.recentlyPlayed[0]
+          this.currentSong = recentSong
+          this.queue = [recentSong]
+          this.currentIndex = 0
+          this.currentTime = 0
+          console.log('[Player] Falling back to most recent song:', recentSong.title)
+        }
+      } catch (e) {
+        console.error('[Player] Failed to restore playback status', e)
+
+        // 出错时也尝试使用最近播放
+        if (libraryStore.recentlyPlayed.length > 0) {
+          const recentSong = libraryStore.recentlyPlayed[0]
+          this.currentSong = recentSong
+          this.queue = [recentSong]
+          this.currentIndex = 0
+          this.currentTime = 0
+        }
+      }
     }
   }
 })

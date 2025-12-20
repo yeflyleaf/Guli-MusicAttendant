@@ -28,6 +28,7 @@
 
   --border-color: #{tokens.$border-color};
   --border-color-light: #{tokens.$border-color-light};
+  --border-color-hover: #{tokens.$border-color-hover};
   --border-color-active: #{tokens.$border-color-active};
 
   --success-color: #{tokens.$success-color};
@@ -53,6 +54,9 @@
   // 动画变量
   --transition-fast: #{tokens.$transition-fast};
   --transition-normal: #{tokens.$transition-normal};
+
+  // 字体大小变量 (可通过 JS 动态修改)
+  --font-size-base: 14px;
 
   // 滚动条变量
   --scrollbar-thumb: rgba(255, 255, 255, 0.15);
@@ -103,7 +107,7 @@ body {
   height: 100%;
   overflow: hidden;
   font-family: $font-family;
-  font-size: $font-size-base;
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   background: var(--bg-primary);
   -webkit-font-smoothing: antialiased;

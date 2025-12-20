@@ -53,13 +53,15 @@ $transition-normal: var(--transition-normal);
 
 // ==================== 静态变量 (不需要动态切换) ====================
 $font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-$font-size-xs: 12px;
-$font-size-sm: 13px;
-$font-size-base: 14px;
-$font-size-md: 16px;
-$font-size-lg: 18px;
-$font-size-xl: 24px;
-$font-size-xxl: 32px;
+// 字体大小使用 rem 单位，相对于根元素 (html) 的 font-size
+// 基准: 1rem = --font-size-base (默认14px，可通过设置调整)
+$font-size-xs: 0.857rem;   // ~12px
+$font-size-sm: 0.929rem;   // ~13px
+$font-size-base: 1rem;     // 基准大小
+$font-size-md: 1.143rem;   // ~16px
+$font-size-lg: 1.286rem;   // ~18px
+$font-size-xl: 1.714rem;   // ~24px
+$font-size-xxl: 2.286rem;  // ~32px
 $font-weight-normal: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;

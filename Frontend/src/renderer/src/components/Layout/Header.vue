@@ -2,58 +2,61 @@
   <header class="app-header app-drag-region">
     <!-- Logo 和标题 + 导航图标 -->
     <div class="header-left app-no-drag">
-      <div class="logo" @click="$router.push('/')">
+      <div class="logo" @click="navigateTo('/')">
         <span class="logo-icon">🎵</span>
-        <span class="logo-text gradient-text">故里音乐</span>
+        <span class="logo-text gradient-text">{{ $t('settings.about.appName') }}</span>
       </div>
 
       <!-- 导航图标区域 -->
       <div class="nav-icons">
         <!-- 首页 -->
-        <el-tooltip content="首页" placement="bottom" :show-after="300">
-          <router-link to="/" class="nav-icon-btn" :class="{ active: $route.path === '/' }">
+        <el-tooltip :content="$t('nav.home')" placement="bottom" :show-after="300">
+          <span class="nav-icon-btn" :class="{ active: $route.path === '/' }" @click="navigateTo('/')">
             <el-icon>
               <HomeFilled />
             </el-icon>
-          </router-link>
+          </span>
         </el-tooltip>
 
         <!-- 本地音乐 -->
-        <el-tooltip content="本地音乐" placement="bottom" :show-after="300">
-          <router-link to="/local-music" class="nav-icon-btn" :class="{ active: $route.path === '/local-music' }">
+        <el-tooltip :content="$t('nav.localMusic')" placement="bottom" :show-after="300">
+          <span class="nav-icon-btn" :class="{ active: $route.path === '/local-music' }"
+            @click="navigateTo('/local-music')">
             <el-icon>
               <Headset />
             </el-icon>
-          </router-link>
+          </span>
         </el-tooltip>
 
         <!-- 我喜欢 -->
-        <el-tooltip content="我喜欢" placement="bottom" :show-after="300">
-          <router-link to="/favorites" class="nav-icon-btn" :class="{ active: $route.path === '/favorites' }">
+        <el-tooltip :content="$t('nav.favorites')" placement="bottom" :show-after="300">
+          <span class="nav-icon-btn" :class="{ active: $route.path === '/favorites' }"
+            @click="navigateTo('/favorites')">
             <el-icon>
               <Star />
             </el-icon>
-          </router-link>
+          </span>
         </el-tooltip>
 
         <!-- 最近播放 -->
-        <el-tooltip content="最近播放" placement="bottom" :show-after="300">
-          <router-link to="/recently-played" class="nav-icon-btn"
-            :class="{ active: $route.path === '/recently-played' }">
+        <el-tooltip :content="$t('nav.recentlyPlayed')" placement="bottom" :show-after="300">
+          <span class="nav-icon-btn" :class="{ active: $route.path === '/recently-played' }"
+            @click="navigateTo('/recently-played')">
             <el-icon>
               <Clock />
             </el-icon>
-          </router-link>
+          </span>
         </el-tooltip>
 
         <!-- 歌单 -->
-        <el-tooltip content="我的歌单" placement="bottom" :show-after="300">
-          <router-link to="/playlists" class="nav-icon-btn"
-            :class="{ active: $route.path === '/playlists' || $route.path.startsWith('/playlist/') }">
+        <el-tooltip :content="$t('nav.playlists')" placement="bottom" :show-after="300">
+          <span class="nav-icon-btn"
+            :class="{ active: $route.path === '/playlists' || $route.path.startsWith('/playlist/') }"
+            @click="navigateTo('/playlists')">
             <el-icon>
               <Tickets />
             </el-icon>
-          </router-link>
+          </span>
         </el-tooltip>
       </div>
     </div>
@@ -64,12 +67,13 @@
     <!-- 窗口控制按钮 -->
     <div class="header-right app-no-drag">
       <!-- 设置 -->
-      <el-tooltip content="设置" placement="bottom" :show-after="300">
-        <router-link to="/settings" class="nav-icon-btn settings-btn" :class="{ active: $route.path === '/settings' }">
+      <el-tooltip :content="$t('nav.settings')" placement="bottom" :show-after="300">
+        <span class="nav-icon-btn settings-btn" :class="{ active: $route.path === '/settings' }"
+          @click="navigateTo('/settings')">
           <el-icon>
             <Setting />
           </el-icon>
-        </router-link>
+        </span>
       </el-tooltip>
 
       <div class="header-divider"></div>
@@ -101,6 +105,7 @@
 
 <script setup lang="ts">
 import { useIpc } from '@/hooks/useIpc'
+import { usePlayerStore } from '@/store/player.store'
 import {
   Clock,
   Close,
@@ -114,10 +119,27 @@ import {
   Tickets
 } from '@element-plus/icons-vue'
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const { minimizeWindow, maximizeWindow, closeWindow, isMaximized: checkMaximized } = useIpc()
+const router = useRouter()
+const playerStore = usePlayerStore()
 
 const isMaximized = ref(false)
+
+// 导航函数：关闭歌词页面后再跳转
+const navigateTo = (path: string) => {
+  // 关闭歌词显示
+  if (playerStore.showLyrics) {
+    playerStore.showLyrics = false
+  }
+  // 关闭播放队列
+  if (playerStore.showQueue) {
+    playerStore.showQueue = false
+  }
+  // 跳转到目标路由
+  router.push(path)
+}
 
 // 检查窗口状态
 const updateMaximizedState = async () => {

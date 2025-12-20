@@ -6,11 +6,11 @@
                 <el-icon class="queue-icon">
                     <List />
                 </el-icon>
-                <span class="queue-title">播放队列</span>
+                <span class="queue-title">{{ $t('player.playQueue') }}</span>
                 <span class="queue-count">({{ playerStore.queueLength }})</span>
             </div>
             <div class="header-actions">
-                <el-tooltip content="清空队列" placement="bottom">
+                <el-tooltip :content="$t('player.clearQueue')" placement="bottom">
                     <el-button text circle size="small" @click="handleClearQueue"
                         :disabled="playerStore.queueLength === 0">
                         <el-icon>
@@ -30,7 +30,7 @@
         <div v-if="playerStore.currentSong" class="now-playing glass">
             <div class="now-playing-label">
                 <span class="label-dot"></span>
-                正在播放
+                {{ $t('player.nowPlaying') || '正在播放' }}
             </div>
             <div class="now-playing-info">
                 <div class="song-cover">
@@ -59,8 +59,7 @@
                 <el-icon class="empty-icon">
                     <List />
                 </el-icon>
-                <span>播放队列为空</span>
-                <span class="empty-hint">播放歌曲后将自动添加到队列</span>
+                <span>{{ $t('player.emptyQueue') }}</span>
             </div>
 
             <template v-else>
@@ -100,7 +99,8 @@
         <!-- 底部操作栏 -->
         <div v-if="playerStore.queueLength > 0" class="queue-footer glass">
             <div class="total-info">
-                共 {{ playerStore.queueLength }} 首，{{ formatTotalDuration }}
+                {{ $t('common.total') }} {{ playerStore.queueLength }} {{ $t('common.songs') }}，{{ formatTotalDuration
+                }}
             </div>
             <div class="play-mode-info" @click="playerStore.togglePlayMode">
                 <el-icon>

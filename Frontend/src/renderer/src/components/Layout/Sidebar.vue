@@ -265,7 +265,7 @@ const confirmCreatePlaylist = async () => {
   }
 
   .nav-icon {
-    font-size: 16px;
+    font-size: $font-size-md;
     color: $text-muted;
   }
 }

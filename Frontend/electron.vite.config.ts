@@ -43,6 +43,12 @@ export default defineConfig({
         }
       }
     },
+    define: {
+      // Vue I18n 配置 - 启用仅运行时模式，禁用消息编译器
+      __VUE_I18N_FULL_INSTALL__: true,
+      __VUE_I18N_LEGACY_API__: false,
+      __INTLIFY_PROD_DEVTOOLS__: false
+    },
     plugins: [vue()],
     resolve: {
       alias: {
@@ -59,3 +65,4 @@ export default defineConfig({
     }
   }
 })
+

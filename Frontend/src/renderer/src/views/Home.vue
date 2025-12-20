@@ -4,10 +4,9 @@
     <section class="welcome-section">
       <div class="welcome-content">
         <h1 class="welcome-title">
-          <span class="gradient-text">欢迎使用故里音乐助手</span>
+          <span class="gradient-text">{{ $t('home.welcome') }}</span>
           <span class="wave">👋</span>
         </h1>
-        <p class="welcome-subtitle">让音乐充满你的每一天</p>
       </div>
       <div class="welcome-stats">
         <div class="stat-card glass clickable" @click="router.push('/local-music')">
@@ -16,7 +15,7 @@
           </el-icon>
           <div class="stat-info">
             <span class="stat-value">{{ libraryStore.musicCount }}</span>
-            <span class="stat-label">首歌曲</span>
+            <span class="stat-label">{{ $t('common.songs') }}</span>
           </div>
         </div>
         <div class="stat-card glass clickable" @click="router.push('/favorites')">
@@ -25,7 +24,7 @@
           </el-icon>
           <div class="stat-info">
             <span class="stat-value">{{ libraryStore.favoriteCount }}</span>
-            <span class="stat-label">首收藏</span>
+            <span class="stat-label">{{ $t('common.favorites') }}</span>
           </div>
         </div>
         <div class="stat-card glass clickable" @click="router.push('/playlists')">
@@ -34,7 +33,7 @@
           </el-icon>
           <div class="stat-info">
             <span class="stat-value">{{ libraryStore.playlistCount }}</span>
-            <span class="stat-label">个歌单</span>
+            <span class="stat-label">{{ $t('common.playlists') }}</span>
           </div>
         </div>
       </div>
@@ -60,9 +59,9 @@
     <!-- 最近播放 -->
     <section class="section" v-if="libraryStore.recentlyPlayed.length > 0">
       <div class="section-header">
-        <h2 class="section-title">最近播放</h2>
+        <h2 class="section-title">{{ $t('home.recentlyPlayed') }}</h2>
         <router-link to="/recently-played" class="section-more">
-          查看全部 <el-icon>
+          {{ $t('home.viewAll') }} <el-icon>
             <ArrowRight />
           </el-icon>
         </router-link>
@@ -76,9 +75,9 @@
     <!-- 我的收藏 -->
     <section class="section" v-if="libraryStore.favorites.length > 0">
       <div class="section-header">
-        <h2 class="section-title">我喜欢的音乐</h2>
+        <h2 class="section-title">{{ $t('home.myFavorites') }}</h2>
         <router-link to="/favorites" class="section-more">
-          查看全部 <el-icon>
+          {{ $t('home.viewAll') }} <el-icon>
             <ArrowRight />
           </el-icon>
         </router-link>
@@ -92,9 +91,9 @@
     <!-- 我的歌单 -->
     <section class="section" v-if="libraryStore.playlists.length > 0">
       <div class="section-header">
-        <h2 class="section-title">我的歌单</h2>
+        <h2 class="section-title">{{ $t('home.myPlaylists') }}</h2>
         <router-link to="/playlists" class="section-more">
-          查看全部 <el-icon>
+          {{ $t('home.viewAll') }} <el-icon>
             <ArrowRight />
           </el-icon>
         </router-link>

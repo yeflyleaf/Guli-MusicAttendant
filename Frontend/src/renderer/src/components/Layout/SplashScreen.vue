@@ -354,7 +354,7 @@ defineExpose({ visible })
 }
 
 .loading-text {
-    font-size: 14px;
+    font-size: 1rem;
     color: $text-muted;
     animation: text-pulse 1s ease-in-out infinite;
 }
@@ -377,7 +377,7 @@ defineExpose({ visible })
     bottom: 24px;
 
     .version {
-        font-size: 12px;
+        font-size: $font-size-xs;
         color: $text-muted;
         opacity: 0.5;
     }

@@ -6,9 +6,10 @@
           <Clock />
         </el-icon>
         <div>
-          <h1 class="page-title">最近播放</h1>
-          <span class="music-count">共 {{ displayedRecentlyPlayed.length }} / {{ libraryStore.recentlyPlayed.length }}
-            首</span>
+          <h1 class="page-title">{{ $t('recentlyPlayed.title') }}</h1>
+          <span class="music-count">{{ $t('common.total') }} {{ displayedRecentlyPlayed.length }} / {{
+            libraryStore.recentlyPlayed.length }}
+            {{ $t('common.songs') }}</span>
         </div>
       </div>
       <div class="header-right">
@@ -17,8 +18,8 @@
           <el-icon class="search-icon">
             <Search />
           </el-icon>
-          <input v-model="localSearchKeyword" type="text" class="search-input" placeholder="搜索最近播放..."
-            @input="handleLocalSearch" />
+          <input v-model="localSearchKeyword" type="text" class="search-input"
+            :placeholder="$t('recentlyPlayed.searchPlaceholder')" @input="handleLocalSearch" />
           <el-icon v-if="localSearchKeyword" class="search-clear" @click="clearLocalSearch">
             <Close />
           </el-icon>
@@ -27,13 +28,13 @@
           <el-icon>
             <Edit />
           </el-icon>
-          {{ isEditMode ? '完成' : '编辑' }}
+          {{ isEditMode ? $t('common.done') : $t('common.edit') }}
         </el-button>
         <el-button type="primary" @click="handlePlayAll" :disabled="displayedRecentlyPlayed.length === 0">
           <el-icon>
             <VideoPlay />
           </el-icon>
-          播放全部
+          {{ $t('localMusic.playAll') }}
         </el-button>
       </div>
     </div>
@@ -42,10 +43,10 @@
     <div class="toolbar" v-if="isEditMode">
       <div class="toolbar-left">
         <el-checkbox v-model="selectAll" :indeterminate="isIndeterminate" @change="handleSelectAll">
-          全选
+          {{ $t('common.selectAll') }}
         </el-checkbox>
         <el-button v-if="selectedIds.size > 0" text type="danger" @click="handleBatchClear">
-          清除记录 ({{ selectedIds.size }})
+          {{ $t('recentlyPlayed.removeSelected') }} ({{ selectedIds.size }})
         </el-button>
       </div>
     </div>
@@ -90,9 +91,9 @@
             </el-icon>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="play">播放</el-dropdown-item>
-                <el-dropdown-item command="addToQueue">添加到播放队列</el-dropdown-item>
-                <el-dropdown-item command="addToPlaylist">添加到歌单</el-dropdown-item>
+                <el-dropdown-item command="play">{{ $t('player.play') || '播放' }}</el-dropdown-item>
+                <el-dropdown-item command="addToQueue">{{ $t('player.addToQueue') }}</el-dropdown-item>
+                <el-dropdown-item command="addToPlaylist">{{ $t('playlist.addToPlaylist') }}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -105,8 +106,7 @@
       <el-icon class="empty-icon">
         <Clock />
       </el-icon>
-      <p>暂无播放记录</p>
-      <p class="empty-hint">播放过的歌曲会显示在这里</p>
+      <p>{{ $t('recentlyPlayed.noHistory') }}</p>
     </div>
 
     <!-- 添加到歌单对话框 -->
@@ -327,7 +327,7 @@ const handleCommand = (command: string, song: Music) => {
 
     .search-icon {
       color: $text-muted;
-      font-size: 16px;
+      font-size: $font-size-md;
       margin-right: $spacing-sm;
     }
 
@@ -347,7 +347,7 @@ const handleCommand = (command: string, song: Music) => {
 
     .search-clear {
       color: $text-muted;
-      font-size: 14px;
+      font-size: 1rem;
       cursor: pointer;
       padding: 4px;
       border-radius: 50%;

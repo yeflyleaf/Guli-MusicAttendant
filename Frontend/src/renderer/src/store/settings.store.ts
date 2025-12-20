@@ -1,6 +1,7 @@
 /**
  * 设置状态管理
  */
+import { setLocale } from '@/locales'
 import type { PlayMode, Settings, Theme } from '@/types/settings'
 import { defineStore } from 'pinia'
 
@@ -14,6 +15,12 @@ export const useSettingsStore = defineStore('settings', {
     volume: 0.7,
     playMode: 'sequence',
     language: 'zh-CN',
+    fontSize: 14,
+    localMusicHeaders: ['title', 'artist', 'album', 'duration', 'created_at'],
+    visualizationStyle: 'bars',
+    visualizationFrameRate: 60,
+    rememberPlaybackStatus: true,
+    gaplessPlayback: false,
     musicFolders: [],
     autoScan: true,
     visualizerEnabled: true,
@@ -32,13 +39,21 @@ export const useSettingsStore = defineStore('settings', {
         this.volume = settings.volume
         this.playMode = settings.playMode
         this.language = settings.language
+        this.fontSize = settings.fontSize ?? 14
+        this.localMusicHeaders = settings.localMusicHeaders ?? ['title', 'artist', 'album', 'duration', 'created_at']
+        this.visualizationStyle = settings.visualizationStyle ?? 'bars'
+        this.visualizationFrameRate = settings.visualizationFrameRate ?? 60
+        this.rememberPlaybackStatus = settings.rememberPlaybackStatus ?? true
+        this.gaplessPlayback = settings.gaplessPlayback ?? false
         this.musicFolders = settings.musicFolders
         this.autoScan = settings.autoScan
         this.visualizerEnabled = settings.visualizerEnabled
         this.isLoaded = true
 
-        // 应用主题
+        // 应用主题和外观
         this.applyTheme()
+        this.applyAppearance()
+        this.applyLanguage()
 
       } catch (error) {
         console.error('[Settings] 加载设置失败:', error)
@@ -58,6 +73,11 @@ export const useSettingsStore = defineStore('settings', {
         // 如果更改了主题，应用主题
         if (settings.theme) {
           this.applyTheme()
+        }
+
+        // 如果更改了外观设置，应用外观
+        if (settings.fontSize) {
+          this.applyAppearance()
         }
 
         return true
@@ -87,6 +107,29 @@ export const useSettingsStore = defineStore('settings', {
       if (this.theme === 'dark') {
         document.documentElement.classList.add('dark')
       }
+    },
+
+    /**
+     * 应用外观设置
+     */
+    applyAppearance() {
+      document.documentElement.style.setProperty('--font-size-base', `${this.fontSize}px`)
+    },
+
+    /**
+     * 应用语言设置
+     */
+    applyLanguage() {
+      setLocale(this.language as any)
+    },
+
+    /**
+     * 设置语言
+     */
+    async setLanguage(language: string) {
+      this.language = language
+      this.applyLanguage()
+      await window.electron.settings.set('language', language)
     },
 
     /**
