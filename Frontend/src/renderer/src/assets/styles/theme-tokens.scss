@@ -33,7 +33,7 @@ $text-disabled: #475569; // 禁用文字
 // 文字颜色 - 浅色主题
 $text-primary-light: #0f172a; // Slate 900
 $text-secondary-light: #475569; // Slate 600
-$text-muted-light: #94a3b8; // Slate 400
+$text-muted-light: #64748b; // Slate 500 (从 Slate 400 调整，提高对比度)
 $text-disabled-light: #cbd5e1; // Slate 300
 
 // 边框颜色 - 深色主题
@@ -42,8 +42,8 @@ $border-color-light: rgba(255, 255, 255, 0.05);
 $border-color-active: rgba(139, 92, 246, 0.5);
 
 // 边框颜色 - 浅色主题
-$border-color-light-theme: rgba(0, 0, 0, 0.1);
-$border-color-light-theme-light: rgba(0, 0, 0, 0.05);
+$border-color-light-theme: rgba(0, 0, 0, 0.25);
+$border-color-light-theme-light: rgba(0, 0, 0, 0.15);
 
 // 功能色
 $success-color: #10b981;

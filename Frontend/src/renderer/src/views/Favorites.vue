@@ -382,7 +382,7 @@ const handleCommand = (command: string, song: Music) => {
 
   .page-icon {
     font-size: 48px;
-    color: $accent-color;
+    color: #FFD700;
   }
 
   .page-title {
