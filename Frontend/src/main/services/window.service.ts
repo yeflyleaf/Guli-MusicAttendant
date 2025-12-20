@@ -23,6 +23,7 @@ export function createMainWindow(): BrowserWindow {
     height: 800,
     minWidth: 900,
     minHeight: 600,
+    title: '故里音乐助手',           // 窗口标题
     show: false,                    // 先隐藏，等准备好再显示
     frame: false,                   // 无边框窗口（自定义标题栏）
     titleBarStyle: 'hidden',        // macOS 上隐藏标题栏但保留红绿灯

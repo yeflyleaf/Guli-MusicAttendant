@@ -14,8 +14,12 @@ import { createMainWindow, getMainWindow } from './services/window.service'
 // 禁用 Windows 7 的 GPU 加速（解决兼容性问题）
 // app.disableHardwareAcceleration()
 
-// 设置应用名称
-app.setName('故里音乐助手')
+// 强制设置应用名称为 GL_Music，这决定了 userData 的路径
+// 结果路径: C:\Users\<用户名>\AppData\Roaming\GL_Music
+app.setName('GL_Music')
+
+// 注意：窗口显示的标题 "故里音乐助手" 已在 window.service.ts 中单独设置
+// 所以这里设置英文名不会影响用户看到的窗口标题
 
 // 生产模式下使用 C 盘默认的 userData 路径
 // 路径通常为: C:\Users\<用户名>\AppData\Roaming\GL_Music

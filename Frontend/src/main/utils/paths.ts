@@ -52,13 +52,19 @@ export function getResourcesPath(): string {
  * 获取数据库文件路径
  */
 export function getDatabasePath(): string {
-  return path.join(getUserDataPath(), 'music.db')
+  if (isDev()) {
+    return path.join(getAppPath(), 'data', 'music.db')
+  }
+  return path.join(getUserDataPath(), 'data', 'music.db')
 }
 
 /**
  * 获取封面缓存目录
  */
 export function getCoverCachePath(): string {
+  if (isDev()) {
+    return path.join(getAppPath(), 'data', 'covers')
+  }
   return path.join(getUserDataPath(), 'covers')
 }
 
