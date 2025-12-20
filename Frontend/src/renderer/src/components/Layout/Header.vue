@@ -1,10 +1,60 @@
 <template>
   <header class="app-header app-drag-region">
-    <!-- Logo 和标题 -->
+    <!-- Logo 和标题 + 导航图标 -->
     <div class="header-left app-no-drag">
-      <div class="logo">
+      <div class="logo" @click="$router.push('/')">
         <span class="logo-icon">🎵</span>
         <span class="logo-text gradient-text">故里音乐</span>
+      </div>
+
+      <!-- 导航图标区域 -->
+      <div class="nav-icons">
+        <!-- 首页 -->
+        <el-tooltip content="首页" placement="bottom" :show-after="300">
+          <router-link to="/" class="nav-icon-btn" :class="{ active: $route.path === '/' }">
+            <el-icon>
+              <HomeFilled />
+            </el-icon>
+          </router-link>
+        </el-tooltip>
+
+        <!-- 本地音乐 -->
+        <el-tooltip content="本地音乐" placement="bottom" :show-after="300">
+          <router-link to="/local-music" class="nav-icon-btn" :class="{ active: $route.path === '/local-music' }">
+            <el-icon>
+              <Headset />
+            </el-icon>
+          </router-link>
+        </el-tooltip>
+
+        <!-- 我喜欢 -->
+        <el-tooltip content="我喜欢" placement="bottom" :show-after="300">
+          <router-link to="/favorites" class="nav-icon-btn" :class="{ active: $route.path === '/favorites' }">
+            <el-icon>
+              <Star />
+            </el-icon>
+          </router-link>
+        </el-tooltip>
+
+        <!-- 最近播放 -->
+        <el-tooltip content="最近播放" placement="bottom" :show-after="300">
+          <router-link to="/recently-played" class="nav-icon-btn"
+            :class="{ active: $route.path === '/recently-played' }">
+            <el-icon>
+              <Clock />
+            </el-icon>
+          </router-link>
+        </el-tooltip>
+
+        <!-- 歌单 -->
+        <el-tooltip content="我的歌单" placement="bottom" :show-after="300">
+          <router-link to="/playlists" class="nav-icon-btn"
+            :class="{ active: $route.path === '/playlists' || $route.path.startsWith('/playlist/') }">
+            <el-icon>
+              <Tickets />
+            </el-icon>
+          </router-link>
+        </el-tooltip>
       </div>
     </div>
 
@@ -13,6 +63,17 @@
 
     <!-- 窗口控制按钮 -->
     <div class="header-right app-no-drag">
+      <!-- 设置 -->
+      <el-tooltip content="设置" placement="bottom" :show-after="300">
+        <router-link to="/settings" class="nav-icon-btn settings-btn" :class="{ active: $route.path === '/settings' }">
+          <el-icon>
+            <Setting />
+          </el-icon>
+        </router-link>
+      </el-tooltip>
+
+      <div class="header-divider"></div>
+
       <!-- 最小化 -->
       <button class="window-btn" @click="handleMinimize" title="最小化">
         <el-icon>
@@ -40,7 +101,18 @@
 
 <script setup lang="ts">
 import { useIpc } from '@/hooks/useIpc'
-import { Close, CopyDocument, FullScreen, Minus } from '@element-plus/icons-vue'
+import {
+  Clock,
+  Close,
+  CopyDocument,
+  FullScreen,
+  Headset,
+  HomeFilled,
+  Minus,
+  Setting,
+  Star,
+  Tickets
+} from '@element-plus/icons-vue'
 import { onMounted, onUnmounted, ref } from 'vue'
 
 const { minimizeWindow, maximizeWindow, closeWindow, isMaximized: checkMaximized } = useIpc()
@@ -86,7 +158,7 @@ onUnmounted(() => {
   justify-content: space-between;
   height: $header-height;
   padding: 0 $spacing-md;
-  background: rgba($bg-secondary, 0.8);
+  background: rgba($bg-secondary-rgb, 0.9);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid $border-color;
   z-index: $z-sticky;
@@ -95,22 +167,29 @@ onUnmounted(() => {
 .header-left {
   display: flex;
   align-items: center;
-  min-width: 200px;
+  gap: $spacing-lg;
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  cursor: default;
+  cursor: pointer;
+  padding-right: $spacing-md;
+  border-right: 1px solid $border-color-light;
+  transition: opacity $transition-fast;
+
+  &:hover {
+    opacity: 0.8;
+  }
 
   .logo-icon {
-    font-size: 24px;
+    font-size: 22px;
     animation: float 3s ease-in-out infinite;
   }
 
   .logo-text {
-    font-size: $font-size-lg;
+    font-size: $font-size-md;
     font-weight: $font-weight-bold;
   }
 }
@@ -123,22 +202,70 @@ onUnmounted(() => {
   }
 
   50% {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+  }
+}
+
+// 导航图标区域
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: $text-secondary;
+  text-decoration: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  .el-icon {
+    font-size: 20px;
+  }
+
+  &:hover {
+    color: $text-primary;
+    background: $bg-hover;
+  }
+
+  &.active {
+    color: $primary-color;
+    background: rgba(var(--primary-color-rgb), 0.15);
+
+    .el-icon {
+      color: $primary-color;
+    }
   }
 }
 
 .header-center {
   flex: 1;
-  max-width: 500px;
-  margin: 0 $spacing-xl;
 }
-
-
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
+}
+
+// 设置按钮（右侧）
+.settings-btn {
+  margin-right: 4px;
+}
+
+// 分隔线
+.header-divider {
+  width: 1px;
+  height: 20px;
+  background: $border-color-light;
+  margin: 0 4px;
 }
 
 .window-btn {

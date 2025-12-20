@@ -8,9 +8,6 @@
 
     <!-- 主内容区域 -->
     <div class="app-main">
-      <!-- 侧边栏 -->
-      <Sidebar />
-
       <!-- 页面内容 -->
       <main class="app-content">
         <router-view v-slot="{ Component }">
@@ -37,7 +34,6 @@
 <script setup lang="ts">
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'
-import Sidebar from '@/components/Layout/Sidebar.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import { useShortcuts } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'

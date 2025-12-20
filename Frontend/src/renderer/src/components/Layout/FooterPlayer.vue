@@ -22,17 +22,17 @@
           </div>
         </div>
         <div class="song-detail">
-          <div class="song-title truncate" :title="playerStore.currentSong.title">{{ playerStore.currentSong.title }}
+          <div class="song-title-row">
+            <div class="song-title truncate" :title="playerStore.currentSong.title">{{ playerStore.currentSong.title }}
+            </div>
+            <el-icon class="favorite-btn" :class="{ active: playerStore.currentSong.is_favorite }"
+              @click="handleToggleFavorite">
+              <StarFilled v-if="playerStore.currentSong.is_favorite" />
+              <Star v-else />
+            </el-icon>
           </div>
           <div class="song-artist truncate" :title="playerStore.currentSong.artist">{{ playerStore.currentSong.artist }}
           </div>
-        </div>
-        <div class="song-actions">
-          <el-icon class="action-btn" :class="{ active: playerStore.currentSong.is_favorite }"
-            @click="handleToggleFavorite">
-            <StarFilled v-if="playerStore.currentSong.is_favorite" />
-            <Star v-else />
-          </el-icon>
         </div>
       </div>
       <div v-else class="no-song">
@@ -436,36 +436,41 @@ onUnmounted(() => {
   flex: 1;
   min-width: 0;
 
+  .song-title-row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-bottom: 4px;
+  }
+
   .song-title {
     font-size: $font-size-base;
     font-weight: $font-weight-medium;
     color: $text-primary;
-    margin-bottom: 4px;
+  }
+
+  .favorite-btn {
+    font-size: 18px;
+    color: $text-muted;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 50%;
+    transition: all $transition-fast;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $text-primary;
+      transform: scale(1.1);
+    }
+
+    &.active {
+      color: #FFD700;
+    }
   }
 
   .song-artist {
     font-size: $font-size-sm;
     color: $text-muted;
-  }
-}
-
-.song-actions {
-  .action-btn {
-    font-size: 32px;
-    color: $text-muted;
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 50%;
-    transition: all $transition-fast;
-
-    &:hover {
-      color: $text-primary;
-      background: $bg-hover;
-    }
-
-    &.active {
-      color: $accent-color;
-    }
   }
 }
 

@@ -424,7 +424,7 @@ const handleCommand = (command: string, song: Music) => {
   gap: $spacing-xs;
 
   .action-btn {
-    font-size: 20px;
+    font-size: 30px;
     color: $text-muted;
     cursor: pointer;
     padding: 6px;
@@ -433,7 +433,7 @@ const handleCommand = (command: string, song: Music) => {
     transition: all $transition-fast;
 
     &.active {
-      color: $accent-color;
+      color: #FFD700;
       // opacity: 1; // 移除此行，让收藏状态默认也隐藏
     }
 

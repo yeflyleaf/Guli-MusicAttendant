@@ -29,6 +29,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '最近播放' }
   },
   {
+    path: '/playlists',
+    name: 'Playlists',
+    component: () => import('@/views/Playlists.vue'),
+    meta: { title: '我的歌单' }
+  },
+  {
     path: '/playlist/:id',
     name: 'PlaylistDetail',
     component: () => import('@/views/PlaylistDetail.vue'),

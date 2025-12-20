@@ -712,7 +712,7 @@ const handleCommand = async (command: string, song: Music) => {
     }
 
     &.active {
-      color: $accent-color;
+      color: #FFD700;
       // opacity: 1; // 移除此行，让收藏状态默认也隐藏
     }
   }
