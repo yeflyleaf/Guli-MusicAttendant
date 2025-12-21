@@ -13,6 +13,18 @@
           <div class="chip chip-2"></div>
           <div class="chip chip-3"></div>
         </div>
+        <!-- 新增：电路脉冲网络 -->
+        <div class="circuit-pulse-network">
+          <div class="pulse-line pulse-h" v-for="n in 8" :key="'h' + n" :style="{ '--i': n }"></div>
+          <div class="pulse-line pulse-v" v-for="n in 6" :key="'v' + n" :style="{ '--i': n }"></div>
+          <div class="pulse-node" v-for="n in 12" :key="'n' + n" :style="{ '--i': n }"></div>
+        </div>
+        <!-- 新增：电弧放电效果 -->
+        <div class="arc-discharge">
+          <div class="arc arc-1"></div>
+          <div class="arc arc-2"></div>
+          <div class="arc arc-3"></div>
+        </div>
       </div>
 
       <!-- 第1层 - Canvas 粒子系统：二进制雨 -->
@@ -32,6 +44,42 @@
       <div class="heatsink-layer">
         <div class="heatsink-fin fin-left"></div>
         <div class="heatsink-fin fin-right"></div>
+      </div>
+
+      <!-- 新增：扫描线效果层 -->
+      <div class="scanline-layer">
+        <div class="scanline"></div>
+        <div class="scanline-glow"></div>
+      </div>
+
+      <!-- 新增：全息投影效果层 -->
+      <div class="hologram-layer">
+        <div class="holo-panel holo-1">
+          <div class="holo-header">MEMORY_MAP</div>
+          <div class="holo-bar" v-for="n in 4" :key="n" :style="{ '--i': n }"></div>
+        </div>
+        <div class="holo-panel holo-2">
+          <div class="holo-header">CPU_USAGE</div>
+          <div class="holo-graph">
+            <div class="graph-bar" v-for="n in 8" :key="n" :style="{ '--i': n }"></div>
+          </div>
+        </div>
+        <div class="holo-panel holo-3">
+          <div class="holo-header">DATA_FLOW</div>
+          <div class="holo-hex">
+            <span v-for="n in 16" :key="n" class="hex-char">{{ hexChars[n % hexChars.length] }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 新增：数据流光线 -->
+      <div class="datastream-layer">
+        <div class="datastream" v-for="n in 6" :key="n" :style="{ '--i': n }"></div>
+      </div>
+
+      <!-- 新增：能量脉冲环 -->
+      <div class="energy-rings">
+        <div class="energy-ring" v-for="n in 4" :key="n" :style="{ '--i': n }"></div>
       </div>
 
       <!-- 第4层 - 装饰性元素 -->
@@ -78,6 +126,12 @@
               </div>
             </div>
             <div class="logo-circuit-glow"></div>
+            <!-- 新增：Logo能量光环 -->
+            <div class="logo-energy-halo"></div>
+            <!-- 新增：Logo粒子环 -->
+            <div class="logo-particle-ring">
+              <div class="particle" v-for="n in 12" :key="n" :style="{ '--i': n }"></div>
+            </div>
           </div>
 
           <!-- 应用名称 - 像素化等宽字体 -->
@@ -100,6 +154,13 @@
             </div>
           </div>
         </div>
+        <!-- 新增：面板流光效果 -->
+        <div class="panel-sheen"></div>
+        <!-- 新增：角落装饰 -->
+        <div class="corner-deco corner-tl"></div>
+        <div class="corner-deco corner-tr"></div>
+        <div class="corner-deco corner-bl"></div>
+        <div class="corner-deco corner-br"></div>
       </div>
 
       <!-- 超频执行效果层 -->
@@ -148,6 +209,7 @@ const overclockLayer = ref<HTMLElement | null>(null)
 
 const appNameChars = '故里音乐助手'.split('')
 const gateSymbols = ['AND', 'OR', 'XOR', 'NOT']
+const hexChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
 
 const loadingTexts = ['Initializing core...', 'Loading modules...', 'Compiling assets...', 'Build succeeded']
 const loadingTextIndex = ref(0)
@@ -575,6 +637,154 @@ $error-red: #ff0055;
       height: 50px;
     }
   }
+
+  // 新增：电路脉冲网络
+  .circuit-pulse-network {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .pulse-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, $terminal-green, transparent);
+    opacity: 0.3;
+
+    &.pulse-h {
+      height: 1px;
+      width: 200px;
+      top: calc(var(--i) * 12%);
+      left: calc(var(--i) * 10%);
+      animation: pulseSweepH 3s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.3s);
+    }
+
+    &.pulse-v {
+      width: 1px;
+      height: 150px;
+      left: calc(var(--i) * 15%);
+      top: calc(var(--i) * 8%);
+      background: linear-gradient(180deg, transparent, $logic-blue, transparent);
+      animation: pulseSweepV 4s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.4s);
+    }
+  }
+
+  .pulse-node {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: $terminal-green;
+    border-radius: 50%;
+    box-shadow: 0 0 10px $terminal-green, 0 0 20px $terminal-green;
+    left: calc(var(--i) * 8%);
+    top: calc(var(--i) * 7% + 5%);
+    animation: nodeGlow 2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.2s);
+  }
+
+  // 新增：电弧放电效果
+  .arc-discharge {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .arc {
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba($logic-blue, 0.8) 20%,
+        $compile-white 50%,
+        rgba($logic-blue, 0.8) 80%,
+        transparent 100%);
+    filter: blur(1px);
+    animation: arcFlicker 0.1s steps(2) infinite;
+
+    &.arc-1 {
+      left: 8%;
+      top: 25%;
+      height: 80px;
+      transform: rotate(30deg);
+      animation-delay: 0s;
+    }
+
+    &.arc-2 {
+      right: 12%;
+      top: 55%;
+      height: 60px;
+      transform: rotate(-45deg);
+      animation-delay: 0.15s;
+    }
+
+    &.arc-3 {
+      left: 20%;
+      bottom: 20%;
+      height: 100px;
+      transform: rotate(15deg);
+      animation-delay: 0.3s;
+    }
+  }
+}
+
+@keyframes pulseSweepH {
+
+  0%,
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  50% {
+    transform: translateX(200%);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulseSweepV {
+
+  0%,
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  50% {
+    transform: translateY(200%);
+    opacity: 0.5;
+  }
+}
+
+@keyframes nodeGlow {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+}
+
+@keyframes arcFlicker {
+  0% {
+    opacity: 0.8;
+    filter: blur(1px);
+  }
+
+  50% {
+    opacity: 0.2;
+    filter: blur(2px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+  }
 }
 
 @keyframes clockPulse {
@@ -762,6 +972,322 @@ $error-red: #ff0055;
   }
 }
 
+// ==================== 新增：扫描线效果层 ====================
+.scanline-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.scanline {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba($terminal-green, 0.3) 20%,
+      rgba($terminal-green, 0.8) 50%,
+      rgba($terminal-green, 0.3) 80%,
+      transparent 100%);
+  box-shadow: 0 0 20px $terminal-green;
+  animation: scanlineMove 4s linear infinite;
+}
+
+.scanline-glow {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba($terminal-green, 0.1) 50%,
+      transparent 100%);
+  animation: scanlineMove 4s linear infinite;
+}
+
+@keyframes scanlineMove {
+  0% {
+    top: -10%;
+  }
+
+  100% {
+    top: 110%;
+  }
+}
+
+// ==================== 新增：全息投影效果层 ====================
+.hologram-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.holo-panel {
+  position: absolute;
+  padding: 10px 15px;
+  background: linear-gradient(135deg,
+      rgba($logic-blue, 0.1) 0%,
+      rgba($peacock-blue, 0.3) 100%);
+  border: 1px solid rgba($logic-blue, 0.4);
+  border-radius: 4px;
+  backdrop-filter: blur(5px);
+  animation: holoFlicker 3s ease-in-out infinite;
+
+  &.holo-1 {
+    left: 5%;
+    top: 15%;
+    animation-delay: 0s;
+  }
+
+  &.holo-2 {
+    right: 5%;
+    top: 25%;
+    animation-delay: 1s;
+  }
+
+  &.holo-3 {
+    left: 8%;
+    bottom: 20%;
+    animation-delay: 2s;
+  }
+
+  .holo-header {
+    font-size: 9px;
+    color: $logic-blue;
+    text-shadow: 0 0 5px $logic-blue;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .holo-bar {
+    height: 3px;
+    margin-bottom: 4px;
+    background: linear-gradient(90deg,
+        $terminal-green 0%,
+        rgba($terminal-green, 0.3) 100%);
+    border-radius: 2px;
+    animation: holoBarPulse 1.5s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.2s);
+    width: calc(60% + var(--i) * 10%);
+  }
+
+  .holo-graph {
+    display: flex;
+    gap: 3px;
+    height: 30px;
+    align-items: flex-end;
+  }
+
+  .graph-bar {
+    width: 6px;
+    background: linear-gradient(180deg, $logic-blue, rgba($logic-blue, 0.3));
+    border-radius: 2px 2px 0 0;
+    animation: graphBarAnimate 1s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.1s);
+  }
+
+  .holo-hex {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80px;
+    gap: 2px;
+  }
+
+  .hex-char {
+    font-size: 8px;
+    color: $terminal-green;
+    text-shadow: 0 0 3px $terminal-green;
+    animation: hexFlicker 0.5s steps(2) infinite;
+    animation-delay: calc(var(--i) * 0.05s);
+  }
+}
+
+@keyframes holoFlicker {
+
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes holoBarPulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes graphBarAnimate {
+
+  0%,
+  100% {
+    height: calc(10px + var(--i) * 2px);
+  }
+
+  50% {
+    height: calc(20px + var(--i) * 3px);
+  }
+}
+
+@keyframes hexFlicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+// ==================== 新增：数据流光线 ====================
+.datastream-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.datastream {
+  position: absolute;
+  width: 200px;
+  height: 2px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      $logic-blue 30%,
+      $compile-white 50%,
+      $logic-blue 70%,
+      transparent 100%);
+  box-shadow: 0 0 10px $logic-blue, 0 0 20px rgba($logic-blue, 0.5);
+  animation: datastreamFlow 2s linear infinite;
+  animation-delay: calc(var(--i) * 0.3s);
+
+  &:nth-child(1) {
+    top: 20%;
+    animation-duration: 1.8s;
+  }
+
+  &:nth-child(2) {
+    top: 35%;
+    animation-duration: 2.2s;
+    animation-direction: reverse;
+  }
+
+  &:nth-child(3) {
+    top: 50%;
+    animation-duration: 1.5s;
+  }
+
+  &:nth-child(4) {
+    top: 65%;
+    animation-duration: 2.5s;
+    animation-direction: reverse;
+  }
+
+  &:nth-child(5) {
+    top: 80%;
+    animation-duration: 1.7s;
+  }
+
+  &:nth-child(6) {
+    top: 90%;
+    animation-duration: 2.8s;
+    animation-direction: reverse;
+  }
+}
+
+@keyframes datastreamFlow {
+  0% {
+    left: -200px;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    left: calc(100% + 200px);
+    opacity: 0;
+  }
+}
+
+// ==================== 新增：能量脉冲环 ====================
+.energy-rings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.energy-ring {
+  position: absolute;
+  border: 1px solid rgba($terminal-green, 0.3);
+  border-radius: 50%;
+  animation: energyRingExpand 4s ease-out infinite;
+  animation-delay: calc(var(--i) * 1s);
+
+  &:nth-child(1) {
+    width: 150px;
+    height: 150px;
+  }
+
+  &:nth-child(2) {
+    width: 250px;
+    height: 250px;
+  }
+
+  &:nth-child(3) {
+    width: 350px;
+    height: 350px;
+  }
+
+  &:nth-child(4) {
+    width: 450px;
+    height: 450px;
+  }
+}
+
+@keyframes energyRingExpand {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+    border-color: rgba($terminal-green, 0.6);
+  }
+
+  50% {
+    border-color: rgba($logic-blue, 0.4);
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    border-color: rgba($terminal-green, 0.1);
+  }
+}
+
 // ==================== 第4层 - 装饰性元素 ====================
 .debug-layer {
   position: absolute;
@@ -779,12 +1305,42 @@ $error-red: #ff0055;
   transform-style: preserve-3d;
   animation: cubeRotate 10s linear infinite;
 
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    background: radial-gradient(circle, rgba($terminal-green, 0.1) 0%, transparent 70%);
+    animation: cubeGlow 2s ease-in-out infinite;
+  }
+
   .cube-face {
     position: absolute;
     width: 80px;
     height: 80px;
     border: 1px solid rgba($terminal-green, 0.4);
-    background: transparent;
+    background: rgba($terminal-green, 0.02);
+    box-shadow: inset 0 0 20px rgba($terminal-green, 0.1);
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: $terminal-green;
+      border-radius: 50%;
+      box-shadow: 0 0 8px $terminal-green;
+    }
+
+    &::before {
+      top: -3px;
+      left: -3px;
+    }
+
+    &::after {
+      bottom: -3px;
+      right: -3px;
+    }
 
     &.face-front {
       transform: translateZ(40px);
@@ -812,6 +1368,18 @@ $error-red: #ff0055;
   }
 }
 
+@keyframes cubeGlow {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
 @keyframes cubeRotate {
   0% {
     transform: rotateX(0deg) rotateY(0deg);
@@ -829,11 +1397,37 @@ $error-red: #ff0055;
   font-size: 11px;
   color: $terminal-green;
   text-shadow: 0 0 5px $terminal-green;
-  opacity: 0.7;
+  opacity: 0.8;
+  padding: 10px 15px;
+  background: rgba($substrate-black, 0.6);
+  border: 1px solid rgba($terminal-green, 0.2);
+  border-radius: 4px;
+  backdrop-filter: blur(5px);
+  max-width: 280px;
+
+  &::before {
+    content: '> SYSTEM_LOG';
+    display: block;
+    font-size: 9px;
+    color: $logic-blue;
+    text-shadow: 0 0 5px $logic-blue;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba($logic-blue, 0.3);
+  }
 
   .log-line {
     margin-bottom: 4px;
     animation: logFlicker 0.1s ease-out;
+    padding-left: 10px;
+    position: relative;
+
+    &::before {
+      content: '>';
+      position: absolute;
+      left: 0;
+      color: $logic-blue;
+    }
   }
 }
 
@@ -1157,6 +1751,215 @@ $error-red: #ff0055;
   }
 }
 
+// 新增：Logo能量光环
+.logo-energy-halo {
+  position: absolute;
+  inset: -30px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent, rgba($logic-blue, 0.3), transparent) border-box;
+  animation: haloRotate 3s linear infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border: 1px solid rgba($terminal-green, 0.2);
+    border-radius: 50%;
+    animation: haloRotate 4s linear infinite reverse;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border: 1px dashed rgba($logic-blue, 0.15);
+    border-radius: 50%;
+    animation: haloRotate 6s linear infinite;
+  }
+}
+
+@keyframes haloRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// 新增：Logo粒子环
+.logo-particle-ring {
+  position: absolute;
+  inset: -25px;
+  animation: particleRingRotate 8s linear infinite;
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: $terminal-green;
+    border-radius: 50%;
+    box-shadow: 0 0 6px $terminal-green, 0 0 12px $terminal-green;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0 0;
+    transform: rotate(calc(var(--i) * 30deg)) translateX(40px);
+    animation: particleGlow 1.5s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.1s);
+  }
+}
+
+@keyframes particleRingRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes particleGlow {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: rotate(calc(var(--i) * 30deg)) translateX(40px) scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: rotate(calc(var(--i) * 30deg)) translateX(40px) scale(1.2);
+  }
+}
+
+// 新增：面板流光效果
+.panel-sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba($compile-white, 0.05),
+        rgba($compile-white, 0.1),
+        rgba($compile-white, 0.05),
+        transparent);
+    animation: sheenSweep 4s ease-in-out infinite;
+  }
+}
+
+@keyframes sheenSweep {
+  0% {
+    left: -100%;
+  }
+
+  50% {
+    left: 100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+// 新增：角落装饰
+.corner-deco {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    background: $terminal-green;
+    box-shadow: 0 0 8px $terminal-green;
+  }
+
+  &::before {
+    width: 100%;
+    height: 2px;
+  }
+
+  &::after {
+    width: 2px;
+    height: 100%;
+  }
+
+  &.corner-tl {
+    top: -5px;
+    left: -5px;
+
+    &::before {
+      top: 0;
+      left: 0;
+    }
+
+    &::after {
+      top: 0;
+      left: 0;
+    }
+  }
+
+  &.corner-tr {
+    top: -5px;
+    right: -5px;
+
+    &::before {
+      top: 0;
+      right: 0;
+    }
+
+    &::after {
+      top: 0;
+      right: 0;
+    }
+  }
+
+  &.corner-bl {
+    bottom: -5px;
+    left: -5px;
+
+    &::before {
+      bottom: 0;
+      left: 0;
+    }
+
+    &::after {
+      bottom: 0;
+      left: 0;
+    }
+  }
+
+  &.corner-br {
+    bottom: -5px;
+    right: -5px;
+
+    &::before {
+      bottom: 0;
+      right: 0;
+    }
+
+    &::after {
+      bottom: 0;
+      right: 0;
+    }
+  }
+}
+
 // 应用名称
 .app-name {
   font-size: 28px;
@@ -1287,30 +2090,44 @@ $error-red: #ff0055;
     border-radius: 50%;
     animation: tunnelExpand 1s ease-out infinite;
     animation-delay: calc(var(--i) * 0.2s);
+    box-shadow: 0 0 20px rgba($terminal-green, 0.2), inset 0 0 20px rgba($logic-blue, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba($logic-blue, 0.2);
+      border-radius: 50%;
+    }
 
     &:nth-child(1) {
       width: 100px;
       height: 100px;
+      border-color: rgba($compile-white, 0.5);
     }
 
     &:nth-child(2) {
       width: 200px;
       height: 200px;
+      border-color: rgba($logic-blue, 0.4);
     }
 
     &:nth-child(3) {
       width: 300px;
       height: 300px;
+      border-color: rgba($terminal-green, 0.3);
     }
 
     &:nth-child(4) {
       width: 400px;
       height: 400px;
+      border-color: rgba($logic-blue, 0.25);
     }
 
     &:nth-child(5) {
       width: 500px;
       height: 500px;
+      border-color: rgba($terminal-green, 0.2);
     }
   }
 }
@@ -1338,12 +2155,14 @@ $error-red: #ff0055;
   .singularity-core {
     width: 20px;
     height: 20px;
-    background: $compile-white;
+    background: radial-gradient(circle, $compile-white 0%, $logic-blue 50%, $terminal-green 100%);
     border-radius: 50%;
     box-shadow:
       0 0 30px $compile-white,
       0 0 60px $logic-blue,
-      0 0 100px $terminal-green;
+      0 0 100px $terminal-green,
+      0 0 150px rgba($terminal-green, 0.5);
+    animation: coreIntensify 0.3s ease-in-out infinite;
   }
 
   .singularity-pulse {
@@ -1352,6 +2171,40 @@ $error-red: #ff0055;
     border: 2px solid rgba($compile-white, 0.5);
     border-radius: 50%;
     animation: singularityPulse 0.5s ease-out infinite;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -15px;
+      border: 1px solid rgba($logic-blue, 0.4);
+      border-radius: 50%;
+      animation: singularityPulse 0.7s ease-out infinite;
+      animation-delay: 0.1s;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -30px;
+      border: 1px solid rgba($terminal-green, 0.3);
+      border-radius: 50%;
+      animation: singularityPulse 0.9s ease-out infinite;
+      animation-delay: 0.2s;
+    }
+  }
+}
+
+@keyframes coreIntensify {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+    filter: brightness(1.5);
   }
 }
 
