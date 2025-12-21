@@ -133,7 +133,14 @@ const electronAPI = {
       ipcRenderer.invoke('dialog:showMessage', options),
 
     confirm: (message: string, title?: string): Promise<boolean> =>
-      ipcRenderer.invoke('dialog:confirm', message, title)
+      ipcRenderer.invoke('dialog:confirm', message, title),
+
+    validateMusicPath: (filePath: string): Promise<{
+      valid: boolean
+      inFolder: boolean
+      fileExists?: boolean
+      musicFolders?: string[]
+    }> => ipcRenderer.invoke('dialog:validateMusicPath', filePath)
   },
 
   // ==================== 窗口控制 ====================

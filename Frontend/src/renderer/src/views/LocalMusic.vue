@@ -210,7 +210,7 @@ const MusicPlay = {
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
-const { selectFolder, scanFolder, scanAllFolders, addMusicFolder, showInFolder, confirm } = useIpc()
+const { selectFolder, scanFolder, scanAllFolders, showInFolder, confirm } = useIpc()
 
 // 滚动容器引用和滚动位置保存
 const scrollContainer = ref<HTMLElement | null>(null)
@@ -423,7 +423,8 @@ const handleScanFolder = async () => {
   const folder = await selectFolder()
   if (!folder) return
 
-  await addMusicFolder(folder)
+  // 将文件夹添加到设置的音乐文件夹列表
+  await settingsStore.addMusicFolder(folder)
 
   ElMessage.info('正在扫描音乐文件...')
   const result = await scanFolder(folder)

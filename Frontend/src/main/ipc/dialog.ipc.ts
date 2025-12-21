@@ -4,7 +4,6 @@
  */
 import { dialog, ipcMain, shell } from 'electron'
 import fs from 'fs'
-import * as musicRepo from '../db/repositories/music.repo'
 import * as settingRepo from '../db/repositories/setting.repo'
 import { scanDirectories, scanDirectory } from '../services/scanner.service'
 import { getMainWindow } from '../services/window.service'
@@ -119,7 +118,7 @@ export function setupDialogIpc(): void {
     return scanResult
   })
 
-  // 重置并扫描所有已添加的音乐文件夹
+  // 扫描所有已添加的音乐文件夹（增量扫描，只添加不删除）
   ipcMain.handle('dialog:resetAndScanAllFolders', async () => {
     const folders = settingRepo.getMusicFolders()
 
@@ -127,11 +126,9 @@ export function setupDialogIpc(): void {
       return { total: 0, added: 0, skipped: 0, failed: 0, errors: ['未设置音乐文件夹'] }
     }
 
-    // 1. 清空数据库
-    musicRepo.deleteAllMusic()
-    console.log('[IPC] All music deleted for full rescan')
+    // 增量扫描：不删除现有记录，只添加新歌曲
+    console.log('[IPC] Starting incremental scan (add only, no delete)')
 
-    // 2. 重新扫描并发送进度
     const scanResult = await scanDirectories(folders, (current, total, file, dir) => {
       const mainWindow = getMainWindow()
       if (mainWindow) {
@@ -198,6 +195,36 @@ export function setupDialogIpc(): void {
     } catch (e) {
       console.error('Failed to read file:', filePath, e)
       return null
+    }
+  })
+
+  // 验证歌曲路径是否在音乐文件夹中
+  ipcMain.handle('dialog:validateMusicPath', (_event, filePath: string) => {
+    const folders = settingRepo.getMusicFolders()
+
+    if (folders.length === 0) {
+      // 没有设置任何音乐文件夹，允许播放
+      return { valid: true, inFolder: false }
+    }
+
+    // 标准化路径用于比较
+    const normalizedPath = filePath.replace(/\\/g, '/').toLowerCase()
+
+    for (const folder of folders) {
+      const normalizedFolder = folder.replace(/\\/g, '/').toLowerCase()
+      if (normalizedPath.startsWith(normalizedFolder)) {
+        return { valid: true, inFolder: true }
+      }
+    }
+
+    // 检查文件是否实际存在于本地
+    const fileExists = fs.existsSync(filePath)
+
+    return {
+      valid: false,
+      inFolder: false,
+      fileExists,
+      musicFolders: folders
     }
   })
 

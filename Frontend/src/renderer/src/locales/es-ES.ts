@@ -199,7 +199,15 @@ export default {
     playModeSequence: 'Secuencial',
     playModeLoop: 'Repetir todo',
     playModeSingle: 'Repetir uno',
-    playModeRandom: 'Aleatorio'
+    playModeRandom: 'Aleatorio',
+    pathValidationTitle: 'No se puede reproducir',
+    pathValidationFailed: 'No se puede reproducir la canción "{title}"',
+    filePath: 'Ruta del archivo: {path}',
+    notInMusicFolder: 'Esta canción no está en las carpetas de música configuradas.',
+    currentMusicFolders: 'Carpetas de música actuales:',
+    fileExistsButNotInFolder: 'Nota: El archivo no está en las carpetas de música especificadas.',
+    fileNotFound: 'Nota: Este archivo no existe localmente.',
+    removeFromList: 'Eliminar de la lista'
   },
   languages: {
     'zh-CN': '简体中文',

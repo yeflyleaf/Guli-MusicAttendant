@@ -222,7 +222,15 @@ export default {
     playModeSequence: 'Séquentiel',
     playModeLoop: 'Boucle tout',
     playModeSingle: 'Répéter un',
-    playModeRandom: 'Aléatoire'
+    playModeRandom: 'Aléatoire',
+    pathValidationTitle: 'Impossible de lire',
+    pathValidationFailed: 'Impossible de lire la chanson "{title}"',
+    filePath: 'Chemin du fichier : {path}',
+    notInMusicFolder: 'Cette chanson n\'est pas dans les dossiers de musique configurés.',
+    currentMusicFolders: 'Dossiers de musique actuels :',
+    fileExistsButNotInFolder: 'Note : Le fichier n\'est pas dans les dossiers de musique spécifiés.',
+    fileNotFound: 'Note : Ce fichier n\'existe pas localement.',
+    removeFromList: 'Supprimer de la liste'
   },
 
   // Language Names

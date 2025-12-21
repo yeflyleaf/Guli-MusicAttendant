@@ -176,15 +176,15 @@
               </div>
               <el-select v-model="splashTheme" style="width: 140px" @change="handleSplashThemeChange">
                 <el-option :label="$t('settings.behavior.splashThemeCosmic')" value="cosmic" />
-                <el-option :label="$t('settings.behavior.splashThemeEmerald')" value="emerald" />
+                <el-option :label="$t('settings.behavior.splashThemeEthereal')" value="ethereal" />
                 <el-option :label="$t('settings.behavior.splashThemeMolten')" value="molten" />
+                <el-option :label="$t('settings.behavior.splashThemeCyber')" value="cyber" />
                 <el-option :label="$t('settings.behavior.splashThemeAbyss')" value="abyss" />
-                <el-option :label="$t('settings.behavior.splashThemeBrass')" value="brass" />
                 <el-option :label="$t('settings.behavior.splashThemePrism')" value="prism" />
+                <el-option :label="$t('settings.behavior.splashThemeEmerald')" value="emerald" />
+                <el-option :label="$t('settings.behavior.splashThemeBrass')" value="brass" />
                 <el-option :label="$t('settings.behavior.splashThemeSanctum')" value="sanctum" />
                 <el-option :label="$t('settings.behavior.splashThemeSilicon')" value="silicon" />
-                <el-option :label="$t('settings.behavior.splashThemeEthereal')" value="ethereal" />
-                <el-option :label="$t('settings.behavior.splashThemeCyber')" value="cyber" />
                 <el-option :label="$t('settings.behavior.splashThemeSakura')" value="sakura" />
                 <el-option :label="$t('settings.behavior.splashThemeChronos')" value="chronos" />
               </el-select>
@@ -259,7 +259,7 @@
           <div class="about-info">
             <div class="app-info">
               <span class="app-name gradient-text">{{ $t('settings.about.appName') }}</span>
-              <span class="app-version">{{ $t('settings.about.version') }} 1.3.0</span>
+              <span class="app-version">{{ $t('settings.about.version') }} 1.4.3</span>
             </div>
             <p class="app-desc">
               {{ $t('settings.about.description') }}

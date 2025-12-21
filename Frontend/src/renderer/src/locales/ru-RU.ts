@@ -199,7 +199,15 @@ export default {
     playModeSequence: 'Последовательно',
     playModeLoop: 'Повторять',
     playModeSingle: 'Один',
-    playModeRandom: 'Случайно'
+    playModeRandom: 'Случайно',
+    pathValidationTitle: 'Невозможно воспроизвести',
+    pathValidationFailed: 'Невозможно воспроизвести песню "{title}"',
+    filePath: 'Путь к файлу: {path}',
+    notInMusicFolder: 'Эта песня не находится в настроенных папках музыки.',
+    currentMusicFolders: 'Текущие папки музыки:',
+    fileExistsButNotInFolder: 'Примечание: Файл не находится в указанных папках музыки.',
+    fileNotFound: 'Примечание: Этот файл не существует локально.',
+    removeFromList: 'Удалить из списка'
   },
   languages: {
     'zh-CN': '简体中文',

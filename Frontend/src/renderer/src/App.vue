@@ -85,16 +85,22 @@ import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
 import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.vue'
 import { useShortcuts } from '@/hooks/useIpc'
+import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
+import type { Music } from '@/types/music'
 import { debounce } from '@/utils/debounce'
 import Lyrics from '@/views/Lyrics.vue'
-import { onMounted, ref, watch } from 'vue'
+import { ElMessageBox } from 'element-plus'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
+const libraryStore = useLibraryStore()
+const { t } = useI18n()
 
 // 启动屏幕控制
 const showSplash = ref(true)
@@ -108,6 +114,81 @@ const handleSplashFinish = () => {
 // 监听显示启动屏幕事件
 window.addEventListener('show-splash-screen', () => {
   showSplash.value = true
+})
+
+// 处理音乐路径验证失败事件
+const handleMusicPathValidationFailed = async (event: CustomEvent<{
+  song: Music
+  fileExists?: boolean
+  musicFolders?: string[]
+}>) => {
+  const { song, fileExists, musicFolders } = event.detail
+
+  // 构建 HTML 格式的警告消息
+  let message = `<div style="line-height: 1.8;">`
+
+  // 第一行：无法播放歌曲
+  message += `<p style="margin: 0 0 12px 0;">${t('player.pathValidationFailed', { title: song.title })}</p>`
+
+  // 第二行：文件路径
+  message += `<p style="margin: 0 0 12px 0; word-break: break-all;">${t('player.filePath', { path: song.file_path })}</p>`
+
+  // 第三行：该歌曲不在设置的音乐文件夹中
+  message += `<p style="margin: 0 0 12px 0;">${t('player.notInMusicFolder')}</p>`
+
+  // 第三行：当前设置的音乐文件夹
+  if (musicFolders && musicFolders.length > 0) {
+    message += `<p style="margin: 0 0 8px 0;">${t('player.currentMusicFolders')}</p>`
+    message += `<ul style="margin: 0 0 12px 0; padding-left: 20px;">`
+    musicFolders.forEach(folder => {
+      message += `<li style="word-break: break-all;">${folder}</li>`
+    })
+    message += `</ul>`
+  }
+
+  // 第四行：提示（标红加粗）
+  if (fileExists) {
+    message += `<p style="margin: 12px 0 0 0; color: #f56c6c; font-weight: bold;">${t('player.fileExistsButNotInFolder')}</p>`
+  } else {
+    message += `<p style="margin: 12px 0 0 0; color: #f56c6c; font-weight: bold;">${t('player.fileNotFound')}</p>`
+  }
+
+  message += `</div>`
+
+  try {
+    await ElMessageBox.confirm(
+      message,
+      t('player.pathValidationTitle'),
+      {
+        confirmButtonText: t('player.removeFromList'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }
+    )
+
+    // 用户选择从列表中删除
+    await libraryStore.deleteMusic(song.id)
+    console.log(`[App] Song "${song.title}" removed from library`)
+  } catch {
+    // 用户取消，不做任何操作
+    console.log(`[App] User cancelled removing song "${song.title}"`)
+  }
+}
+
+// 添加路径验证失败事件监听
+onMounted(() => {
+  window.addEventListener(
+    'music-path-validation-failed',
+    handleMusicPathValidationFailed as unknown as EventListener
+  )
+})
+
+onUnmounted(() => {
+  window.removeEventListener(
+    'music-path-validation-failed',
+    handleMusicPathValidationFailed as unknown as EventListener
+  )
 })
 
 // 设置全局快捷键监听

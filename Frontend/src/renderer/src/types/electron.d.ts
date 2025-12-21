@@ -54,6 +54,12 @@ declare global {
           buttons?: string[]
         }) => Promise<number>
         confirm: (message: string, title?: string) => Promise<boolean>
+        validateMusicPath: (filePath: string) => Promise<{
+          valid: boolean
+          inFolder: boolean
+          fileExists?: boolean
+          musicFolders?: string[]
+        }>
       }
 
       // 窗口控制

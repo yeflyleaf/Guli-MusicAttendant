@@ -221,7 +221,16 @@ export default {
     playModeSequence: 'Sequential',
     playModeLoop: 'Loop All',
     playModeSingle: 'Repeat One',
-    playModeRandom: 'Shuffle'
+    playModeRandom: 'Shuffle',
+    // Path validation
+    pathValidationTitle: 'Cannot Play',
+    pathValidationFailed: 'Cannot play song "{title}"',
+    filePath: 'File path: {path}',
+    notInMusicFolder: 'This song is not in the configured music folders.',
+    currentMusicFolders: 'Current music folders:',
+    fileExistsButNotInFolder: 'Note: The file is not in the specified music folders. You can add the corresponding folder in "Settings" → "Library".',
+    fileNotFound: 'Note: This file does not exist locally, it may have been moved or deleted.',
+    removeFromList: 'Remove from List'
   },
 
   // Language Names

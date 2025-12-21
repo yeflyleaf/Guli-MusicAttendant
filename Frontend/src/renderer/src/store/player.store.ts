@@ -86,8 +86,33 @@ export const usePlayerStore = defineStore('player', {
   actions: {
     /**
      * 播放指定歌曲
+     * @param song 要播放的歌曲
+     * @param addToQueue 是否添加到队列
+     * @param skipValidation 是否跳过路径验证（内部使用）
      */
-    play(song: Music, addToQueue = true) {
+    async play(song: Music, addToQueue = true, skipValidation = false) {
+      // 验证歌曲路径是否在音乐文件夹中
+      if (!skipValidation && window.electron?.dialog?.validateMusicPath) {
+        try {
+          const result = await window.electron.dialog.validateMusicPath(song.file_path)
+
+          if (!result.valid) {
+            // 歌曲不在音乐文件夹中，触发警告事件
+            window.dispatchEvent(new CustomEvent('music-path-validation-failed', {
+              detail: {
+                song,
+                fileExists: result.fileExists,
+                musicFolders: result.musicFolders
+              }
+            }))
+            return
+          }
+        } catch (error) {
+          console.error('[Player] Failed to validate music path:', error)
+          // 验证失败时继续播放（容错处理）
+        }
+      }
+
       // 如果需要添加到队列
       if (addToQueue && !this.queue.find(s => s.id === song.id)) {
         this.queue.push(song)

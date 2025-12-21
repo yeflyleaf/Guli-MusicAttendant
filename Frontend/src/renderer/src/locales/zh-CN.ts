@@ -221,7 +221,16 @@ export default {
     playModeSequence: '顺序播放',
     playModeLoop: '列表循环',
     playModeSingle: '单曲循环',
-    playModeRandom: '随机播放'
+    playModeRandom: '随机播放',
+    // 路径验证相关
+    pathValidationTitle: '无法播放',
+    pathValidationFailed: '无法播放歌曲 "{title}"',
+    filePath: '文件路径：{path}',
+    notInMusicFolder: '该歌曲不在设置的音乐文件夹中。',
+    currentMusicFolders: '当前设置的音乐文件夹：',
+    fileExistsButNotInFolder: '提示：文件不在指定音乐文件夹内。您可以在"设置"→"音乐库"中添加对应的文件夹。',
+    fileNotFound: '提示：该文件在本地不存在，可能已被移动或删除。',
+    removeFromList: '从列表中删除'
   },
 
   // 语言名称

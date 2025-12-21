@@ -222,7 +222,15 @@ export default {
     playModeSequence: 'تسلسلي',
     playModeLoop: 'تكرار الكل',
     playModeSingle: 'تكرار واحد',
-    playModeRandom: 'عشوائي'
+    playModeRandom: 'عشوائي',
+    pathValidationTitle: 'لا يمكن التشغيل',
+    pathValidationFailed: 'لا يمكن تشغيل الأغنية "{title}"',
+    filePath: 'مسار الملف: {path}',
+    notInMusicFolder: 'هذه الأغنية ليست في مجلدات الموسيقى المحددة.',
+    currentMusicFolders: 'مجلدات الموسيقى الحالية:',
+    fileExistsButNotInFolder: 'ملاحظة: الملف ليس في مجلدات الموسيقى المحددة.',
+    fileNotFound: 'ملاحظة: هذا الملف غير موجود محلياً.',
+    removeFromList: 'إزالة من القائمة'
   },
 
   // Language Names
