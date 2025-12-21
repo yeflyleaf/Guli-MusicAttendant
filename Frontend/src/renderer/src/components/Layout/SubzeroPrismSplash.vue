@@ -2,8 +2,17 @@
     <Transition name="prism-fade">
         <div v-if="visible" class="prism-splash" ref="splashContainer">
             <!-- 第0层 - 极夜天空 -->
-            <div class="arctic-sky-bg">
+            <div class="arctic-sky-bg" ref="skyLayer">
                 <div class="sky-gradient"></div>
+                <div class="stars-bg"></div>
+            </div>
+
+            <!-- 冰山与倒影层 -->
+            <div class="landscape-layer" ref="landscapeLayer">
+                <div class="ice-mountains"></div>
+                <div class="ice-lake">
+                    <div class="lake-reflection"></div>
+                </div>
             </div>
 
             <!-- 飘落冰晶雪花层 (Canvas 纯渲染) -->
@@ -122,7 +131,7 @@
 
             <!-- 底部信息 -->
             <div class="splash-footer">
-                <p class="version">v1.0.0</p>
+
             </div>
         </div>
     </Transition>
@@ -147,6 +156,8 @@ const snowflakeCanvas = ref<HTMLCanvasElement | null>(null)
 const splashContainer = ref<HTMLElement | null>(null)
 const glacialPanel = ref<HTMLElement | null>(null)
 const bifrostLayer = ref<HTMLElement | null>(null)
+const skyLayer = ref<HTMLElement | null>(null)
+const landscapeLayer = ref<HTMLElement | null>(null)
 
 // 应用名称
 const appNameChars = '故里音乐助手'.split('')
@@ -426,14 +437,14 @@ const initCrystalSystem = () => {
     const createCrystal = (): Crystal => ({
         x: random(0, canvas.width),
         y: random(0, canvas.height),
-        size: random(1, 4),
+        size: random(0.5, 2.5), // 更小，更精致
         rotation: random(0, Math.PI * 2),
-        rotationSpeed: random(-0.02, 0.02),
-        opacity: random(0.3, 0.8),
+        rotationSpeed: random(-0.01, 0.01), // 更慢
+        opacity: random(0.4, 0.9),
         twinklePhase: random(0, Math.PI * 2),
-        twinkleSpeed: random(0.05, 0.15),
-        driftX: random(-0.2, 0.2),
-        driftY: random(-0.1, 0.1)
+        twinkleSpeed: random(0.02, 0.08), // 缓慢闪烁
+        driftX: random(-0.1, 0.1), // 极慢漂浮
+        driftY: random(-0.05, 0.05)
     })
 
     crystals = Array.from({ length: crystalCount }, createCrystal)
@@ -443,25 +454,43 @@ const initCrystalSystem = () => {
         ctx.translate(x, y)
         ctx.rotate(rotation)
 
-        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 2)
-        gradient.addColorStop(0, `rgba(240, 255, 255, ${opacity})`)
-        gradient.addColorStop(0.5, `rgba(0, 240, 255, ${opacity * 0.5})`)
-        gradient.addColorStop(1, `rgba(0, 240, 255, 0)`)
+        // 钻石星尘 - 锐利的十字星
+        ctx.globalCompositeOperation = 'screen'
 
-        ctx.strokeStyle = gradient
-        ctx.lineWidth = size * 0.5
+        // 核心光点
+        ctx.fillStyle = `rgba(240, 255, 255, ${opacity})`
         ctx.beginPath()
-        // 四角星形状
-        ctx.moveTo(0, -size * 2)
-        ctx.lineTo(0, size * 2)
-        ctx.moveTo(-size * 2, 0)
-        ctx.lineTo(size * 2, 0)
-        // 对角线
-        ctx.moveTo(-size, -size)
-        ctx.lineTo(size, size)
-        ctx.moveTo(size, -size)
-        ctx.lineTo(-size, size)
-        ctx.stroke()
+        ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2)
+        ctx.fill()
+
+        // 垂直光芒
+        const gradientV = ctx.createLinearGradient(0, -size * 4, 0, size * 4)
+        gradientV.addColorStop(0, `rgba(0, 240, 255, 0)`)
+        gradientV.addColorStop(0.5, `rgba(240, 255, 255, ${opacity})`)
+        gradientV.addColorStop(1, `rgba(0, 240, 255, 0)`)
+
+        ctx.fillStyle = gradientV
+        ctx.beginPath()
+        ctx.moveTo(-size * 0.2, 0)
+        ctx.lineTo(0, -size * 4)
+        ctx.lineTo(size * 0.2, 0)
+        ctx.lineTo(0, size * 4)
+        ctx.fill()
+
+        // 水平光芒
+        const gradientH = ctx.createLinearGradient(-size * 4, 0, size * 4, 0)
+        gradientH.addColorStop(0, `rgba(138, 43, 226, 0)`)
+        gradientH.addColorStop(0.5, `rgba(240, 255, 255, ${opacity})`)
+        gradientH.addColorStop(1, `rgba(138, 43, 226, 0)`)
+
+        ctx.fillStyle = gradientH
+        ctx.beginPath()
+        ctx.moveTo(0, -size * 0.2)
+        ctx.lineTo(-size * 4, 0)
+        ctx.lineTo(0, size * 0.2)
+        ctx.lineTo(size * 4, 0)
+        ctx.fill()
+
         ctx.restore()
     }
 
@@ -609,6 +638,17 @@ const triggerBifrostAscension = () => {
         decorations.style.transform = 'translateY(150%)'
     }
 
+    // 视线抬升 (Skyward Gaze) - 背景下移
+    if (skyLayer.value) {
+        skyLayer.value.style.transition = `all ${ascensionDuration / 1000}s cubic-bezier(0.6, 0, 0.4, 1)`
+        skyLayer.value.style.transform = 'translateY(30%) scale(1.1)'
+    }
+    if (landscapeLayer.value) {
+        landscapeLayer.value.style.transition = `all ${ascensionDuration / 1000}s cubic-bezier(0.6, 0, 0.4, 1)`
+        landscapeLayer.value.style.transform = 'translateY(100%) scale(1.2)'
+        landscapeLayer.value.style.opacity = '0'
+    }
+
     // 白化过渡
     const whiteout = bifrostLayer.value?.querySelector('.whiteout') as HTMLElement
     if (whiteout) {
@@ -713,20 +753,91 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
     background: $deep-space;
 }
 
-// ==================== 第0层 - 极夜天空 ====================
+// ==================== 第0层 - 极夜天空与地景 ====================
 .arctic-sky-bg {
     position: absolute;
     inset: 0;
     overflow: hidden;
+    background: linear-gradient(180deg, $polar-night 0%, $deep-space 100%);
 
     .sky-gradient {
         position: absolute;
         inset: 0;
         background:
-            radial-gradient(ellipse at 50% 20%, rgba($electric-purple, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse at 30% 40%, rgba($aurora-green, 0.1) 0%, transparent 40%),
-            radial-gradient(ellipse at 70% 30%, rgba($quantum-cyan, 0.12) 0%, transparent 45%),
-            linear-gradient(180deg, $polar-night 0%, $deep-space 100%);
+            radial-gradient(circle at 50% -20%, rgba($aurora-green, 0.15), transparent 60%),
+            radial-gradient(circle at 20% 30%, rgba($electric-purple, 0.1), transparent 50%),
+            radial-gradient(circle at 80% 40%, rgba($quantum-cyan, 0.1), transparent 50%);
+        mix-blend-mode: screen;
+    }
+
+    .stars-bg {
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(1px 1px at 10% 10%, white 100%, transparent),
+            radial-gradient(1px 1px at 20% 20%, white 100%, transparent),
+            radial-gradient(2px 2px at 30% 30%, white 100%, transparent),
+            radial-gradient(1px 1px at 40% 40%, white 100%, transparent),
+            radial-gradient(1px 1px at 50% 50%, white 100%, transparent),
+            radial-gradient(2px 2px at 60% 60%, white 100%, transparent),
+            radial-gradient(1px 1px at 70% 70%, white 100%, transparent),
+            radial-gradient(1px 1px at 80% 80%, white 100%, transparent),
+            radial-gradient(2px 2px at 90% 90%, white 100%, transparent);
+        background-size: 500px 500px;
+        opacity: 0.3;
+    }
+}
+
+.landscape-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.ice-mountains {
+    position: absolute;
+    bottom: 30%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        linear-gradient(180deg, transparent 0%, rgba($polar-night, 0.8) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0,300 L0,150 L100,100 L200,200 L300,50 L450,250 L600,100 L750,200 L900,50 L1050,150 L1200,100 L1200,300 Z' fill='%23051327' opacity='0.8'/%3E%3Cpath d='M0,300 L0,200 L150,150 L300,250 L450,100 L600,200 L750,150 L900,250 L1050,100 L1200,200 L1200,300 Z' fill='%23020a15' opacity='0.9'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-position: bottom;
+    filter: drop-shadow(0 -5px 10px rgba($quantum-cyan, 0.1));
+}
+
+.ice-lake {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(180deg, rgba($polar-night, 0.9) 0%, $deep-space 100%);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: rgba($glacier-white, 0.5);
+        box-shadow: 0 0 10px $quantum-cyan;
+    }
+
+    .lake-reflection {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba($aurora-green, 0.1), rgba($electric-purple, 0.05));
+        filter: blur(10px);
+        opacity: 0.3;
     }
 }
 
@@ -760,12 +871,13 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
     width: 40%;
     height: 80%;
     background: linear-gradient(180deg,
-            rgba($aurora-green, 0.4) 0%,
-            rgba($quantum-cyan, 0.3) 30%,
-            rgba($electric-purple, 0.3) 60%,
+            rgba($aurora-green, 0.3) 0%,
+            rgba($quantum-cyan, 0.2) 30%,
+            rgba($electric-purple, 0.2) 60%,
             transparent 100%);
-    filter: blur(40px);
-    animation: auroraWave 12s ease-in-out infinite;
+    filter: blur(60px);
+    mix-blend-mode: screen;
+    animation: auroraWave 15s ease-in-out infinite;
     transform-origin: top center;
 
     &.aurora-1 {
@@ -907,13 +1019,27 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
 .ice-monolith {
     position: absolute;
     background: linear-gradient(180deg,
-            rgba($glacier-white, 0.3) 0%,
-            rgba($quantum-cyan, 0.2) 50%,
-            rgba($prism-blue, 0.1) 100%);
-    clip-path: polygon(20% 100%, 50% 0%, 80% 100%);
+            rgba($glacier-white, 0.1) 0%,
+            rgba($quantum-cyan, 0.1) 50%,
+            rgba($polar-night, 0.8) 100%);
+    clip-path: polygon(20% 100%, 40% 0%, 60% 0%, 80% 100%); // 塔状
+    border-top: 2px solid rgba($quantum-cyan, 0.8);
     box-shadow:
-        0 0 30px rgba($quantum-cyan, 0.3),
-        inset 0 0 20px rgba($glacier-white, 0.2);
+        0 0 30px rgba($quantum-cyan, 0.2),
+        inset 0 0 20px rgba($glacier-white, 0.1);
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 80%;
+        background: linear-gradient(180deg, $aurora-green, transparent);
+        box-shadow: 0 0 10px $aurora-green;
+        opacity: 0.8;
+    }
 
     &.monolith-1 {
         left: 3%;
@@ -959,10 +1085,13 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
 
 .bokeh-snowflake {
     position: absolute;
-    background: radial-gradient(circle, rgba($glacier-white, 0.6), transparent 60%);
+    width: 60px; // 更大
+    height: 60px;
+    background: radial-gradient(circle, rgba($glacier-white, 0.4), transparent 70%);
     border-radius: 50%;
-    filter: blur(8px);
+    filter: blur(15px); // 更模糊
     animation: snowflakeDrift linear infinite;
+    z-index: 20; // 最前景
 
     &::before {
         content: '';
@@ -997,12 +1126,18 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
 .glacial-panel {
     position: relative;
     z-index: 10;
-    width: 380px;
-    padding: 50px 40px;
-    background: $glacial-glass;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba($glacier-white, 0.3);
-    transition: all 0.5s ease;
+    width: 400px;
+    padding: 60px 40px;
+    background: rgba(5, 19, 39, 0.4); // 更通透
+    backdrop-filter: blur(15px) brightness(1.1);
+    border: 1px solid rgba($glacier-white, 0.4);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        inset 0 0 0 1px rgba($glacier-white, 0.1);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    clip-path: polygon(20px 0, 100% 0,
+            100% calc(100% - 20px), calc(100% - 20px) 100%,
+            0 100%, 0 20px); // 切角设计
 
     &.idle-frost {
         animation: panelBreathe 4s ease-in-out infinite;
@@ -1073,17 +1208,33 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
 
 .sharp-border {
     position: absolute;
-    inset: -1px;
-    border: 2px solid transparent;
-    background:
-        linear-gradient($glacial-glass, $glacial-glass) padding-box,
-        linear-gradient(135deg,
-            rgba($glacier-white, 0.8) 0%,
-            rgba($quantum-cyan, 0.4) 25%,
-            rgba($glacier-white, 0.2) 50%,
-            rgba($electric-purple, 0.3) 75%,
-            rgba($glacier-white, 0.6) 100%) border-box;
+    inset: 0;
     pointer-events: none;
+
+    // 冰裂纹高光边框
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba($glacier-white, 0.5);
+        clip-path: polygon(20px 0, 100% 0,
+                100% calc(100% - 20px), calc(100% - 20px) 100%,
+                0 100%, 0 20px);
+        filter: drop-shadow(0 0 2px $quantum-cyan);
+    }
+
+    // 角落加固
+    &::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background:
+            linear-gradient(135deg, $glacier-white 10px, transparent 0) top left,
+            linear-gradient(-135deg, $glacier-white 10px, transparent 0) bottom right;
+        background-size: 20px 20px;
+        background-repeat: no-repeat;
+        filter: drop-shadow(0 0 5px $quantum-cyan);
+    }
 }
 
 .panel-content {

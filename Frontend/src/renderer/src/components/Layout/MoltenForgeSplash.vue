@@ -151,7 +151,7 @@
 
       <!-- 底部信息 -->
       <div class="splash-footer">
-        <p class="version">v1.0.0</p>
+
       </div>
     </div>
   </Transition>
@@ -215,8 +215,8 @@ const meteors = Array.from({ length: 15 }, (_, i) => {  // 增加陨石数量
       top: `${random(-20, -5)}%`,
       animationDelay: `${random(0, 5)}s`,
       animationDuration: `${random(1.5, 3)}s`,
-      '--meteor-angle': `${random(40, 60)}deg`,
-      '--meteor-length': `${random(80, 200)}px`
+      '--meteor-angle': `${random(60, 80)}deg`,
+      '--meteor-length': `${random(150, 300)}px`
     }
   }
 })
@@ -237,26 +237,26 @@ const initEmberSystem = () => {
   window.addEventListener('resize', resizeCanvas)
 
   // 创建火星和灰烬
-  const emberColors = ['#ff3300', '#ff6600', '#ff8800', '#ffaa00', '#ffd700', '#ffffff']
-  const ashColors = ['#4a4a4a', '#3d3d3d', '#2e2e2e', '#1f1f1f']
-  const particleCount = 200  // 增加粒子数量
+  const emberColors = ['#ff3300', '#ff5500', '#ff8800', '#ffaa00', '#ffd700', '#ffffff']
+  const ashColors = ['#4a4a4a', '#3d3d3d', '#2e2e2e', '#1f1f1f', '#100505']
+  const particleCount = 400  // 增加粒子数量，制造更密集的氛围
 
   const createParticle = (): Ember => {
-    const isEmber = Math.random() > 0.3
+    const isEmber = Math.random() > 0.2 // 更多火星
     return {
       x: Math.random() * canvas.width,
       y: isEmber ? canvas.height + 50 : -50,
-      vx: (Math.random() - 0.5) * 2,
-      vy: isEmber ? -(Math.random() * 3 + 1) : Math.random() * 0.5 + 0.2,
-      size: isEmber ? Math.random() * 3 + 1 : Math.random() * 5 + 3,
+      vx: (Math.random() - 0.5) * 3, // 更大的横向随机移动
+      vy: isEmber ? -(Math.random() * 4 + 1.5) : Math.random() * 0.8 + 0.3, // 更快的上升速度
+      size: isEmber ? Math.random() * 3 + 1.5 : Math.random() * 6 + 4,
       brightness: Math.random(),
-      brightnessSpeed: Math.random() * 0.05 + 0.02,
+      brightnessSpeed: Math.random() * 0.08 + 0.03,
       type: isEmber ? 'ember' : 'ash',
       color: isEmber
         ? emberColors[Math.floor(Math.random() * emberColors.length)]
         : ashColors[Math.floor(Math.random() * ashColors.length)],
       life: 0,
-      maxLife: Math.random() * 200 + 100
+      maxLife: Math.random() * 250 + 100
     }
   }
 
@@ -371,8 +371,8 @@ const triggerCataclysm = () => {
     const now = Date.now()
     const progress = Math.min((now - startTime) / eruptionDuration, 1)
     const easeProgress = progress === 0 ? 0 : Math.pow(2, 10 * progress - 10)
-    const speed = 1 + easeProgress * 30
-    const intensity = 1 + easeProgress * 2
+    const speed = 1 + easeProgress * 50 // 极速爆发
+    const intensity = 1 + easeProgress * 4 // 亮度激增
     emberControls?.setSpeed(speed)
     emberControls?.setIntensity(intensity)
 
@@ -521,9 +521,9 @@ $charcoal-black: #100505;
 $basalt-gray: #1a1a1a;
 $lava-red: #ff3300;
 $ember-orange: #ff8800;
-$core-white: #fffaf0;
+$core-white: #ffffff;
 $sulfur-yellow: #ffd700;
-$obsidian: rgba(10, 5, 5, 0.85);
+$obsidian: rgba(16, 5, 5, 0.9);
 
 .molten-splash {
   position: fixed;
@@ -546,8 +546,8 @@ $obsidian: rgba(10, 5, 5, 0.85);
   .apocalypse-sky {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 100%, #2d0a0a 0%, #1a0505 30%, $charcoal-black 70%);
-    animation: skyPulse 4s ease-in-out infinite;
+    background: radial-gradient(ellipse at 50% 100%, #4a0a0a 0%, #2a0505 40%, $charcoal-black 80%);
+    animation: skyPulse 3s ease-in-out infinite;
   }
 }
 
@@ -642,9 +642,9 @@ $obsidian: rgba(10, 5, 5, 0.85);
   bottom: 0;
   height: 100%;
   background: linear-gradient(to top,
-      rgba($lava-red, 0.9) 0%,
-      rgba($ember-orange, 0.7) 30%,
-      rgba($sulfur-yellow, 0.5) 60%,
+      rgba($lava-red, 1) 0%,
+      rgba($ember-orange, 0.9) 20%,
+      rgba($lava-red, 0.7) 50%,
       transparent 100%);
   filter: blur(2px);
   animation: lavaFlow 8s ease-in-out infinite;
@@ -802,8 +802,9 @@ $obsidian: rgba(10, 5, 5, 0.85);
     transform: translateX(-50%);
     width: 4px;
     height: var(--meteor-length, 100px);
-    background: linear-gradient(to bottom, $ember-orange 0%, $lava-red 40%, rgba(20, 5, 5, 0.5) 80%, transparent 100%);
+    background: linear-gradient(to bottom, $core-white 0%, $sulfur-yellow 20%, $lava-red 60%, transparent 100%);
     border-radius: 0 0 2px 2px;
+    box-shadow: 0 0 10px rgba($lava-red, 0.5);
   }
 }
 
@@ -822,7 +823,7 @@ $obsidian: rgba(10, 5, 5, 0.85);
   }
 
   100% {
-    transform: rotate(calc(var(--meteor-angle, 45deg))) translateY(calc(100vh + 300px));
+    transform: rotate(calc(var(--meteor-angle, 45deg))) translateY(calc(100vh + 500px));
     opacity: 0;
   }
 }
@@ -849,8 +850,9 @@ $obsidian: rgba(10, 5, 5, 0.85);
   bottom: 0;
 
   .column-body {
-    background: linear-gradient(to right, #1a1a1a 0%, #2a2a2a 30%, #1a1a1a 70%, #0a0a0a 100%);
-    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    background: linear-gradient(to right, #2a2a2a 0%, #1a1a1a 40%, #0a0a0a 100%);
+    clip-path: polygon(0% 5%, 30% 0%, 100% 5%, 100% 100%, 0% 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .column-lava {
@@ -915,8 +917,12 @@ $obsidian: rgba(10, 5, 5, 0.85);
   position: absolute;
   background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 50%, #0a0a0a 100%);
   border-radius: 30% 70% 50% 50%;
-  box-shadow: inset -5px -5px 15px rgba(0, 0, 0, 0.5), inset 2px 2px 5px rgba(100, 50, 30, 0.3);
+  box-shadow:
+    inset -5px -5px 15px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 5px rgba(100, 50, 30, 0.5),
+    0 0 10px rgba($lava-red, 0.2);
   animation: floatRock 6s ease-in-out infinite;
+  border: 1px solid rgba($lava-red, 0.1);
 
   &::after {
     content: '';
@@ -1024,8 +1030,15 @@ $obsidian: rgba(10, 5, 5, 0.85);
   overflow: hidden;
 
   &.tectonic-shake {
-    animation: tectonicShake 0.15s ease-in-out infinite;
+    animation: tectonicShake 0.1s ease-in-out infinite;
   }
+
+  // 裂变黑曜石效果
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8),
+  0 0 0 1px rgba($lava-red, 0.2),
+  inset 0 0 60px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba($lava-red, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .panel-texture {
@@ -1131,10 +1144,10 @@ $obsidian: rgba(10, 5, 5, 0.85);
   pointer-events: none;
   background: transparent;
   box-shadow:
-    0 0 20px rgba($lava-red, 0.5),
-    0 0 40px rgba($ember-orange, 0.3),
-    inset 0 0 20px rgba($lava-red, 0.2);
-  animation: lavaGlowPulse 1.5s ease-in-out infinite;
+    0 0 15px rgba($lava-red, 0.6),
+    0 0 30px rgba($ember-orange, 0.4),
+    inset 0 0 15px rgba($lava-red, 0.3);
+  animation: lavaGlowPulse 2s ease-in-out infinite;
 
   &.active {
     opacity: 1;
@@ -1441,8 +1454,9 @@ $obsidian: rgba(10, 5, 5, 0.85);
   }
 
   100% {
-    transform: translate(-50%, -50%) scale(50);
-    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(100);
+    opacity: 1;
+    filter: brightness(2);
   }
 }
 
@@ -1466,9 +1480,9 @@ $obsidian: rgba(10, 5, 5, 0.85);
   }
 
   100% {
-    transform: translate(-50%, -50%) scale(30);
+    transform: translate(-50%, -50%) scale(50);
     opacity: 0;
-    border-width: 1px;
+    border-width: 0px;
   }
 }
 
@@ -1482,16 +1496,22 @@ $obsidian: rgba(10, 5, 5, 0.85);
 @keyframes thermalEngulf {
   0% {
     opacity: 0;
+    background: radial-gradient(circle at center, rgba($ember-orange, 0) 0%, transparent 100%);
   }
 
-  50% {
-    opacity: 0.85;
-    background: radial-gradient(circle at center, rgba(255, 220, 180, 0.9) 0%, rgba($ember-orange, 0.8) 40%, rgba($lava-red, 0.7) 70%, rgba($charcoal-black, 0.9) 100%);
+  40% {
+    opacity: 0.8;
+    background: radial-gradient(circle at center, rgba($lava-red, 0.9) 0%, rgba($ember-orange, 0.8) 50%, rgba($charcoal-black, 0.9) 100%);
+  }
+
+  80% {
+    opacity: 1;
+    background: radial-gradient(circle at center, #ffffff 0%, #fff0d0 40%, rgba($ember-orange, 0.9) 80%, rgba($lava-red, 1) 100%);
   }
 
   100% {
-    opacity: 0.95;
-    background: radial-gradient(circle at center, rgba(255, 235, 210, 0.85) 0%, rgba(255, 200, 150, 0.8) 50%, rgba($charcoal-black, 0.6) 100%);
+    opacity: 1;
+    background: #ffffff;
   }
 }
 

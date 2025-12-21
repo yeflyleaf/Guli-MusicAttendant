@@ -128,7 +128,7 @@
 
       <!-- 底部信息 -->
       <div class="splash-footer">
-        <p class="version">v1.0.0</p>
+
       </div>
     </div>
   </Transition>
