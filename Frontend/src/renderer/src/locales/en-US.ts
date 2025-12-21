@@ -99,7 +99,8 @@ export default {
       splashThemeBrass: 'Brass Era',
       splashThemePrism: 'Sub-zero Prism',
       splashThemeSanctum: 'Sanctum of Truth',
-      splashThemeSilicon: 'Silicon Order'
+      splashThemeSilicon: 'Silicon Order',
+      splashThemeEthereal: 'Ethereal Geometry'
     },
     // Library
     library: {

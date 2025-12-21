@@ -91,7 +91,8 @@ export default {
       splashThemeBrass: 'Era del Latón',
       splashThemePrism: 'Prisma Bajo Cero',
       splashThemeSanctum: 'Santuario de la Verdad',
-      splashThemeSilicon: 'Orden del Silicio'
+      splashThemeSilicon: 'Orden del Silicio',
+      splashThemeEthereal: 'Geometría Etérea'
     },
     library: {
       title: 'Biblioteca',

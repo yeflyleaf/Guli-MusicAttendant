@@ -99,7 +99,8 @@ export default {
       splashThemeBrass: '黄铜纪元',
       splashThemePrism: '零度棱镜',
       splashThemeSanctum: '真理殿堂',
-      splashThemeSilicon: '硅基秩序'
+      splashThemeSilicon: '硅基秩序',
+      splashThemeEthereal: '幻象几何'
     },
     // 音乐库设置
     library: {

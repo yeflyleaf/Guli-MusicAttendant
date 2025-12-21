@@ -100,7 +100,8 @@ export default {
       splashThemeBrass: 'Ère du Laiton',
       splashThemePrism: 'Prisme Zéro Absolu',
       splashThemeSanctum: 'Sanctuaire de la Vérité',
-      splashThemeSilicon: 'Ordre du Silicium'
+      splashThemeSilicon: 'Ordre du Silicium',
+      splashThemeEthereal: 'Géométrie Éthérée'
     },
     // Library
     library: {

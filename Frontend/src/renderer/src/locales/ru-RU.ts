@@ -91,7 +91,8 @@ export default {
       splashThemeBrass: 'Эра Латуни',
       splashThemePrism: 'Призма Абсолютного Нуля',
       splashThemeSanctum: 'Святилище Истины',
-      splashThemeSilicon: 'Кремниевый Порядок'
+      splashThemeSilicon: 'Кремниевый Порядок',
+      splashThemeEthereal: 'Эфирная Геометрия'
     },
     library: {
       title: 'Библиотека',

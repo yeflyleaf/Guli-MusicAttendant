@@ -183,6 +183,7 @@
                 <el-option :label="$t('settings.behavior.splashThemePrism')" value="prism" />
                 <el-option :label="$t('settings.behavior.splashThemeSanctum')" value="sanctum" />
                 <el-option :label="$t('settings.behavior.splashThemeSilicon')" value="silicon" />
+                <el-option :label="$t('settings.behavior.splashThemeEthereal')" value="ethereal" />
               </el-select>
             </div>
           </div>

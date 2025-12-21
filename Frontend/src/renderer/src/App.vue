@@ -24,6 +24,9 @@
   <!-- 硅基秩序主题 -->
   <SiliconOrderSplash v-if="showSplash && settingsStore.splashTheme === 'silicon'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 幻象几何主题 -->
+  <EtherealGeometrySplash v-if="showSplash && settingsStore.splashTheme === 'ethereal'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -60,6 +63,7 @@
 import BioluminescentAbyssSplash from '@/components/Layout/BioluminescentAbyssSplash.vue'
 import BrassEraSplash from '@/components/Layout/BrassEraSplash.vue'
 import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.vue'
+import EtherealGeometrySplash from '@/components/Layout/EtherealGeometrySplash.vue'
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'
 import MoltenForgeSplash from '@/components/Layout/MoltenForgeSplash.vue'

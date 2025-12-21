@@ -100,7 +100,8 @@ export default {
       splashThemeBrass: 'عصر النحاس',
       splashThemePrism: 'موشور تحت الصفر',
       splashThemeSanctum: 'محراب الحقيقة',
-      splashThemeSilicon: 'نظام السيليكون'
+      splashThemeSilicon: 'نظام السيليكون',
+      splashThemeEthereal: 'الهندسة الأثيرية'
     },
     // Library
     library: {
