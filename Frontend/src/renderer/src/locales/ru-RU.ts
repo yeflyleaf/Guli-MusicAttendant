@@ -92,7 +92,8 @@ export default {
       splashThemePrism: 'Призма Абсолютного Нуля',
       splashThemeSanctum: 'Святилище Истины',
       splashThemeSilicon: 'Кремниевый Порядок',
-      splashThemeEthereal: 'Минималистичная Геометрия'
+      splashThemeEthereal: 'Минималистичная Геометрия',
+      splashThemeCyber: 'Кибергород'
     },
     library: {
       title: 'Библиотека',

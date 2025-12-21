@@ -27,6 +27,9 @@
   <!-- 幻象几何主题 -->
   <EtherealGeometrySplash v-if="showSplash && settingsStore.splashTheme === 'ethereal'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 未来都市主题 -->
+  <CyberCityscapeSplash v-if="showSplash && settingsStore.splashTheme === 'cyber'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -62,6 +65,7 @@
 <script setup lang="ts">
 import BioluminescentAbyssSplash from '@/components/Layout/BioluminescentAbyssSplash.vue'
 import BrassEraSplash from '@/components/Layout/BrassEraSplash.vue'
+import CyberCityscapeSplash from '@/components/Layout/CyberCityscapeSplash.vue'
 import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.vue'
 import EtherealGeometrySplash from '@/components/Layout/EtherealGeometrySplash.vue'
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'

@@ -101,7 +101,8 @@ export default {
       splashThemePrism: 'Prisme Zéro Absolu',
       splashThemeSanctum: 'Sanctuaire de la Vérité',
       splashThemeSilicon: 'Ordre du Silicium',
-      splashThemeEthereal: 'Géométrie Minimaliste'
+      splashThemeEthereal: 'Géométrie Minimaliste',
+      splashThemeCyber: 'Ville Cybernétique'
     },
     // Library
     library: {

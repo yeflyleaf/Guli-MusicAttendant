@@ -100,7 +100,8 @@ export default {
       splashThemePrism: 'Sub-zero Prism',
       splashThemeSanctum: 'Sanctum of Truth',
       splashThemeSilicon: 'Silicon Order',
-      splashThemeEthereal: 'Minimalist Geometry'
+      splashThemeEthereal: 'Minimalist Geometry',
+      splashThemeCyber: 'Cyber Cityscape'
     },
     // Library
     library: {
