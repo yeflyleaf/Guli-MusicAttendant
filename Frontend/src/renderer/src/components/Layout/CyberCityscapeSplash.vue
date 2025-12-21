@@ -3,22 +3,32 @@
     <div v-if="visible" class="cyber-splash">
       <!-- 第0层 - 巨型建筑群剪影 (视差滚动) -->
       <div class="megastructures">
+        <!-- 极远景建筑层 - 最慢 -->
+        <div class="building-layer layer-ultra-far">
+          <div class="building ultra-far" v-for="n in 100" :key="'ultrafar-' + n" :style="getUltraFarBuildingStyle(n)">
+          </div>
+        </div>
         <!-- 远景建筑层 - 慢速 -->
         <div class="building-layer layer-far">
-          <div class="building" v-for="n in 40" :key="'far-' + n" :style="getFarBuildingStyle(n)"></div>
+          <div class="building far" v-for="n in 80" :key="'far-' + n" :style="getFarBuildingStyle(n)"></div>
         </div>
         <!-- 中景建筑层 - 中速 -->
         <div class="building-layer layer-mid">
-          <div class="building mid" v-for="n in 30" :key="'mid-' + n" :style="getMidBuildingStyle(n)">
-            <div class="led-ad" v-if="n % 3 === 0">
+          <div class="building mid" v-for="n in 60" :key="'mid-' + n" :style="getMidBuildingStyle(n)">
+            <div class="led-ad" v-if="n % 4 === 0">
               <span>{{ getRandomAdText() }}</span>
             </div>
           </div>
         </div>
         <!-- 近景建筑层 - 快速 -->
         <div class="building-layer layer-near">
-          <div class="building near" v-for="n in 20" :key="'near-' + n" :style="getNearBuildingStyle(n)"></div>
+          <div class="building near" v-for="n in 40" :key="'near-' + n" :style="getNearBuildingStyle(n)"></div>
         </div>
+      </div>
+
+      <!-- 浮动光粒子层 -->
+      <div class="floating-particles">
+        <div class="particle" v-for="n in 30" :key="'particle-' + n" :style="getParticleStyle(n)"></div>
       </div>
 
       <!-- 第1层 - Canvas 酸雨粒子系统 -->
@@ -188,11 +198,23 @@ const getRandomBinary = () => {
   return str
 }
 
-// 远景建筑样式 (慢速层)
+// 极远景建筑样式 (最慢层) - 非常瘦高
+const getUltraFarBuildingStyle = (n: number) => {
+  const baseLeft = (n - 1) * 2 // 密集排列
+  const height = 15 + Math.random() * 30
+  const width = 0.3 + Math.random() * 0.8 // 极细
+  return {
+    left: `${baseLeft}%`,
+    height: `${height}%`,
+    width: `${width}%`
+  }
+}
+
+// 远景建筑样式 (慢速层) - 瘦高
 const getFarBuildingStyle = (n: number) => {
-  const baseLeft = (n - 1) * 5 // 更宽间距
-  const height = 20 + Math.random() * 35 // 较矮
-  const width = 3 + Math.random() * 5
+  const baseLeft = (n - 1) * 2.5
+  const height = 25 + Math.random() * 45 // 更高
+  const width = 0.5 + Math.random() * 1.2 // 更细
   return {
     left: `${baseLeft}%`,
     height: `${height}%`,
@@ -200,11 +222,11 @@ const getFarBuildingStyle = (n: number) => {
   }
 }
 
-// 中景建筑样式 (中速层)
+// 中景建筑样式 (中速层) - 瘦高
 const getMidBuildingStyle = (n: number) => {
-  const baseLeft = (n - 1) * 6.7
-  const height = 35 + Math.random() * 45
-  const width = 4 + Math.random() * 6
+  const baseLeft = (n - 1) * 3.4
+  const height = 40 + Math.random() * 50 // 更高
+  const width = 0.8 + Math.random() * 1.8 // 更细
   return {
     left: `${baseLeft}%`,
     height: `${height}%`,
@@ -212,15 +234,28 @@ const getMidBuildingStyle = (n: number) => {
   }
 }
 
-// 近景建筑样式 (快速层)
+// 近景建筑样式 (快速层) - 瘦高
 const getNearBuildingStyle = (n: number) => {
-  const baseLeft = (n - 1) * 10
-  const height = 50 + Math.random() * 40
-  const width = 6 + Math.random() * 8
+  const baseLeft = (n - 1) * 5
+  const height = 55 + Math.random() * 40 // 更高
+  const width = 1.2 + Math.random() * 2.5 // 更细
   return {
     left: `${baseLeft}%`,
     height: `${height}%`,
     width: `${width}%`
+  }
+}
+
+// 浮动光粒子样式
+const getParticleStyle = (_n: number) => {
+  const hue = Math.random() > 0.5 ? 330 : 180 // 粉色或青色
+  return {
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 70}%`,
+    '--hue': hue,
+    '--size': `${2 + Math.random() * 4}px`,
+    '--duration': `${3 + Math.random() * 4}s`,
+    '--delay': `${Math.random() * 5}s`
   }
 }
 
@@ -680,17 +715,46 @@ $neon-magenta: #ff00ff;
   align-items: flex-end;
   will-change: transform;
 
-  // 远景层 - 慢速滚动 (200% 宽度循环)
+  // 极远景层 - 最慢滚动
+  &.layer-ultra-far {
+    width: 200%;
+    animation: scrollLayerUltraFar 60s linear infinite;
+    opacity: 0.25;
+
+    .building {
+      background: linear-gradient(180deg,
+          rgba(20, 20, 40, 0.5) 0%,
+          rgba(10, 10, 25, 0.6) 100%);
+      border-top: 1px solid rgba($cyber-pink, 0.08);
+    }
+  }
+
+  // 远景层 - 慢速滚动
   &.layer-far {
     width: 200%;
     animation: scrollLayerFar 40s linear infinite;
-    opacity: 0.4;
+    opacity: 0.45;
 
     .building {
       background: linear-gradient(180deg,
           rgba(25, 25, 45, 0.7) 0%,
           rgba(15, 15, 30, 0.8) 100%);
       border-top: 1px solid rgba($cyber-pink, 0.15);
+
+      // 偶尔的屋顶灯
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 2px;
+        background: $cyber-pink;
+        box-shadow: 0 0 8px $cyber-pink, 0 0 15px $cyber-pink;
+        border-radius: 50%;
+        animation: blink 2s ease-in-out infinite;
+        animation-delay: var(--delay, 0s);
+      }
     }
   }
 
@@ -698,17 +762,29 @@ $neon-magenta: #ff00ff;
   &.layer-mid {
     width: 200%;
     animation: scrollLayerMid 25s linear infinite;
-    opacity: 0.7;
+    opacity: 0.75;
 
     .building {
       background: linear-gradient(180deg,
           rgba(30, 30, 55, 0.85) 0%,
           rgba(18, 18, 35, 0.9) 100%);
-      border-top: 2px solid rgba($laser-cyan, 0.25);
+      border-top: 2px solid rgba($laser-cyan, 0.3);
       box-shadow:
-        0 0 40px rgba($cyber-pink, 0.1),
-        0 0 20px rgba($laser-cyan, 0.1),
-        inset 0 0 30px rgba(0, 0, 0, 0.4);
+        0 0 30px rgba($cyber-pink, 0.08),
+        0 0 15px rgba($laser-cyan, 0.08),
+        inset 0 0 20px rgba(0, 0, 0, 0.4);
+
+      // 窗户条纹
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 5% 15% 10% 15%;
+        background: repeating-linear-gradient(0deg,
+            transparent 0px,
+            transparent 4px,
+            rgba($signal-white, 0.08) 4px,
+            rgba($signal-white, 0.08) 5px);
+      }
     }
   }
 
@@ -716,17 +792,48 @@ $neon-magenta: #ff00ff;
   &.layer-near {
     width: 200%;
     animation: scrollLayerNear 15s linear infinite;
-    opacity: 0.9;
+    opacity: 0.95;
 
     .building {
       background: linear-gradient(180deg,
           rgba(35, 35, 60, 0.95) 0%,
           rgba(20, 20, 40, 1) 100%);
-      border-top: 3px solid rgba($laser-cyan, 0.4);
+      border-top: 2px solid rgba($laser-cyan, 0.5);
       box-shadow:
-        0 0 60px rgba($cyber-pink, 0.15),
-        0 0 30px rgba($laser-cyan, 0.15),
-        inset 0 0 40px rgba(0, 0, 0, 0.3);
+        0 0 40px rgba($cyber-pink, 0.12),
+        0 0 20px rgba($laser-cyan, 0.12),
+        inset 0 0 30px rgba(0, 0, 0, 0.3);
+
+      // 明亮窗户
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 3% 10% 8% 10%;
+        background:
+          repeating-linear-gradient(0deg,
+            transparent 0px,
+            transparent 6px,
+            rgba($signal-white, 0.1) 6px,
+            rgba($signal-white, 0.1) 8px),
+          repeating-linear-gradient(90deg,
+            transparent 0px,
+            transparent 3px,
+            rgba($signal-white, 0.05) 3px,
+            rgba($signal-white, 0.05) 4px);
+      }
+
+      // 霓虹招牌
+      &::after {
+        content: '';
+        position: absolute;
+        top: 20%;
+        left: 10%;
+        right: 10%;
+        height: 8%;
+        background: linear-gradient(90deg, rgba($cyber-pink, 0.6), rgba($laser-cyan, 0.4));
+        box-shadow: 0 0 15px rgba($cyber-pink, 0.5);
+        animation: neonFlicker 3s ease-in-out infinite;
+      }
     }
   }
 }
@@ -802,6 +909,16 @@ $neon-magenta: #ff00ff;
 }
 
 // 平滑的视差滚动动画
+@keyframes scrollLayerUltraFar {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes scrollLayerFar {
   0% {
     transform: translateX(0);
@@ -865,6 +982,92 @@ $neon-magenta: #ff00ff;
 
   100% {
     text-shadow: 0 0 20px $cyber-pink, 0 0 40px $neon-magenta, 0 0 60px rgba($signal-white, 0.5);
+  }
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes neonFlicker {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  5% {
+    opacity: 0.3;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  15% {
+    opacity: 0.4;
+  }
+
+  20% {
+    opacity: 0.9;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// ==================== 浮动光粒子 ====================
+.floating-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: var(--size, 3px);
+  height: var(--size, 3px);
+  background: radial-gradient(circle,
+      hsla(var(--hue, 180), 100%, 70%, 0.9) 0%,
+      hsla(var(--hue, 180), 100%, 50%, 0) 70%);
+  border-radius: 50%;
+  animation: floatParticle var(--duration, 5s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  filter: blur(1px);
+}
+
+@keyframes floatParticle {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.6;
+  }
+
+  25% {
+    transform: translateY(-20px) translateX(10px) scale(1.2);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: translateY(-10px) translateX(-5px) scale(0.8);
+    opacity: 0.7;
+  }
+
+  75% {
+    transform: translateY(-30px) translateX(15px) scale(1.1);
+    opacity: 0.5;
   }
 }
 
@@ -1955,27 +2158,39 @@ $neon-magenta: #ff00ff;
   }
 }
 
-// 最终白光
+// 最终柔和渐变 (避免光污染)
 .final-flash {
   position: absolute;
   inset: 0;
-  background: $signal-white;
+  // 使用柔和的渐变而非纯白
+  background: radial-gradient(ellipse at center,
+      rgba($laser-cyan, 0.3) 0%,
+      rgba($midnight-purple, 0.6) 40%,
+      rgba($asphalt-black, 0.9) 100%);
   opacity: 0;
-  animation: finalFlash 1s ease-in forwards;
-  animation-delay: 2s;
+  animation: softFadeOut 1.2s ease-out forwards;
+  animation-delay: 1.8s;
 }
 
-@keyframes finalFlash {
+@keyframes softFadeOut {
   0% {
     opacity: 0;
+    backdrop-filter: blur(0px);
   }
 
-  80% {
-    opacity: 0;
+  30% {
+    opacity: 0.4;
+    backdrop-filter: blur(5px);
+  }
+
+  60% {
+    opacity: 0.7;
+    backdrop-filter: blur(10px);
   }
 
   100% {
     opacity: 1;
+    backdrop-filter: blur(20px);
   }
 }
 
