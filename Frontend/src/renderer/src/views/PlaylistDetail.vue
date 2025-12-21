@@ -209,6 +209,7 @@ import { Delete, Edit, Headset, Loading, Menu, Plus, Search, Setting, Tickets, V
 import { ElMessage } from 'element-plus'
 import Sortable from 'sortablejs'
 import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 
 // 定义组件名称，用于 keep-alive 的 include 匹配
@@ -218,6 +219,7 @@ defineOptions({
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const playerStore = usePlayerStore()
 const libraryStore = useLibraryStore()
 
@@ -384,7 +386,7 @@ const handleDragEnd = async (evt: Sortable.SortableEvent) => {
 
 // 删除歌单
 const handleDelete = async () => {
-  const confirmed = await showConfirm({ message: '确定要删除这个歌单吗？', type: 'warning' })
+  const confirmed = await showConfirm({ message: t('playlist.confirmDelete', { name: playlist.value!.name }), type: 'warning' })
   if (!confirmed) return
 
   await libraryStore.deletePlaylist(playlist.value!.id)
@@ -425,7 +427,7 @@ const handleBatchRemove = async () => {
   if (selectedIds.value.size === 0 || !playlist.value) return
 
   const confirmed = await showConfirm({
-    message: `确定要从歌单中移除选中的 ${selectedIds.value.size} 首歌曲吗？`,
+    message: t('playlist.confirmRemoveSongs', { count: selectedIds.value.size }),
     type: 'warning'
   })
   if (!confirmed) return

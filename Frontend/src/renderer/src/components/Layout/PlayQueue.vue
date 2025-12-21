@@ -129,8 +129,10 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, nextTick, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const playerStore = usePlayerStore()
+const { t } = useI18n()
 const queueListRef = ref<HTMLElement | null>(null)
 
 // 播放模式图标
@@ -179,7 +181,7 @@ const handleRemoveSong = (songId: number) => {
 
 // 清空队列
 const handleClearQueue = async () => {
-    const confirmed = await showConfirm({ message: '确定要清空播放队列吗？', type: 'warning' })
+    const confirmed = await showConfirm({ message: t('player.confirmClearQueue'), type: 'warning' })
     if (!confirmed) return
 
     playerStore.clearQueue()

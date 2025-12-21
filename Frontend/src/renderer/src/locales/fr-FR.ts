@@ -158,6 +158,7 @@ export default {
     noMusic: 'Aucune musique locale',
     noSearchResult: 'Aucune chanson correspondante trouvée',
     confirmDelete: 'Êtes-vous sûr de vouloir supprimer {count} chanson(s) sélectionnée(s) ?',
+    confirmDeleteSingle: 'Êtes-vous sûr de vouloir supprimer cette chanson ?',
     deleteSuccess: '{count} chanson(s) supprimée(s)',
     removeSelected: 'Supprimer la sélection',
     showInFolder: 'Afficher dans le dossier'
@@ -204,6 +205,7 @@ export default {
     addSuccess: 'Ajouté à la playlist',
     removeFromPlaylist: 'Retirer de la playlist',
     removeSuccess: 'Retiré de la playlist',
+    confirmRemoveSongs: 'Êtes-vous sûr de vouloir retirer {count} chanson(s) sélectionnée(s) de la playlist ?',
     songCount: '{count} chansons'
   },
 
@@ -215,6 +217,7 @@ export default {
     next: 'Suivant',
     playQueue: 'File d\'attente',
     clearQueue: 'Vider la file',
+    confirmClearQueue: 'Êtes-vous sûr de vouloir vider la file d\'attente ?',
     emptyQueue: 'File d\'attente vide',
     addToQueue: 'Ajouter à la file',
     nowPlaying: 'En cours de lecture',

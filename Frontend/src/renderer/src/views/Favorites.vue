@@ -120,6 +120,7 @@ import { formatDuration } from '@/utils/format'
 import { Close, Edit, Headset, MoreFilled, Search, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, nextTick, onActivated, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
 
 // 定义组件名称，用于 keep-alive 的 include 匹配
@@ -131,6 +132,7 @@ import type { Music } from '@/types/music'
 
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
+const { t } = useI18n()
 
 // ==================== 本地搜索功能 ====================
 const localSearchKeyword = ref('')
@@ -196,7 +198,7 @@ const handleBatchUnfavorite = async () => {
   if (selectedIds.value.size === 0) return
 
   const confirmed = await showConfirm({
-    message: `确定要取消收藏选中的 ${selectedIds.value.size} 首歌曲吗？`,
+    message: t('favoriteMusic.confirmUnfavorite', { count: selectedIds.value.size }),
     type: 'warning'
   })
   if (!confirmed) return

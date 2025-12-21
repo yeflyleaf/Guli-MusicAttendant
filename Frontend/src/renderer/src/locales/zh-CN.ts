@@ -157,6 +157,7 @@ export default {
     noMusic: '暂无本地音乐',
     noSearchResult: '未找到匹配的歌曲',
     confirmDelete: '确定要删除选中的 {count} 首歌曲吗？',
+    confirmDeleteSingle: '确定要删除这首歌曲吗？',
     deleteSuccess: '已删除 {count} 首歌曲',
     removeSelected: '删除选中',
     showInFolder: '在文件夹中显示'
@@ -202,7 +203,8 @@ export default {
     addToPlaylist: '添加到歌单',
     addSuccess: '已添加到歌单',
     removeFromPlaylist: '从歌单中移除',
-    removeSuccess: '已从歌单中移除',
+    removeSuccess: '已从歌单移除',
+    confirmRemoveSongs: '确定要从歌单中移除选中的 {count} 首歌曲吗？',
     songCount: '{count} 首歌曲'
   },
 
@@ -214,6 +216,7 @@ export default {
     next: '下一首',
     playQueue: '播放队列',
     clearQueue: '清空队列',
+    confirmClearQueue: '确定要清空播放队列吗？',
     emptyQueue: '播放队列为空',
     addToQueue: '添加到播放队列',
     nowPlaying: '正在播放',

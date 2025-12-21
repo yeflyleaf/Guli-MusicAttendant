@@ -143,6 +143,7 @@ export default {
     noMusic: 'Нет музыки',
     noSearchResult: 'Не найдено',
     confirmDelete: 'Удалить {count}?',
+    confirmDeleteSingle: 'Удалить эту песню?',
     deleteSuccess: 'Удалено {count}',
     removeSelected: 'Удалить',
     showInFolder: 'Показать в папке'
@@ -183,6 +184,7 @@ export default {
     addSuccess: 'Добавлено',
     removeFromPlaylist: 'Удалить',
     removeSuccess: 'Удалено',
+    confirmRemoveSongs: 'Удалить {count} из плейлиста?',
     songCount: '{count} треков'
   },
   player: {
@@ -192,6 +194,7 @@ export default {
     next: 'Следующий',
     playQueue: 'Очередь',
     clearQueue: 'Очистить',
+    confirmClearQueue: 'Очистить очередь воспроизведения?',
     emptyQueue: 'Пусто',
     addToQueue: 'В очередь',
     nowPlaying: 'Сейчас играет',

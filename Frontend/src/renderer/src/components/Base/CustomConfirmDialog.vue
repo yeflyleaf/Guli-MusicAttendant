@@ -116,19 +116,19 @@ const themeClass = computed(() => {
 const defaultTitle = computed(() => {
   switch (props.type) {
     case 'warning':
-      return t('common.warning') || '警告'
+      return t('common.warning') || 'Warning'
     case 'error':
-      return t('common.error') || '错误'
+      return t('common.error') || 'Error'
     case 'success':
-      return t('common.success') || '成功'
+      return t('common.success') || 'Success'
     default:
-      return t('common.confirm') || '确认'
+      return t('common.confirm') || 'Confirm'
   }
 })
 
 // 确认按钮文本
-const confirmText = computed(() => props.confirmText || t('common.confirm') || '确定')
-const cancelText = computed(() => props.cancelText || t('common.cancel') || '取消')
+const confirmText = computed(() => props.confirmText || t('common.confirm') || 'Confirm')
+const cancelText = computed(() => props.cancelText || t('common.cancel') || 'Cancel')
 
 // 确认按钮类
 const confirmButtonClass = computed(() => {

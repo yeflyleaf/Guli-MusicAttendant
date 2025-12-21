@@ -158,6 +158,7 @@ export default {
     noMusic: 'لا توجد موسيقى',
     noSearchResult: 'لم يتم العثور',
     confirmDelete: 'هل أنت متأكد من حذف {count} أغنية محددة؟',
+    confirmDeleteSingle: 'هل أنت متأكد من حذف هذه الأغنية؟',
     deleteSuccess: 'تم حذف {count} أغنية',
     removeSelected: 'إزالة المحدد',
     showInFolder: 'عرض في المجلد'
@@ -204,6 +205,7 @@ export default {
     addSuccess: 'تمت الإضافة إلى قائمة التشغيل',
     removeFromPlaylist: 'إزالة من قائمة التشغيل',
     removeSuccess: 'تمت الإزالة من قائمة التشغيل',
+    confirmRemoveSongs: 'هل أنت متأكد من إزالة {count} أغنية محددة من قائمة التشغيل؟',
     songCount: '{count} أغنية'
   },
 
@@ -215,6 +217,7 @@ export default {
     next: 'التالي',
     playQueue: 'قائمة التشغيل',
     clearQueue: 'مسح القائمة',
+    confirmClearQueue: 'هل أنت متأكد من مسح قائمة التشغيل؟',
     emptyQueue: 'قائمة التشغيل فارغة',
     addToQueue: 'إضافة إلى القائمة',
     nowPlaying: 'يتم التشغيل الآن',

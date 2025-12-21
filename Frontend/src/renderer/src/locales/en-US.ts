@@ -157,6 +157,7 @@ export default {
     noMusic: 'No local music',
     noSearchResult: 'No matching songs found',
     confirmDelete: 'Are you sure you want to delete {count} selected song(s)?',
+    confirmDeleteSingle: 'Are you sure you want to delete this song?',
     deleteSuccess: 'Deleted {count} song(s)',
     removeSelected: 'Remove Selected',
     showInFolder: 'Show in Folder'
@@ -203,6 +204,7 @@ export default {
     addSuccess: 'Added to playlist',
     removeFromPlaylist: 'Remove from Playlist',
     removeSuccess: 'Removed from playlist',
+    confirmRemoveSongs: 'Are you sure you want to remove {count} selected song(s) from the playlist?',
     songCount: '{count} songs'
   },
 
@@ -214,6 +216,7 @@ export default {
     next: 'Next',
     playQueue: 'Play Queue',
     clearQueue: 'Clear Queue',
+    confirmClearQueue: 'Are you sure you want to clear the play queue?',
     emptyQueue: 'Play queue is empty',
     addToQueue: 'Add to Queue',
     nowPlaying: 'Now Playing',

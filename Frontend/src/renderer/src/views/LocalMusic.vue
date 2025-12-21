@@ -142,7 +142,7 @@
                   <el-dropdown-item command="addToQueue">{{ $t('player.addToQueue') }}</el-dropdown-item>
                   <el-dropdown-item command="addToPlaylist">{{ $t('playlist.addToPlaylist') }}</el-dropdown-item>
                   <el-dropdown-item command="showInFolder">{{ $t('localMusic.showInFolder') || '在文件夹中显示'
-                    }}</el-dropdown-item>
+                  }}</el-dropdown-item>
                   <el-dropdown-item command="delete" divided>{{ $t('common.delete') }}</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -191,6 +191,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, h, nextTick, onActivated, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
 // 定义组件名称，用于 keep-alive 的 include 匹配
 defineOptions({
@@ -211,6 +212,7 @@ const MusicPlay = {
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
+const { t } = useI18n()
 const { selectFolder, scanFolder, scanAllFolders, showInFolder } = useIpc()
 
 // 滚动容器引用和滚动位置保存
@@ -455,7 +457,7 @@ const handleToggleFavorite = async (id: number) => {
 
 // 删除选中
 const handleDeleteSelected = async () => {
-  const confirmed = await showConfirm({ message: `确定要删除选中的 ${selectedIds.value.size} 首歌曲吗？`, type: 'warning' })
+  const confirmed = await showConfirm({ message: t('localMusic.confirmDelete', { count: selectedIds.value.size }), type: 'warning' })
   if (!confirmed) return
 
   await libraryStore.deleteMusicBatch(Array.from(selectedIds.value))
@@ -481,7 +483,7 @@ const handleCommand = async (command: string, song: Music) => {
       showInFolder(song.file_path)
       break
     case 'delete':
-      const confirmed = await showConfirm({ message: '确定要删除这首歌曲吗？', type: 'warning' })
+      const confirmed = await showConfirm({ message: t('localMusic.confirmDeleteSingle'), type: 'warning' })
       if (confirmed) {
         await libraryStore.deleteMusic(song.id)
         ElMessage.success('删除成功')

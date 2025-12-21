@@ -143,6 +143,7 @@ export default {
     noMusic: 'Sin música',
     noSearchResult: 'Sin resultados',
     confirmDelete: '¿Eliminar {count}?',
+    confirmDeleteSingle: '¿Eliminar esta canción?',
     deleteSuccess: '{count} eliminadas',
     removeSelected: 'Eliminar',
     showInFolder: 'Mostrar en carpeta'
@@ -183,6 +184,7 @@ export default {
     addSuccess: 'Agregada',
     removeFromPlaylist: 'Quitar',
     removeSuccess: 'Quitada',
+    confirmRemoveSongs: '¿Quitar {count} de la lista?',
     songCount: '{count} canciones'
   },
   player: {
@@ -192,6 +194,7 @@ export default {
     next: 'Siguiente',
     playQueue: 'Cola',
     clearQueue: 'Limpiar',
+    confirmClearQueue: '¿Limpiar la cola de reproducción?',
     emptyQueue: 'Cola vacía',
     addToQueue: 'A la cola',
     nowPlaying: 'Reproduciendo',

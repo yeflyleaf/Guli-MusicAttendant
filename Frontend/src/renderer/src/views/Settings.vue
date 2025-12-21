@@ -311,7 +311,7 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // 初始化 i18n 以便在模板中使用 $t
-useI18n()
+const { t } = useI18n()
 
 const settingsStore = useSettingsStore()
 const libraryStore = useLibraryStore()
@@ -419,7 +419,10 @@ const handleAddFolder = async () => {
 }
 
 const handleRemoveFolder = async (folder: string) => {
-  const confirmed = await showConfirm({ message: `确定要移除文件夹 "${folder}" 吗？\n（不会删除文件夹中的歌曲数据）`, type: 'warning' })
+  const confirmed = await showConfirm({
+    message: t('settings.library.confirmRemoveFolder', { folder }),
+    type: 'warning'
+  })
   if (!confirmed) return
 
   await settingsStore.removeMusicFolder(folder)
@@ -449,7 +452,7 @@ const handleScanAll = async () => {
 // --- 其他 ---
 
 const handleResetSettings = async () => {
-  const confirmed = await showConfirm({ message: '确定要将所有设置恢复为默认值吗？', type: 'warning' })
+  const confirmed = await showConfirm({ message: t('settings.about.confirmReset'), type: 'warning' })
   if (!confirmed) return
 
   await settingsStore.resetSettings()
