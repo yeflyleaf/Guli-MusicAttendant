@@ -94,7 +94,8 @@ export default {
       splashThemeSilicon: 'Orden del Silicio',
       splashThemeEthereal: 'Geometría Minimalista',
       splashThemeCyber: 'Ciudad Cibernética',
-      splashThemeSakura: 'Flores de Cerezo Zen'
+      splashThemeSakura: 'Flores de Cerezo Zen',
+      splashThemeChronos: 'Fisura del Tiempo'
     },
     library: {
       title: 'Biblioteca',

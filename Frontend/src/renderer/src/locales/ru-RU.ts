@@ -94,7 +94,8 @@ export default {
       splashThemeSilicon: 'Кремниевый Порядок',
       splashThemeEthereal: 'Минималистичная Геометрия',
       splashThemeCyber: 'Кибергород',
-      splashThemeSakura: 'Цветение Сакуры'
+      splashThemeSakura: 'Цветение Сакуры',
+      splashThemeChronos: 'Разлом Хроноса'
     },
     library: {
       title: 'Библиотека',

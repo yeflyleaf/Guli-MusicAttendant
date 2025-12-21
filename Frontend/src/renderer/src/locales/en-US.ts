@@ -102,7 +102,8 @@ export default {
       splashThemeSilicon: 'Silicon Order',
       splashThemeEthereal: 'Minimalist Geometry',
       splashThemeCyber: 'Cyber Cityscape',
-      splashThemeSakura: 'Zen Cherry Blossom'
+      splashThemeSakura: 'Zen Cherry Blossom',
+      splashThemeChronos: 'Chronos Rift'
     },
     // Library
     library: {

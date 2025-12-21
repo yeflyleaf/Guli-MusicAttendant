@@ -103,7 +103,8 @@ export default {
       splashThemeSilicon: 'نظام السيليكون',
       splashThemeEthereal: 'الهندسة البسيطة',
       splashThemeCyber: 'مدينة المستقبل',
-      splashThemeSakura: 'أزهار الكرز اليابانية'
+      splashThemeSakura: 'أزهار الكرز اليابانية',
+      splashThemeChronos: 'شق الزمن'
     },
     // Library
     library: {

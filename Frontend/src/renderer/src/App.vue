@@ -33,6 +33,9 @@
   <!-- 和风落樱主题 -->
   <ZenCherryBlossomSplash v-if="showSplash && settingsStore.splashTheme === 'sakura'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 时空裂隙主题 -->
+  <ChronosRiftSplash v-if="showSplash && settingsStore.splashTheme === 'chronos'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -68,6 +71,7 @@
 <script setup lang="ts">
 import BioluminescentAbyssSplash from '@/components/Layout/BioluminescentAbyssSplash.vue'
 import BrassEraSplash from '@/components/Layout/BrassEraSplash.vue'
+import ChronosRiftSplash from '@/components/Layout/ChronosRiftSplash.vue'
 import CyberCityscapeSplash from '@/components/Layout/CyberCityscapeSplash.vue'
 import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.vue'
 import EtherealGeometrySplash from '@/components/Layout/EtherealGeometrySplash.vue'

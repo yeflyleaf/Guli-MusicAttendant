@@ -103,7 +103,8 @@ export default {
       splashThemeSilicon: 'Ordre du Silicium',
       splashThemeEthereal: 'Géométrie Minimaliste',
       splashThemeCyber: 'Ville Cybernétique',
-      splashThemeSakura: 'Fleurs de Cerisier Zen'
+      splashThemeSakura: 'Fleurs de Cerisier Zen',
+      splashThemeChronos: 'Fissure Temporelle'
     },
     // Library
     library: {
