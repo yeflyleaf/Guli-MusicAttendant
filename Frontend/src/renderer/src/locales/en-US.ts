@@ -96,7 +96,8 @@ export default {
       splashThemeEmerald: 'Emerald Sanctuary',
       splashThemeMolten: 'Thermal Impact',
       splashThemeAbyss: 'Bioluminescent Abyss',
-      splashThemeBrass: 'Brass Era'
+      splashThemeBrass: 'Brass Era',
+      splashThemePrism: 'Sub-zero Prism'
     },
     // Library
     library: {

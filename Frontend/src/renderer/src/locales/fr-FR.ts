@@ -97,7 +97,8 @@ export default {
       splashThemeEmerald: 'Sanctuaire d\'Émeraude',
       splashThemeMolten: 'Impact Thermique',
       splashThemeAbyss: 'Abysse Bioluminescente',
-      splashThemeBrass: 'Ère du Laiton'
+      splashThemeBrass: 'Ère du Laiton',
+      splashThemePrism: 'Prisme Zéro Absolu'
     },
     // Library
     library: {

@@ -180,6 +180,7 @@
                 <el-option :label="$t('settings.behavior.splashThemeMolten')" value="molten" />
                 <el-option :label="$t('settings.behavior.splashThemeAbyss')" value="abyss" />
                 <el-option :label="$t('settings.behavior.splashThemeBrass')" value="brass" />
+                <el-option :label="$t('settings.behavior.splashThemePrism')" value="prism" />
               </el-select>
             </div>
           </div>

@@ -88,7 +88,8 @@ export default {
       splashThemeEmerald: 'Santuario Esmeralda',
       splashThemeMolten: 'Impacto Térmico',
       splashThemeAbyss: 'Abismo Bioluminiscente',
-      splashThemeBrass: 'Era del Latón'
+      splashThemeBrass: 'Era del Latón',
+      splashThemePrism: 'Prisma Bajo Cero'
     },
     library: {
       title: 'Biblioteca',

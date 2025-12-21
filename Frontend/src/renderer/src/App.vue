@@ -15,6 +15,9 @@
   <!-- 黄铜纪元主题 -->
   <BrassEraSplash v-if="showSplash && settingsStore.splashTheme === 'brass'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 零度棱镜主题 -->
+  <SubzeroPrismSplash v-if="showSplash && settingsStore.splashTheme === 'prism'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -56,6 +59,7 @@ import Header from '@/components/Layout/Header.vue'
 import MoltenForgeSplash from '@/components/Layout/MoltenForgeSplash.vue'
 import PlayQueue from '@/components/Layout/PlayQueue.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
+import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
 import { useShortcuts } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'

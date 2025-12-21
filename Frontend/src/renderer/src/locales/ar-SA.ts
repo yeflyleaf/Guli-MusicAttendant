@@ -97,7 +97,8 @@ export default {
       splashThemeEmerald: 'ملاذ الزمرد',
       splashThemeMolten: 'تأثير حراري',
       splashThemeAbyss: 'هاوية بيولوجية مضيئة',
-      splashThemeBrass: 'عصر النحاس'
+      splashThemeBrass: 'عصر النحاس',
+      splashThemePrism: 'موشور تحت الصفر'
     },
     // Library
     library: {

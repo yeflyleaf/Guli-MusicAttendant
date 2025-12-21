@@ -88,7 +88,8 @@ export default {
       splashThemeEmerald: 'Изумрудное убежище',
       splashThemeMolten: 'Тепловой удар',
       splashThemeAbyss: 'Биолюминесцентная бездна',
-      splashThemeBrass: 'Эра Латуни'
+      splashThemeBrass: 'Эра Латуни',
+      splashThemePrism: 'Призма Абсолютного Нуля'
     },
     library: {
       title: 'Библиотека',
