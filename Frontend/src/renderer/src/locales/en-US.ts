@@ -89,7 +89,11 @@ export default {
       disableSplashScreenDesc: 'When enabled, the application will skip the opening animation on the next launch',
       showSplashScreen: 'Show splash screen immediately',
       showSplashScreenDesc: 'Play the opening animation once again',
-      showSplashScreenBtn: 'Show Immediately'
+      showSplashScreenBtn: 'Show Immediately',
+      splashTheme: 'Splash Screen Theme',
+      splashThemeDesc: 'Choose the visual style for the splash screen',
+      splashThemeCosmic: 'Cosmic Voyage',
+      splashThemeEmerald: 'Emerald Sanctuary'
     },
     // Library
     library: {

@@ -168,6 +168,17 @@
               </div>
               <el-button @click="handleShowSplashScreen">{{ $t('settings.behavior.showSplashScreenBtn') }}</el-button>
             </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.behavior.splashTheme') }}</span>
+                <span class="setting-desc">{{ $t('settings.behavior.splashThemeDesc') }}</span>
+              </div>
+              <el-select v-model="splashTheme" style="width: 140px" @change="handleSplashThemeChange">
+                <el-option :label="$t('settings.behavior.splashThemeCosmic')" value="cosmic" />
+                <el-option :label="$t('settings.behavior.splashThemeEmerald')" value="emerald" />
+              </el-select>
+            </div>
           </div>
         </div>
       </el-tab-pane>
@@ -273,7 +284,7 @@
 import { useIpc } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
 import { useSettingsStore } from '@/store/settings.store'
-import type { Theme } from '@/types/settings'
+import type { SplashTheme, Theme } from '@/types/settings'
 import {
   Close,
   Folder,
@@ -311,6 +322,7 @@ const rememberPlaybackStatus = ref(true)
 const gaplessPlayback = ref(false)
 const autoScan = ref(true)
 const disableSplashScreen = ref(false)
+const splashTheme = ref<SplashTheme>('cosmic')
 
 // 初始化设置值
 onMounted(() => {
@@ -326,6 +338,7 @@ onMounted(() => {
   gaplessPlayback.value = settingsStore.gaplessPlayback
   autoScan.value = settingsStore.autoScan
   disableSplashScreen.value = settingsStore.disableSplashScreen
+  splashTheme.value = settingsStore.splashTheme
 })
 
 // --- 外观设置处理 ---
@@ -378,6 +391,10 @@ const handleDisableSplashScreenChange = async (value: boolean) => {
 
 const handleShowSplashScreen = () => {
   window.dispatchEvent(new CustomEvent('show-splash-screen'))
+}
+
+const handleSplashThemeChange = async (value: SplashTheme) => {
+  await settingsStore.saveSettings({ splashTheme: value })
 }
 
 // --- 音乐库设置处理 ---

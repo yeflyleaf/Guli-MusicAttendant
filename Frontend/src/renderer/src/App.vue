@@ -1,8 +1,11 @@
 <template>
   <!-- 启动屏幕 -->
-  <!-- 启动屏幕 -->
-  <SplashScreen v-if="showSplash" :disabled="isStartup && settingsStore.disableSplashScreen"
-    @finished="handleSplashFinish" />
+  <!-- 星际穿梭主题 -->
+  <SplashScreen v-if="showSplash && settingsStore.splashTheme === 'cosmic'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 翡翠圣域主题 -->
+  <EmeraldSanctuarySplash v-if="showSplash && settingsStore.splashTheme === 'emerald'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -36,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.vue'
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'
 import PlayQueue from '@/components/Layout/PlayQueue.vue'

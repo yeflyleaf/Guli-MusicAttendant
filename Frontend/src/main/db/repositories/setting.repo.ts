@@ -12,6 +12,7 @@ export function getAllSettings(): Settings {
 
   const settings: Settings = {
     theme: 'dark',
+    splashTheme: 'cosmic',
     volume: 0.7,
     playMode: 'sequence',
     language: 'zh-CN',
@@ -31,6 +32,9 @@ export function getAllSettings(): Settings {
     switch (row.key) {
       case 'theme':
         settings.theme = row.value as 'dark' | 'light'
+        break
+      case 'splashTheme':
+        settings.splashTheme = row.value as 'cosmic' | 'emerald'
         break
       case 'volume':
         settings.volume = parseFloat(row.value)
@@ -181,6 +185,7 @@ export function resetSettings(): boolean {
 
   const defaults = [
     ['theme', 'dark'],
+    ['splashTheme', 'cosmic'],
     ['volume', '0.7'],
     ['playMode', 'sequence'],
     ['language', 'zh-CN'],

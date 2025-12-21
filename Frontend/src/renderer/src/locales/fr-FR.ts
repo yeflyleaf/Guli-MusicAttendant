@@ -90,7 +90,11 @@ export default {
       disableSplashScreenDesc: 'Si activé, l\'application sautera l\'animation d\'ouverture au prochain lancement',
       showSplashScreen: 'Afficher l\'écran de démarrage immédiatement',
       showSplashScreenDesc: 'Rejouer l\'animation d\'ouverture une fois de plus',
-      showSplashScreenBtn: 'Afficher immédiatement'
+      showSplashScreenBtn: 'Afficher immédiatement',
+      splashTheme: 'Thème de l\'écran de démarrage',
+      splashThemeDesc: 'Choisir le style visuel de l\'écran de démarrage',
+      splashThemeCosmic: 'Voyage Cosmique',
+      splashThemeEmerald: 'Sanctuaire d\'Émeraude'
     },
     // Library
     library: {

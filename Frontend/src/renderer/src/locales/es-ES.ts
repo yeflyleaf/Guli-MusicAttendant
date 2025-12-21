@@ -81,7 +81,11 @@ export default {
       disableSplashScreenDesc: 'Si está activado, la aplicación omitirá la animación de apertura en el próximo lanzamiento',
       showSplashScreen: 'Mostrar pantalla de inicio inmediatamente',
       showSplashScreenDesc: 'Reproducir la animación de apertura una vez más',
-      showSplashScreenBtn: 'Mostrar inmediatamente'
+      showSplashScreenBtn: 'Mostrar inmediatamente',
+      splashTheme: 'Tema de pantalla de inicio',
+      splashThemeDesc: 'Elegir el estilo visual de la pantalla de inicio',
+      splashThemeCosmic: 'Viaje Cósmico',
+      splashThemeEmerald: 'Santuario Esmeralda'
     },
     library: {
       title: 'Biblioteca',

@@ -89,7 +89,11 @@ export default {
       disableSplashScreenDesc: '开启后，下次启动应用将跳过开场动画',
       showSplashScreen: '立即显示过场动画',
       showSplashScreenDesc: '重新播放一次开场动画',
-      showSplashScreenBtn: '立即显示'
+      showSplashScreenBtn: '立即显示',
+      splashTheme: '过场动画主题',
+      splashThemeDesc: '选择开屏动画的视觉风格',
+      splashThemeCosmic: '星际穿梭',
+      splashThemeEmerald: '翡翠圣域'
     },
     // 音乐库设置
     library: {

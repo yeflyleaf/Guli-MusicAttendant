@@ -12,6 +12,7 @@ interface SettingsState extends Settings {
 export const useSettingsStore = defineStore('settings', {
   state: (): SettingsState => ({
     theme: 'dark',
+    splashTheme: 'cosmic',
     volume: 0.7,
     playMode: 'sequence',
     language: 'zh-CN',
@@ -37,6 +38,7 @@ export const useSettingsStore = defineStore('settings', {
         const settings = await window.electron.settings.getAll()
 
         this.theme = settings.theme
+        this.splashTheme = settings.splashTheme ?? 'cosmic'
         this.volume = settings.volume
         this.playMode = settings.playMode
         this.language = settings.language

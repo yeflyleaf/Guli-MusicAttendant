@@ -81,7 +81,11 @@ export default {
       disableSplashScreenDesc: 'Если включено, приложение пропустит начальную анимацию при следующем запуске',
       showSplashScreen: 'Показать заставку немедленно',
       showSplashScreenDesc: 'Проиграть начальную анимацию еще раз',
-      showSplashScreenBtn: 'Показать немедленно'
+      showSplashScreenBtn: 'Показать немедленно',
+      splashTheme: 'Тема заставки',
+      splashThemeDesc: 'Выберите визуальный стиль заставки',
+      splashThemeCosmic: 'Космическое путешествие',
+      splashThemeEmerald: 'Изумрудное убежище'
     },
     library: {
       title: 'Библиотека',

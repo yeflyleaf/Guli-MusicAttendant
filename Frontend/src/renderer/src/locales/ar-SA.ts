@@ -90,7 +90,11 @@ export default {
       disableSplashScreenDesc: 'عند التمكين، سيتخطى التطبيق الرسوم المتحركة الافتتاحية عند التشغيل التالي',
       showSplashScreen: 'إظهار شاشة البداية فوراً',
       showSplashScreenDesc: 'تشغيل الرسوم المتحركة الافتتاحية مرة أخرى',
-      showSplashScreenBtn: 'إظهار فوراً'
+      showSplashScreenBtn: 'إظهار فوراً',
+      splashTheme: 'سمة شاشة البداية',
+      splashThemeDesc: 'اختر النمط البصري لشاشة البداية',
+      splashThemeCosmic: 'رحلة كونية',
+      splashThemeEmerald: 'ملاذ الزمرد'
     },
     // Library
     library: {

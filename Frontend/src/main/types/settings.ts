@@ -8,9 +8,13 @@ export type PlayMode = 'sequence' | 'loop' | 'single' | 'random'
 // 主题
 export type Theme = 'dark' | 'light'
 
+// 开屏动画主题
+export type SplashTheme = 'cosmic' | 'emerald'
+
 // 设置键名
 export type SettingKey =
   | 'theme'
+  | 'splashTheme'
   | 'volume'
   | 'playMode'
   | 'language'
@@ -28,6 +32,7 @@ export type SettingKey =
 // 完整设置对象
 export interface Settings {
   theme: Theme               // 主题：暗色/亮色
+  splashTheme: SplashTheme   // 开屏动画主题
   volume: number             // 音量 0-1
   playMode: PlayMode         // 播放模式
   language: string           // 语言
