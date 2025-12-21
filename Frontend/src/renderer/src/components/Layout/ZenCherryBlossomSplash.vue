@@ -5,7 +5,7 @@
       <div class="fuji-layer">
         <div class="sun-moon" :class="{ setting: isToriiPassage }"></div>
         <div class="clouds">
-          <div class="cloud" v-for="n in 6" :key="n" :style="getCloudStyle(n)"></div>
+          <div class="cloud" v-for="n in 12" :key="n" :style="getCloudStyle(n)"></div>
         </div>
         <div class="fuji-mountain">
           <div class="fuji-snow"></div>
@@ -18,23 +18,23 @@
       <!-- 第2层 - 浮世绘海浪 -->
       <div class="wave-layer">
         <div class="wave wave-1">
-          <div class="wave-crest" v-for="n in 12" :key="'crest1-' + n" :style="getWaveCrestStyle(n, 1)"></div>
+          <div class="wave-crest" v-for="n in 18" :key="'crest1-' + n" :style="getWaveCrestStyle(n, 1)"></div>
         </div>
         <div class="wave wave-2">
-          <div class="wave-crest" v-for="n in 10" :key="'crest2-' + n" :style="getWaveCrestStyle(n, 2)"></div>
+          <div class="wave-crest" v-for="n in 15" :key="'crest2-' + n" :style="getWaveCrestStyle(n, 2)"></div>
         </div>
         <div class="wave wave-3">
-          <div class="wave-crest" v-for="n in 8" :key="'crest3-' + n" :style="getWaveCrestStyle(n, 3)"></div>
+          <div class="wave-crest" v-for="n in 12" :key="'crest3-' + n" :style="getWaveCrestStyle(n, 3)"></div>
         </div>
         <div class="wave-foam"></div>
       </div>
 
       <!-- 第3层 - 漂浮油纸伞 -->
       <div class="wagasa-layer">
-        <div class="wagasa" v-for="n in 3" :key="n" :style="getWagasaStyle(n)">
+        <div class="wagasa" v-for="n in 6" :key="n" :style="getWagasaStyle(n)">
           <div class="wagasa-top"></div>
           <div class="wagasa-ribs">
-            <div class="rib" v-for="r in 8" :key="r" :style="{ '--i': r }"></div>
+            <div class="rib" v-for="r in 16" :key="r" :style="{ '--i': r }"></div>
           </div>
           <div class="wagasa-handle"></div>
         </div>
@@ -42,16 +42,39 @@
 
       <!-- 第4层 - 装饰性元素 -->
       <div class="decorations">
-        <!-- 鸟居 -->
-        <div class="torii">
+        <!-- 多个鸟居 -->
+        <div class="torii torii-main">
           <div class="torii-top"></div>
           <div class="torii-beam"></div>
           <div class="torii-pillar left"></div>
           <div class="torii-pillar right"></div>
         </div>
-        <!-- 提灯 -->
-        <div class="chochin-group">
-          <div class="chochin" v-for="n in 3" :key="n" :style="getChochinStyle(n)">
+        <div class="torii torii-small torii-left">
+          <div class="torii-top"></div>
+          <div class="torii-beam"></div>
+          <div class="torii-pillar left"></div>
+          <div class="torii-pillar right"></div>
+        </div>
+        <div class="torii torii-small torii-right">
+          <div class="torii-top"></div>
+          <div class="torii-beam"></div>
+          <div class="torii-pillar left"></div>
+          <div class="torii-pillar right"></div>
+        </div>
+        <!-- 提灯组 - 左侧 -->
+        <div class="chochin-group chochin-group-left">
+          <div class="chochin" v-for="n in 6" :key="'left-' + n" :style="getChochinStyle(n, 'left')">
+            <div class="chochin-top"></div>
+            <div class="chochin-body">
+              <div class="chochin-glow"></div>
+            </div>
+            <div class="chochin-bottom"></div>
+            <div class="chochin-tassel"></div>
+          </div>
+        </div>
+        <!-- 提灯组 - 右侧 -->
+        <div class="chochin-group chochin-group-right">
+          <div class="chochin" v-for="n in 6" :key="'right-' + n" :style="getChochinStyle(n, 'right')">
             <div class="chochin-top"></div>
             <div class="chochin-body">
               <div class="chochin-glow"></div>
@@ -166,45 +189,60 @@ const appNameChars = '故里音乐助手'.split('')
 
 let animationFrameId: number | null = null
 
-// 云彩样式
+// 云彩样式 - 支持12个
 const getCloudStyle = (n: number) => ({
-  left: `${(n - 1) * 18}%`,
-  top: `${10 + Math.sin(n) * 8}%`,
-  '--delay': `${n * 2}s`,
-  '--duration': `${20 + n * 5}s`,
-  opacity: 0.3 + Math.random() * 0.4
+  left: `${(n - 1) * 9}%`,
+  top: `${5 + Math.sin(n * 0.8) * 12}%`,
+  '--delay': `${n * 1.5}s`,
+  '--duration': `${18 + n * 3}s`,
+  opacity: 0.25 + Math.random() * 0.35,
+  transform: `scale(${0.7 + Math.random() * 0.6})`
 })
 
 // 浪花顶部样式
-const getWaveCrestStyle = (n: number, layer: number) => ({
-  left: `${(n - 1) * (100 / (12 - layer * 2))}%`,
-  '--delay': `${n * 0.2 + layer * 0.5}s`,
-  '--size': `${20 + layer * 10 + Math.random() * 15}px`
-})
-
-// 油纸伞样式
-const getWagasaStyle = (n: number) => {
-  const positions = [
-    { left: '15%', top: '20%' },
-    { left: '75%', top: '15%' },
-    { left: '85%', top: '35%' }
-  ]
-  const colors = ['#ff6b6b', '#c41e3a', '#ff69b4']
+const getWaveCrestStyle = (n: number, layer: number) => {
+  const counts = [18, 15, 12]
+  const count = counts[layer - 1] || 18
   return {
-    ...positions[n - 1],
-    '--color': colors[n - 1],
-    '--delay': `${n * 1.5}s`,
-    '--duration': `${8 + n * 2}s`,
-    '--rotate': `${(n - 2) * 15}deg`
+    left: `${(n - 1) * (100 / count)}%`,
+    '--delay': `${n * 0.15 + layer * 0.4}s`,
+    '--size': `${18 + layer * 8 + Math.random() * 12}px`
   }
 }
 
-// 提灯样式
-const getChochinStyle = (n: number) => ({
-  right: `${20 + (n - 1) * 60}px`,
-  '--delay': `${n * 0.3}s`,
-  '--swing': `${3 + n}deg`
-})
+// 油纸伞样式 - 支持6个
+const getWagasaStyle = (n: number) => {
+  const positions = [
+    { left: '8%', top: '12%' },
+    { left: '72%', top: '8%' },
+    { left: '88%', top: '25%' },
+    { left: '5%', top: '45%' },
+    { left: '78%', top: '40%' },
+    { left: '18%', top: '30%' }
+  ]
+  const colors = ['#ff6b6b', '#c41e3a', '#ff69b4', '#e74c3c', '#ff1493', '#dc143c']
+  const sizes = [1, 0.85, 0.95, 0.75, 0.9, 0.8]
+  return {
+    ...positions[n - 1],
+    '--color': colors[n - 1],
+    '--delay': `${n * 1.2}s`,
+    '--duration': `${7 + n * 1.5}s`,
+    '--rotate': `${(n - 3) * 12}deg`,
+    transform: `scale(${sizes[n - 1]})`
+  }
+}
+
+// 提灯样式 - 支持双侧12个
+const getChochinStyle = (n: number, side: 'left' | 'right') => {
+  const baseOffset = side === 'left' ? 0 : 0
+  return {
+    [side]: `${baseOffset + (n - 1) * 55}px`,
+    top: `${(n % 2 === 0 ? 0 : 15) + (n - 1) * 5}px`,
+    '--delay': `${n * 0.25 + (side === 'right' ? 0.1 : 0)}s`,
+    '--swing': `${2.5 + (n % 3)}deg`,
+    transform: `scale(${0.75 + (n % 3) * 0.1})`
+  }
+}
 
 // 碎片样式
 const getShardStyle = (n: number) => {
@@ -1347,6 +1385,64 @@ $ink-black: #1a1a2e;
   width: 180px;
   height: 240px;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4));
+
+  // 主鸟居
+  &.torii-main {
+    bottom: 18%;
+    left: 4%;
+    width: 180px;
+    height: 240px;
+  }
+
+  // 小鸟居变体
+  &.torii-small {
+    width: 100px;
+    height: 140px;
+    opacity: 0.7;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+
+    .torii-top {
+      height: 14px;
+
+      &::before {
+        height: 8px;
+        top: -6px;
+      }
+
+      &::after {
+        height: 2px;
+      }
+    }
+
+    .torii-beam {
+      top: 20px;
+      height: 10px;
+    }
+
+    .torii-pillar {
+      width: 12px;
+      top: 12px;
+
+      &::after {
+        height: 8px;
+        left: -4px;
+        right: -4px;
+      }
+    }
+  }
+
+  // 左侧远景小鸟居
+  &.torii-left {
+    bottom: 25%;
+    left: 20%;
+  }
+
+  // 右侧远景小鸟居
+  &.torii-right {
+    bottom: 22%;
+    right: 8%;
+    left: auto;
+  }
 }
 
 .torii-top {
@@ -1511,8 +1607,19 @@ $ink-black: #1a1a2e;
 // 提灯 - 精细版
 .chochin-group {
   position: absolute;
-  top: 8%;
-  right: 4%;
+  top: 6%;
+
+  // 左侧提灯组
+  &.chochin-group-left {
+    left: 3%;
+    right: auto;
+  }
+
+  // 右侧提灯组
+  &.chochin-group-right {
+    right: 3%;
+    left: auto;
+  }
 }
 
 .chochin {
