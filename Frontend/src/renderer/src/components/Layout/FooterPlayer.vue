@@ -69,13 +69,13 @@
         </el-icon>
 
         <!-- 音量控制 -->
-        <el-popover trigger="hover" placement="top" :width="40">
+        <el-popover trigger="hover" placement="top" :width="36" popper-style="min-width: auto; padding: 12px 0;">
           <template #reference>
             <el-icon class="control-btn small" @click="playerStore.toggleMute">
               <component :is="volumeIcon" />
             </el-icon>
           </template>
-          <div class="volume-slider">
+          <div class="volume-slider" @wheel.prevent="handleVolumeWheel">
             <el-slider v-model="volumePercent" vertical height="100px" :show-tooltip="false"
               @input="handleVolumeChange" />
             <span class="volume-value">{{ volumePercent }}%</span>
@@ -226,6 +226,14 @@ const volumeIcon = computed(() => {
   if (vol < 70) return VolumeMedium
   return VolumeHigh
 })
+
+// 处理音量滚轮
+const handleVolumeWheel = (e: WheelEvent) => {
+  const step = 0.05
+  const delta = e.deltaY < 0 ? step : -step
+  const newVolume = Math.min(Math.max(playerStore.volume + delta, 0), 1)
+  setVolume(newVolume)
+}
 
 // 处理音量变化
 const handleVolumeChange = (value: number) => {
@@ -766,7 +774,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: $spacing-sm;
+  padding: 0;
 
   .volume-value {
     margin-top: $spacing-sm;
