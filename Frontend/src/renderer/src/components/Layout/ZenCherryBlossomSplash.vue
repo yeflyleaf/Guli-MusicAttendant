@@ -151,11 +151,8 @@
         <!-- 樱花暴风雪 -->
         <canvas ref="blizzardCanvas" class="blizzard-canvas"></canvas>
 
-        <!-- 终点光芒 -->
+        <!-- 终点光芒 - 只保留白光 -->
         <div class="bloom-light">
-          <div class="bloom-petals">
-            <div class="bloom-petal" v-for="n in 8" :key="n" :style="{ '--i': n }"></div>
-          </div>
           <div class="white-flash"></div>
         </div>
       </div>
@@ -514,13 +511,13 @@ const initBlizzardSystem = () => {
     opacity: number
   }
 
-  const petals: BlizzardPetal[] = Array.from({ length: 300 }, () => ({
+  const petals: BlizzardPetal[] = Array.from({ length: 500 }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
     z: Math.random(),
-    size: 5 + Math.random() * 15,
-    speed: 5 + Math.random() * 15,
-    opacity: 0.3 + Math.random() * 0.7
+    size: 5 + Math.random() * 18,
+    speed: 4 + Math.random() * 16,
+    opacity: 0.4 + Math.random() * 0.6
   }))
 
   let progress = 0
