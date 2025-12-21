@@ -364,7 +364,7 @@ onMounted(async () => {
     loadingTextIndex.value = (loadingTextIndex.value + 1) % loadingTexts.length
   }, 800) // 文字轮换慢一点
 
-  const minDisplayTime = 3000 // 基础展示时间延长至3秒
+  const minDisplayTime = 2000 // 基础展示时间调整至2秒
   const startTime = Date.now()
 
   // 等待数据预加载完成

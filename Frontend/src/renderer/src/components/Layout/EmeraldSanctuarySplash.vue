@@ -444,7 +444,7 @@ onMounted(async () => {
   dewdropInterval = window.setInterval(createDewdrop, 3000)
   setTimeout(createDewdrop, 1000)
 
-  const minDisplayTime = 3500
+  const minDisplayTime = 2000
   const startTime = Date.now()
 
   // 等待数据预加载
