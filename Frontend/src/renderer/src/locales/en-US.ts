@@ -93,7 +93,8 @@ export default {
       splashTheme: 'Splash Screen Theme',
       splashThemeDesc: 'Choose the visual style for the splash screen',
       splashThemeCosmic: 'Cosmic Voyage',
-      splashThemeEmerald: 'Emerald Sanctuary'
+      splashThemeEmerald: 'Emerald Sanctuary',
+      splashThemeMolten: 'Thermal Impact'
     },
     // Library
     library: {

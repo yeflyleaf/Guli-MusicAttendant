@@ -177,6 +177,7 @@
               <el-select v-model="splashTheme" style="width: 140px" @change="handleSplashThemeChange">
                 <el-option :label="$t('settings.behavior.splashThemeCosmic')" value="cosmic" />
                 <el-option :label="$t('settings.behavior.splashThemeEmerald')" value="emerald" />
+                <el-option :label="$t('settings.behavior.splashThemeMolten')" value="molten" />
               </el-select>
             </div>
           </div>

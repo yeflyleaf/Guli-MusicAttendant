@@ -94,7 +94,8 @@ export default {
       splashTheme: 'سمة شاشة البداية',
       splashThemeDesc: 'اختر النمط البصري لشاشة البداية',
       splashThemeCosmic: 'رحلة كونية',
-      splashThemeEmerald: 'ملاذ الزمرد'
+      splashThemeEmerald: 'ملاذ الزمرد',
+      splashThemeMolten: 'تأثير حراري'
     },
     // Library
     library: {

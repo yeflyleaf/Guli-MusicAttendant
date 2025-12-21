@@ -85,7 +85,8 @@ export default {
       splashTheme: 'Tema de pantalla de inicio',
       splashThemeDesc: 'Elegir el estilo visual de la pantalla de inicio',
       splashThemeCosmic: 'Viaje Cósmico',
-      splashThemeEmerald: 'Santuario Esmeralda'
+      splashThemeEmerald: 'Santuario Esmeralda',
+      splashThemeMolten: 'Impacto Térmico'
     },
     library: {
       title: 'Biblioteca',

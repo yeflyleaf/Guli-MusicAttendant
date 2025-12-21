@@ -6,6 +6,9 @@
   <!-- 翡翠圣域主题 -->
   <EmeraldSanctuarySplash v-if="showSplash && settingsStore.splashTheme === 'emerald'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 炼狱熔炉主题 -->
+  <MoltenForgeSplash v-if="showSplash && settingsStore.splashTheme === 'molten'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -42,6 +45,7 @@
 import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.vue'
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'
+import MoltenForgeSplash from '@/components/Layout/MoltenForgeSplash.vue'
 import PlayQueue from '@/components/Layout/PlayQueue.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import { useShortcuts } from '@/hooks/useIpc'

@@ -94,7 +94,8 @@ export default {
       splashTheme: 'Thème de l\'écran de démarrage',
       splashThemeDesc: 'Choisir le style visuel de l\'écran de démarrage',
       splashThemeCosmic: 'Voyage Cosmique',
-      splashThemeEmerald: 'Sanctuaire d\'Émeraude'
+      splashThemeEmerald: 'Sanctuaire d\'Émeraude',
+      splashThemeMolten: 'Impact Thermique'
     },
     // Library
     library: {
