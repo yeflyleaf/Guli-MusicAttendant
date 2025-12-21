@@ -102,7 +102,8 @@ export default {
       splashThemeSanctum: 'Sanctuaire de la Vérité',
       splashThemeSilicon: 'Ordre du Silicium',
       splashThemeEthereal: 'Géométrie Minimaliste',
-      splashThemeCyber: 'Ville Cybernétique'
+      splashThemeCyber: 'Ville Cybernétique',
+      splashThemeSakura: 'Fleurs de Cerisier Zen'
     },
     // Library
     library: {

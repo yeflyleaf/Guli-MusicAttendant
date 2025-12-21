@@ -101,7 +101,8 @@ export default {
       splashThemeSanctum: 'Sanctum of Truth',
       splashThemeSilicon: 'Silicon Order',
       splashThemeEthereal: 'Minimalist Geometry',
-      splashThemeCyber: 'Cyber Cityscape'
+      splashThemeCyber: 'Cyber Cityscape',
+      splashThemeSakura: 'Zen Cherry Blossom'
     },
     // Library
     library: {

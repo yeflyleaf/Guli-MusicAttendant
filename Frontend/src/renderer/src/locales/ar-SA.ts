@@ -102,7 +102,8 @@ export default {
       splashThemeSanctum: 'محراب الحقيقة',
       splashThemeSilicon: 'نظام السيليكون',
       splashThemeEthereal: 'الهندسة البسيطة',
-      splashThemeCyber: 'مدينة المستقبل'
+      splashThemeCyber: 'مدينة المستقبل',
+      splashThemeSakura: 'أزهار الكرز اليابانية'
     },
     // Library
     library: {

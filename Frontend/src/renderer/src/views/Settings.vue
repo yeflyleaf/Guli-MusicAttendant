@@ -185,6 +185,7 @@
                 <el-option :label="$t('settings.behavior.splashThemeSilicon')" value="silicon" />
                 <el-option :label="$t('settings.behavior.splashThemeEthereal')" value="ethereal" />
                 <el-option :label="$t('settings.behavior.splashThemeCyber')" value="cyber" />
+                <el-option :label="$t('settings.behavior.splashThemeSakura')" value="sakura" />
               </el-select>
             </div>
           </div>

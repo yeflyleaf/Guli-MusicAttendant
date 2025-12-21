@@ -101,7 +101,8 @@ export default {
       splashThemeSanctum: '真理殿堂',
       splashThemeSilicon: '硅基秩序',
       splashThemeEthereal: '极简几何',
-      splashThemeCyber: '未来都市'
+      splashThemeCyber: '未来都市',
+      splashThemeSakura: '和风落樱'
     },
     // 音乐库设置
     library: {

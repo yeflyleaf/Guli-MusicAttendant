@@ -30,6 +30,9 @@
   <!-- 未来都市主题 -->
   <CyberCityscapeSplash v-if="showSplash && settingsStore.splashTheme === 'cyber'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 和风落樱主题 -->
+  <ZenCherryBlossomSplash v-if="showSplash && settingsStore.splashTheme === 'sakura'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -76,6 +79,7 @@ import SanctumOfTruthSplash from '@/components/Layout/SanctumOfTruthSplash.vue'
 import SiliconOrderSplash from '@/components/Layout/SiliconOrderSplash.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
+import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.vue'
 import { useShortcuts } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
