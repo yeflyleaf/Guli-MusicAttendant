@@ -1,17 +1,23 @@
 <template>
   <Transition name="cyber-fade">
     <div v-if="visible" class="cyber-splash">
-      <!-- 第0层 - 巨型建筑群剪影 -->
+      <!-- 第0层 - 巨型建筑群剪影 (视差滚动) -->
       <div class="megastructures">
-        <div class="building" v-for="n in 25" :key="n" :style="getBuildingStyle(n)">
-          <div class="building-windows">
-            <div class="window" v-for="w in getWindowCount(n)" :key="w"
-              :style="{ opacity: Math.random() * 0.5 + 0.3, animationDelay: `${Math.random() * 5}s` }">
+        <!-- 远景建筑层 - 慢速 -->
+        <div class="building-layer layer-far">
+          <div class="building" v-for="n in 40" :key="'far-' + n" :style="getFarBuildingStyle(n)"></div>
+        </div>
+        <!-- 中景建筑层 - 中速 -->
+        <div class="building-layer layer-mid">
+          <div class="building mid" v-for="n in 30" :key="'mid-' + n" :style="getMidBuildingStyle(n)">
+            <div class="led-ad" v-if="n % 3 === 0">
+              <span>{{ getRandomAdText() }}</span>
             </div>
           </div>
-          <div class="led-ad" v-if="n % 4 === 0" :style="{ animationDelay: `${Math.random() * 3}s` }">
-            <span>{{ getRandomAdText() }}</span>
-          </div>
+        </div>
+        <!-- 近景建筑层 - 快速 -->
+        <div class="building-layer layer-near">
+          <div class="building near" v-for="n in 20" :key="'near-' + n" :style="getNearBuildingStyle(n)"></div>
         </div>
       </div>
 
@@ -51,12 +57,16 @@
         </div>
       </div>
 
-      <!-- 霓虹灯光效果 -->
+      <!-- 霓虹灯光效果 (视差滚动) -->
       <div class="neon-glow-layer">
         <div class="neon-glow pink"></div>
         <div class="neon-glow cyan"></div>
         <div class="neon-glow green"></div>
+        <div class="neon-glow magenta"></div>
       </div>
+
+      <!-- 路灰地面反光 -->
+      <div class="road-reflection"></div>
 
       <!-- 主内容 - 湿润全息终端面板 -->
       <div class="holographic-terminal" :class="{ glitching: isGlitching, imploding: isImploding }" ref="terminalPanel">
@@ -100,7 +110,7 @@
               <div class="loading-progress"></div>
               <div class="loading-glitch"></div>
             </div>
-            <div class="loading-text">{{ loadingText }}</div>
+            <div class="loading-text">INITIALIZING NEURAL LINK<span class="loading-dots"></span></div>
           </div>
         </div>
 
@@ -137,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps<{
   disabled?: boolean
@@ -163,11 +173,6 @@ const warpRainCanvas = ref<HTMLCanvasElement | null>(null)
 const appNameChars = '故里音乐助手'.split('')
 const adTexts = ['ネオン', '未来', 'システム', 'データ', '電脳', '接続', 'CYBER', 'NEON', 'FUTURE']
 
-const loadingTexts = ['Initializing neural link...', 'Scanning cityscape...', 'Connecting to network...', 'ACCESS READY']
-const loadingTextIndex = ref(0)
-const loadingText = computed(() => loadingTexts[loadingTextIndex.value])
-
-let loadingTextInterval: number | null = null
 let animationFrameId: number | null = null
 let glitchInterval: number | null = null
 
@@ -183,21 +188,41 @@ const getRandomBinary = () => {
   return str
 }
 
-// 建筑样式生成
-const getBuildingStyle = (n: number) => {
-  const left = (n - 1) * 4 + Math.random() * 2
-  const height = 30 + Math.random() * 60
-  const width = 2 + Math.random() * 4
+// 远景建筑样式 (慢速层)
+const getFarBuildingStyle = (n: number) => {
+  const baseLeft = (n - 1) * 5 // 更宽间距
+  const height = 20 + Math.random() * 35 // 较矮
+  const width = 3 + Math.random() * 5
   return {
-    left: `${left}%`,
+    left: `${baseLeft}%`,
     height: `${height}%`,
-    width: `${width}%`,
-    '--glow-hue': Math.random() > 0.5 ? '330' : '180'
+    width: `${width}%`
   }
 }
 
-// 窗户数量
-const getWindowCount = (_n: number) => Math.floor(5 + Math.random() * 15)
+// 中景建筑样式 (中速层)
+const getMidBuildingStyle = (n: number) => {
+  const baseLeft = (n - 1) * 6.7
+  const height = 35 + Math.random() * 45
+  const width = 4 + Math.random() * 6
+  return {
+    left: `${baseLeft}%`,
+    height: `${height}%`,
+    width: `${width}%`
+  }
+}
+
+// 近景建筑样式 (快速层)
+const getNearBuildingStyle = (n: number) => {
+  const baseLeft = (n - 1) * 10
+  const height = 50 + Math.random() * 40
+  const width = 6 + Math.random() * 8
+  return {
+    left: `${baseLeft}%`,
+    height: `${height}%`,
+    width: `${width}%`
+  }
+}
 
 // 水滴样式
 const getDropletStyle = (_n: number) => ({
@@ -569,11 +594,6 @@ onMounted(async () => {
     }
   }, 3000)
 
-  // 文字切换
-  loadingTextInterval = window.setInterval(() => {
-    loadingTextIndex.value = (loadingTextIndex.value + 1) % loadingTexts.length
-  }, 600)
-
   const minDisplayTime = 2500
   const startTime = Date.now()
 
@@ -611,7 +631,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  if (loadingTextInterval) clearInterval(loadingTextInterval)
   if (animationFrameId) cancelAnimationFrame(animationFrameId)
   if (glitchInterval) clearInterval(glitchInterval)
 })
@@ -643,7 +662,7 @@ $neon-magenta: #ff00ff;
   font-family: 'Orbitron', 'Rajdhani', 'Michroma', sans-serif;
 }
 
-// ==================== 巨型建筑群 ====================
+// ==================== 巨型建筑群 (视差滚动) ====================
 .megastructures {
   position: absolute;
   inset: 0;
@@ -651,79 +670,201 @@ $neon-magenta: #ff00ff;
   overflow: hidden;
 }
 
-.building {
+// 建筑层容器 - 包含循环滚动
+.building-layer {
   position: absolute;
   bottom: 0;
-  background: linear-gradient(180deg,
-      rgba(30, 30, 50, 0.9) 0%,
-      rgba(15, 15, 30, 0.95) 100%);
-  border-top: 2px solid rgba($laser-cyan, 0.3);
-  box-shadow:
-    0 0 30px rgba(var(--glow-hue), 100%, 50%, 0.1),
-    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  will-change: transform;
 
-  .building-windows {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px;
-    padding: 4px;
-    justify-content: center;
+  // 远景层 - 慢速滚动 (200% 宽度循环)
+  &.layer-far {
+    width: 200%;
+    animation: scrollLayerFar 40s linear infinite;
+    opacity: 0.4;
+
+    .building {
+      background: linear-gradient(180deg,
+          rgba(25, 25, 45, 0.7) 0%,
+          rgba(15, 15, 30, 0.8) 100%);
+      border-top: 1px solid rgba($cyber-pink, 0.15);
+    }
   }
 
-  .window {
-    width: 3px;
-    height: 4px;
-    background: rgba($signal-white, 0.6);
-    animation: windowFlicker 5s infinite;
+  // 中景层 - 中速滚动
+  &.layer-mid {
+    width: 200%;
+    animation: scrollLayerMid 25s linear infinite;
+    opacity: 0.7;
+
+    .building {
+      background: linear-gradient(180deg,
+          rgba(30, 30, 55, 0.85) 0%,
+          rgba(18, 18, 35, 0.9) 100%);
+      border-top: 2px solid rgba($laser-cyan, 0.25);
+      box-shadow:
+        0 0 40px rgba($cyber-pink, 0.1),
+        0 0 20px rgba($laser-cyan, 0.1),
+        inset 0 0 30px rgba(0, 0, 0, 0.4);
+    }
   }
 
-  .led-ad {
-    position: absolute;
-    top: 20%;
-    left: 0;
-    right: 0;
-    height: 15%;
-    background: linear-gradient(90deg, $cyber-pink, $neon-magenta);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: ledScroll 4s linear infinite;
-    overflow: hidden;
+  // 近景层 - 快速滚动
+  &.layer-near {
+    width: 200%;
+    animation: scrollLayerNear 15s linear infinite;
+    opacity: 0.9;
 
-    span {
-      color: $signal-white;
-      font-size: 8px;
-      font-weight: bold;
-      text-shadow: 0 0 10px $cyber-pink;
-      white-space: nowrap;
+    .building {
+      background: linear-gradient(180deg,
+          rgba(35, 35, 60, 0.95) 0%,
+          rgba(20, 20, 40, 1) 100%);
+      border-top: 3px solid rgba($laser-cyan, 0.4);
+      box-shadow:
+        0 0 60px rgba($cyber-pink, 0.15),
+        0 0 30px rgba($laser-cyan, 0.15),
+        inset 0 0 40px rgba(0, 0, 0, 0.3);
     }
   }
 }
 
-@keyframes windowFlicker {
+.building {
+  position: relative;
+  flex-shrink: 0;
 
-  0%,
-  90%,
-  100% {
-    opacity: var(--base-opacity, 0.4);
+  // 窗户网格 (用伪元素生成)
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 5% 10% 20% 10%;
+    background:
+      repeating-linear-gradient(0deg,
+        transparent 0px,
+        transparent 6px,
+        rgba($signal-white, 0.1) 6px,
+        rgba($signal-white, 0.1) 8px),
+      repeating-linear-gradient(90deg,
+        transparent 0px,
+        transparent 8px,
+        rgba($signal-white, 0.1) 8px,
+        rgba($signal-white, 0.1) 10px);
+    opacity: 0.7;
   }
 
-  92% {
-    opacity: 0.1;
+  // 随机亮灯窗户
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 10% 15% 25% 15%;
+    background: radial-gradient(ellipse 3px 4px at var(--window-x, 30%) var(--window-y, 40%),
+        rgba($acid-green, 0.8) 0%,
+        transparent 100%);
+    animation: randomWindow 3s ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
   }
 
-  94% {
-    opacity: 0.8;
+  &.mid::after {
+    --window-x: 60%;
+    --window-y: 50%;
+  }
+
+  &.near::after {
+    --window-x: 25%;
+    --window-y: 35%;
+  }
+
+  .led-ad {
+    position: absolute;
+    top: 15%;
+    left: 0;
+    right: 0;
+    height: 12%;
+    background: linear-gradient(90deg, $cyber-pink, $neon-magenta, $cyber-pink);
+    background-size: 200% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: ledGlow 2s ease-in-out infinite;
+    overflow: hidden;
+
+    span {
+      color: $signal-white;
+      font-size: 10px;
+      font-weight: bold;
+      text-shadow: 0 0 15px $cyber-pink, 0 0 30px $neon-magenta;
+      white-space: nowrap;
+      animation: textGlow 1.5s ease-in-out infinite alternate;
+    }
   }
 }
 
-@keyframes ledScroll {
+// 平滑的视差滚动动画
+@keyframes scrollLayerFar {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(0);
   }
 
   100% {
-    transform: translateX(100%);
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollLayerMid {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollLayerNear {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes randomWindow {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes ledGlow {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+    filter: brightness(1);
+  }
+
+  50% {
+    background-position: 100% 50%;
+    filter: brightness(1.3);
+  }
+}
+
+@keyframes textGlow {
+  0% {
+    text-shadow: 0 0 10px $cyber-pink, 0 0 20px $neon-magenta;
+  }
+
+  100% {
+    text-shadow: 0 0 20px $cyber-pink, 0 0 40px $neon-magenta, 0 0 60px rgba($signal-white, 0.5);
   }
 }
 
@@ -1044,7 +1185,7 @@ $neon-magenta: #ff00ff;
   }
 }
 
-// ==================== 霓虹光效 ====================
+// ==================== 霓虹光效 (视差滚动) ====================
 .neon-glow-layer {
   position: absolute;
   inset: 0;
@@ -1055,54 +1196,148 @@ $neon-magenta: #ff00ff;
 
 .neon-glow {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.4;
-  animation: neonFloat 8s ease-in-out infinite;
+  filter: blur(100px);
+  opacity: 0.5;
+  will-change: transform;
 
   &.pink {
-    background: $cyber-pink;
-    top: 10%;
-    right: 15%;
-    animation-delay: 0s;
+    background: radial-gradient(circle, $cyber-pink 0%, transparent 70%);
+    top: 5%;
+    animation: neonScrollFast 20s linear infinite;
   }
 
   &.cyan {
-    background: $laser-cyan;
-    bottom: 20%;
-    left: 10%;
-    animation-delay: 2s;
+    background: radial-gradient(circle, $laser-cyan 0%, transparent 70%);
+    top: 40%;
+    animation: neonScrollMid 30s linear infinite;
   }
 
   &.green {
-    background: $acid-green;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation-delay: 4s;
-    opacity: 0.2;
+    background: radial-gradient(circle, $acid-green 0%, transparent 70%);
+    top: 60%;
+    animation: neonScrollSlow 45s linear infinite;
+    opacity: 0.3;
+  }
+
+  &.magenta {
+    background: radial-gradient(circle, $neon-magenta 0%, transparent 70%);
+    top: 20%;
+    animation: neonScrollFast 25s linear infinite reverse;
+    opacity: 0.4;
   }
 }
 
-@keyframes neonFloat {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  25% {
-    transform: translate(20px, -20px) scale(1.1);
+// 霓虹光平滑滚动 (从右到左，模拟经过)
+@keyframes neonScrollFast {
+  0% {
+    left: 100%;
+    transform: scale(1);
   }
 
   50% {
-    transform: translate(-10px, 10px) scale(0.9);
+    transform: scale(1.3);
   }
 
-  75% {
-    transform: translate(15px, 15px) scale(1.05);
+  100% {
+    left: -30%;
+    transform: scale(1);
+  }
+}
+
+@keyframes neonScrollMid {
+  0% {
+    left: 110%;
+    transform: scale(0.8);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    left: -20%;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes neonScrollSlow {
+  0% {
+    left: 120%;
+    transform: scale(0.6);
+  }
+
+  50% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    left: -10%;
+    transform: scale(0.6);
+  }
+}
+
+// ==================== 路面反光 ====================
+.road-reflection {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 15%;
+  z-index: 3;
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba($asphalt-black, 0.4) 30%,
+      rgba($asphalt-black, 0.7) 100%);
+
+  // 湿漉漉的反光条纹
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(90deg,
+        transparent 0px,
+        transparent 100px,
+        rgba($laser-cyan, 0.05) 100px,
+        rgba($laser-cyan, 0.05) 102px);
+    animation: roadReflectionScroll 3s linear infinite;
+  }
+
+  // 霓虹反射光晕
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 300px 50px at 20% 80%, rgba($cyber-pink, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse 250px 40px at 60% 70%, rgba($laser-cyan, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse 200px 35px at 85% 90%, rgba($acid-green, 0.1) 0%, transparent 50%);
+    animation: reflectionPulse 4s ease-in-out infinite;
+  }
+}
+
+@keyframes roadReflectionScroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(102px);
+  }
+}
+
+@keyframes reflectionPulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
   }
 }
 
@@ -1507,6 +1742,40 @@ $neon-magenta: #ff00ff;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 0 5px $laser-cyan;
+
+  // 动态省略号
+  .loading-dots {
+    display: inline-block;
+    width: 24px;
+    text-align: left;
+
+    &::after {
+      content: '';
+      animation: loadingDots 1.5s steps(4, end) infinite;
+    }
+  }
+}
+
+@keyframes loadingDots {
+  0% {
+    content: '';
+  }
+
+  25% {
+    content: '.';
+  }
+
+  50% {
+    content: '..';
+  }
+
+  75% {
+    content: '...';
+  }
+
+  100% {
+    content: '';
+  }
 }
 
 // ACCESS GRANTED
