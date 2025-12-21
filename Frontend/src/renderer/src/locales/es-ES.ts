@@ -159,15 +159,15 @@ export default {
   },
   recentlyPlayed: {
     title: 'Recientes',
-    searchPlaceholder: 'Buscar...',
-    noHistory: 'Sin historial',
-    noSearchResult: 'Sin resultados',
-    confirmRemove: '¿Eliminar {count}?',
-    removeSuccess: '{count} eliminadas',
-    removeSelected: 'Eliminar',
-    clearAll: 'Limpiar',
-    confirmClearAll: '¿Limpiar historial?',
-    clearSuccess: 'Historial limpiado'
+    searchPlaceholder: 'Buscar en recientes...',
+    noHistory: 'Sin historial de reproducción',
+    noSearchResult: 'No se encontraron coincidencias',
+    confirmRemove: '¿Está seguro de que desea eliminar {count} canciones del historial?',
+    removeSuccess: 'Se han eliminado {count} canciones del historial',
+    removeSelected: 'Eliminar seleccionadas',
+    clearAll: 'Borrar historial',
+    confirmClearAll: '¿Está seguro de que desea borrar todo el historial de reproducción?',
+    clearSuccess: 'Historial de reproducción borrado'
   },
   playlist: {
     title: 'Mis listas',

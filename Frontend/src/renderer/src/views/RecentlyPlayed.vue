@@ -30,6 +30,12 @@
           </el-icon>
           {{ isEditMode ? $t('common.done') : $t('common.edit') }}
         </el-button>
+        <el-button v-if="displayedRecentlyPlayed.length > 0" @click="handleClearAll">
+          <el-icon>
+            <Delete />
+          </el-icon>
+          {{ $t('recentlyPlayed.clearAll') }}
+        </el-button>
         <el-button type="primary" @click="handlePlayAll" :disabled="displayedRecentlyPlayed.length === 0">
           <el-icon>
             <VideoPlay />
@@ -111,17 +117,23 @@
 
     <!-- 添加到歌单对话框 -->
     <AddToPlaylistDialog v-model="showAddToPlaylistDialog" :song="selectedSongForPlaylist" />
+
+    <!-- 自定义确认对话框 -->
+    <CustomConfirmDialog v-model="confirmDialogVisible" :title="confirmDialogTitle" :message="confirmDialogMessage"
+      :type="confirmDialogType" @confirm="handleConfirmDialogConfirm" @cancel="handleConfirmDialogCancel" />
   </div>
 </template>
 
 <script setup lang="ts">
 import AddToPlaylistDialog from '@/components/Base/AddToPlaylistDialog.vue'
+import CustomConfirmDialog from '@/components/Base/CustomConfirmDialog.vue'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { formatDuration, formatRelativeTime } from '@/utils/format'
-import { Clock, Close, Edit, Headset, MoreFilled, Search, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
+import { Clock, Close, Delete, Edit, Headset, MoreFilled, Search, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, nextTick, onActivated, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
 
 // 定义组件名称，用于 keep-alive 的 include 匹配
@@ -133,6 +145,7 @@ import type { Music } from '@/types/music'
 
 const libraryStore = useLibraryStore()
 const playerStore = usePlayerStore()
+const { t } = useI18n()
 
 // ==================== 本地搜索功能 ====================
 const localSearchKeyword = ref('')
@@ -194,13 +207,77 @@ const handleSelect = (id: number, checked: boolean) => {
   selectedIds.value = new Set(selectedIds.value)
 }
 
+// 自定义确认对话框状态
+const confirmDialogVisible = ref(false)
+const confirmDialogTitle = ref('')
+const confirmDialogMessage = ref('')
+const confirmDialogType = ref<'warning' | 'info'>('warning')
+let resolveConfirm: ((value: boolean) => void) | null = null
+
+const showConfirm = (message: string, title: string, type: 'warning' | 'info' = 'warning'): Promise<boolean> => {
+  confirmDialogMessage.value = message
+  confirmDialogTitle.value = title
+  confirmDialogType.value = type
+  confirmDialogVisible.value = true
+  return new Promise((resolve) => {
+    resolveConfirm = resolve
+  })
+}
+
+const handleConfirmDialogConfirm = () => {
+  if (resolveConfirm) {
+    resolveConfirm(true)
+    resolveConfirm = null
+  }
+}
+
+const handleConfirmDialogCancel = () => {
+  if (resolveConfirm) {
+    resolveConfirm(false)
+    resolveConfirm = null
+  }
+}
+
 const handleBatchClear = async () => {
   if (selectedIds.value.size === 0) return
 
-  // 暂未实现清除播放记录的功能
-  ElMessage.info('清除播放记录功能暂未实现')
-  selectedIds.value = new Set()
-  selectAll.value = false
+  const confirm = await showConfirm(
+    t('recentlyPlayed.confirmRemove', { count: selectedIds.value.size }),
+    t('common.warning'),
+    'warning'
+  )
+
+  if (confirm) {
+    const success = await libraryStore.removeRecentlyPlayed(Array.from(selectedIds.value))
+    if (success) {
+      ElMessage.success(t('recentlyPlayed.removeSuccess', { count: selectedIds.value.size }))
+      selectedIds.value = new Set()
+      selectAll.value = false
+      if (displayedRecentlyPlayed.value.length === 0) {
+        isEditMode.value = false
+      }
+    } else {
+      ElMessage.error(t('common.error'))
+    }
+  }
+}
+
+const handleClearAll = async () => {
+  const confirm = await showConfirm(
+    t('recentlyPlayed.confirmClearAll'),
+    t('common.warning'),
+    'warning'
+  )
+
+  if (confirm) {
+    const success = await libraryStore.clearRecentlyPlayed()
+    if (success) {
+      ElMessage.success(t('recentlyPlayed.clearSuccess'))
+      isEditMode.value = false
+    } else {
+      ElMessage.error(t('common.error'))
+    }
+  }
 }
 
 // 添加到歌单对话框状态

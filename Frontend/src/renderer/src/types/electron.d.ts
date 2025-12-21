@@ -15,6 +15,8 @@ declare global {
         getCount: () => Promise<number>
         getFavorites: () => Promise<any[]>
         getRecentlyPlayed: (limit?: number) => Promise<any[]>
+        removeRecentlyPlayed: (ids: number[]) => Promise<boolean>
+        clearRecentlyPlayed: () => Promise<boolean>
         getMostPlayed: (limit?: number) => Promise<any[]>
         update: (id: number, data: any) => Promise<boolean>
       }

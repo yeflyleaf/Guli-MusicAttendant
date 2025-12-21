@@ -288,6 +288,35 @@ export function getRecentlyPlayed(limit = 50): Music[] {
 }
 
 /**
+ * 移除最近播放记录（不删除歌曲，仅清除播放时间）
+ */
+export function removeRecentlyPlayed(ids: number[]): boolean {
+  if (ids.length === 0) return false
+
+  const placeholders = ids.map(() => '?').join(',')
+  const result = execute(`
+    UPDATE music
+    SET last_played_at = NULL
+    WHERE id IN (${placeholders})
+  `, ids)
+
+  return result.changes > 0
+}
+
+/**
+ * 清空最近播放记录
+ */
+export function clearRecentlyPlayed(): boolean {
+  const result = execute(`
+    UPDATE music
+    SET last_played_at = NULL
+    WHERE last_played_at IS NOT NULL
+  `)
+
+  return result.changes > 0
+}
+
+/**
  * 获取最常播放
  */
 export function getMostPlayed(limit = 50): Music[] {

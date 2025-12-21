@@ -159,15 +159,15 @@ export default {
   },
   recentlyPlayed: {
     title: 'Недавние',
-    searchPlaceholder: 'Поиск...',
-    noHistory: 'Нет истории',
-    noSearchResult: 'Не найдено',
-    confirmRemove: 'Удалить {count}?',
-    removeSuccess: 'Удалено {count}',
-    removeSelected: 'Удалить',
-    clearAll: 'Очистить',
-    confirmClearAll: 'Очистить историю?',
-    clearSuccess: 'Очищено'
+    searchPlaceholder: 'Поиск в недавних...',
+    noHistory: 'История воспроизведения пуста',
+    noSearchResult: 'Ничего не найдено',
+    confirmRemove: 'Вы уверены, что хотите удалить {count} треков из истории?',
+    removeSuccess: 'Удалено {count} треков из истории',
+    removeSelected: 'Удалить выбранное',
+    clearAll: 'Очистить историю',
+    confirmClearAll: 'Вы уверены, что хотите очистить всю историю воспроизведения?',
+    clearSuccess: 'История воспроизведения очищена'
   },
   playlist: {
     title: 'Плейлисты',

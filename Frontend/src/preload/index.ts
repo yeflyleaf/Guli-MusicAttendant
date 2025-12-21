@@ -41,6 +41,12 @@ const electronAPI = {
     getRecentlyPlayed: (limit?: number): Promise<Music[]> =>
       ipcRenderer.invoke('music:getRecentlyPlayed', limit),
 
+    removeRecentlyPlayed: (ids: number[]): Promise<boolean> =>
+      ipcRenderer.invoke('music:removeRecentlyPlayed', ids),
+
+    clearRecentlyPlayed: (): Promise<boolean> =>
+      ipcRenderer.invoke('music:clearRecentlyPlayed'),
+
     getMostPlayed: (limit?: number): Promise<Music[]> =>
       ipcRenderer.invoke('music:getMostPlayed', limit),
 

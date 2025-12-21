@@ -19,6 +19,8 @@ export interface ElectronAPI {
     getCount: () => Promise<number>
     getFavorites: () => Promise<Music[]>
     getRecentlyPlayed: (limit?: number) => Promise<Music[]>
+    removeRecentlyPlayed: (ids: number[]) => Promise<boolean>
+    clearRecentlyPlayed: () => Promise<boolean>
     getMostPlayed: (limit?: number) => Promise<Music[]>
     update: (id: number, data: Partial<{
       title: string

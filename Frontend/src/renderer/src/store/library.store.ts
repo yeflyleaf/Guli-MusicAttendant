@@ -232,6 +232,37 @@ export const useLibraryStore = defineStore('library', {
     },
 
     /**
+     * 移除最近播放记录
+     */
+    async removeRecentlyPlayed(musicIds: number[]) {
+      try {
+        await window.electron.music.removeRecentlyPlayed(musicIds)
+
+        const idSet = new Set(musicIds)
+        this.recentlyPlayed = this.recentlyPlayed.filter(m => !idSet.has(m.id))
+
+        return true
+      } catch (error) {
+        console.error('[Library] 移除最近播放失败:', error)
+        return false
+      }
+    },
+
+    /**
+     * 清空最近播放记录
+     */
+    async clearRecentlyPlayed() {
+      try {
+        await window.electron.music.clearRecentlyPlayed()
+        this.recentlyPlayed = []
+        return true
+      } catch (error) {
+        console.error('[Library] 清空最近播放失败:', error)
+        return false
+      }
+    },
+
+    /**
      * 创建歌单
      */
     async createPlaylist(name: string, description?: string) {
