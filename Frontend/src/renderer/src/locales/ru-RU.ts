@@ -89,7 +89,8 @@ export default {
       splashThemeMolten: 'Тепловой удар',
       splashThemeAbyss: 'Биолюминесцентная бездна',
       splashThemeBrass: 'Эра Латуни',
-      splashThemePrism: 'Призма Абсолютного Нуля'
+      splashThemePrism: 'Призма Абсолютного Нуля',
+      splashThemeSanctum: 'Святилище Истины'
     },
     library: {
       title: 'Библиотека',

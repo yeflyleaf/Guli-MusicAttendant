@@ -97,7 +97,8 @@ export default {
       splashThemeMolten: '热能冲击',
       splashThemeAbyss: '深蓝幽光',
       splashThemeBrass: '黄铜纪元',
-      splashThemePrism: '零度棱镜'
+      splashThemePrism: '零度棱镜',
+      splashThemeSanctum: '真理殿堂'
     },
     // 音乐库设置
     library: {

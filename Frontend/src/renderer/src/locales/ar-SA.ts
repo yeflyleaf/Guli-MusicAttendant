@@ -98,7 +98,8 @@ export default {
       splashThemeMolten: 'تأثير حراري',
       splashThemeAbyss: 'هاوية بيولوجية مضيئة',
       splashThemeBrass: 'عصر النحاس',
-      splashThemePrism: 'موشور تحت الصفر'
+      splashThemePrism: 'موشور تحت الصفر',
+      splashThemeSanctum: 'محراب الحقيقة'
     },
     // Library
     library: {

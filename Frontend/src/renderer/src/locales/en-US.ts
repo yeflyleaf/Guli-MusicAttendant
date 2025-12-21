@@ -97,7 +97,8 @@ export default {
       splashThemeMolten: 'Thermal Impact',
       splashThemeAbyss: 'Bioluminescent Abyss',
       splashThemeBrass: 'Brass Era',
-      splashThemePrism: 'Sub-zero Prism'
+      splashThemePrism: 'Sub-zero Prism',
+      splashThemeSanctum: 'Sanctum of Truth'
     },
     // Library
     library: {

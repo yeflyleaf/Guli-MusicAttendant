@@ -89,7 +89,8 @@ export default {
       splashThemeMolten: 'Impacto Térmico',
       splashThemeAbyss: 'Abismo Bioluminiscente',
       splashThemeBrass: 'Era del Latón',
-      splashThemePrism: 'Prisma Bajo Cero'
+      splashThemePrism: 'Prisma Bajo Cero',
+      splashThemeSanctum: 'Santuario de la Verdad'
     },
     library: {
       title: 'Biblioteca',

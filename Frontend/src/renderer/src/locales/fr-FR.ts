@@ -98,7 +98,8 @@ export default {
       splashThemeMolten: 'Impact Thermique',
       splashThemeAbyss: 'Abysse Bioluminescente',
       splashThemeBrass: 'Ère du Laiton',
-      splashThemePrism: 'Prisme Zéro Absolu'
+      splashThemePrism: 'Prisme Zéro Absolu',
+      splashThemeSanctum: 'Sanctuaire de la Vérité'
     },
     // Library
     library: {

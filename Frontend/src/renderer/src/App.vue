@@ -18,6 +18,9 @@
   <!-- 零度棱镜主题 -->
   <SubzeroPrismSplash v-if="showSplash && settingsStore.splashTheme === 'prism'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 真理殿堂主题 -->
+  <SanctumOfTruthSplash v-if="showSplash && settingsStore.splashTheme === 'sanctum'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -58,6 +61,7 @@ import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'
 import MoltenForgeSplash from '@/components/Layout/MoltenForgeSplash.vue'
 import PlayQueue from '@/components/Layout/PlayQueue.vue'
+import SanctumOfTruthSplash from '@/components/Layout/SanctumOfTruthSplash.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
 import { useShortcuts } from '@/hooks/useIpc'
