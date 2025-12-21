@@ -99,7 +99,8 @@ export default {
       splashThemeAbyss: 'Abysse Bioluminescente',
       splashThemeBrass: 'Ère du Laiton',
       splashThemePrism: 'Prisme Zéro Absolu',
-      splashThemeSanctum: 'Sanctuaire de la Vérité'
+      splashThemeSanctum: 'Sanctuaire de la Vérité',
+      splashThemeSilicon: 'Ordre du Silicium'
     },
     // Library
     library: {

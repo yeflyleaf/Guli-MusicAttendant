@@ -90,7 +90,8 @@ export default {
       splashThemeAbyss: 'Биолюминесцентная бездна',
       splashThemeBrass: 'Эра Латуни',
       splashThemePrism: 'Призма Абсолютного Нуля',
-      splashThemeSanctum: 'Святилище Истины'
+      splashThemeSanctum: 'Святилище Истины',
+      splashThemeSilicon: 'Кремниевый Порядок'
     },
     library: {
       title: 'Библиотека',

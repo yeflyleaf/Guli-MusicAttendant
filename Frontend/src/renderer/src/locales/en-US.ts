@@ -98,7 +98,8 @@ export default {
       splashThemeAbyss: 'Bioluminescent Abyss',
       splashThemeBrass: 'Brass Era',
       splashThemePrism: 'Sub-zero Prism',
-      splashThemeSanctum: 'Sanctum of Truth'
+      splashThemeSanctum: 'Sanctum of Truth',
+      splashThemeSilicon: 'Silicon Order'
     },
     // Library
     library: {

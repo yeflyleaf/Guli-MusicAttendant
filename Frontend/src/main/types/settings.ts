@@ -9,7 +9,7 @@ export type PlayMode = 'sequence' | 'loop' | 'single' | 'random'
 export type Theme = 'dark' | 'light'
 
 // 开屏动画主题
-export type SplashTheme = 'cosmic' | 'emerald' | 'molten' | 'abyss' | 'brass' | 'prism' | 'sanctum'
+export type SplashTheme = 'cosmic' | 'emerald' | 'molten' | 'abyss' | 'brass' | 'prism' | 'sanctum' | 'silicon'
 
 // 设置键名
 export type SettingKey =

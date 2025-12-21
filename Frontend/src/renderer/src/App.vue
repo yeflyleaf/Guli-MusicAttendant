@@ -21,6 +21,9 @@
   <!-- 真理殿堂主题 -->
   <SanctumOfTruthSplash v-if="showSplash && settingsStore.splashTheme === 'sanctum'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 硅基秩序主题 -->
+  <SiliconOrderSplash v-if="showSplash && settingsStore.splashTheme === 'silicon'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -62,6 +65,7 @@ import Header from '@/components/Layout/Header.vue'
 import MoltenForgeSplash from '@/components/Layout/MoltenForgeSplash.vue'
 import PlayQueue from '@/components/Layout/PlayQueue.vue'
 import SanctumOfTruthSplash from '@/components/Layout/SanctumOfTruthSplash.vue'
+import SiliconOrderSplash from '@/components/Layout/SiliconOrderSplash.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
 import { useShortcuts } from '@/hooks/useIpc'

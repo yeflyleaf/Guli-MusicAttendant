@@ -90,7 +90,8 @@ export default {
       splashThemeAbyss: 'Abismo Bioluminiscente',
       splashThemeBrass: 'Era del Latón',
       splashThemePrism: 'Prisma Bajo Cero',
-      splashThemeSanctum: 'Santuario de la Verdad'
+      splashThemeSanctum: 'Santuario de la Verdad',
+      splashThemeSilicon: 'Orden del Silicio'
     },
     library: {
       title: 'Biblioteca',
