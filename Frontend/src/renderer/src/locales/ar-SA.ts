@@ -101,7 +101,7 @@ export default {
       splashThemePrism: 'موشور تحت الصفر',
       splashThemeSanctum: 'محراب الحقيقة',
       splashThemeSilicon: 'نظام السيليكون',
-      splashThemeEthereal: 'الهندسة الأثيرية'
+      splashThemeEthereal: 'الهندسة البسيطة'
     },
     // Library
     library: {

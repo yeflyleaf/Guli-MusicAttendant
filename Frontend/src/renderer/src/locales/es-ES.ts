@@ -92,7 +92,7 @@ export default {
       splashThemePrism: 'Prisma Bajo Cero',
       splashThemeSanctum: 'Santuario de la Verdad',
       splashThemeSilicon: 'Orden del Silicio',
-      splashThemeEthereal: 'Geometría Etérea'
+      splashThemeEthereal: 'Geometría Minimalista'
     },
     library: {
       title: 'Biblioteca',
