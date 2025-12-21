@@ -637,6 +637,8 @@ defineExpose({ visible })
 </script>
 
 <style lang="scss" scoped>
+@use "sass:color";
+
 // ==================== 颜色变量 ====================
 $twilight-purple: #2e2a38;
 $madder-red: #b63636;
@@ -660,8 +662,8 @@ $ink-black: #1a1a2e;
   overflow: hidden;
   background: linear-gradient(180deg,
       $twilight-purple 0%,
-      mix($twilight-purple, $madder-red, 70%) 30%,
-      mix($madder-red, $ultramarine, 50%) 60%,
+      color.mix($twilight-purple, $madder-red, 70%) 30%,
+      color.mix($madder-red, $ultramarine, 50%) 60%,
       $ultramarine 100%);
   font-family: 'Noto Serif JP', 'Hiragino Mincho Pro', serif;
 }
@@ -1237,10 +1239,10 @@ $ink-black: #1a1a2e;
       rgba(0, 0, 0, 0.2) 100%),
     // 主体颜色
     radial-gradient(ellipse at 40% 40%,
-      lighten($torii-red, 15%) 0%,
+      color.adjust($torii-red, $lightness: 15%) 0%,
       var(--color) 30%,
-      darken($torii-red, 10%) 70%,
-      darken($torii-red, 25%) 100%);
+      color.adjust($torii-red, $lightness: -10%) 70%,
+      color.adjust($torii-red, $lightness: -25%) 100%);
   border-radius: 50% 50% 0 0;
   box-shadow:
     0 -3px 15px rgba(0, 0, 0, 0.25),
@@ -1362,7 +1364,7 @@ $ink-black: #1a1a2e;
     height: 6px;
     background: linear-gradient(180deg,
         $gold-leaf 0%,
-        darken($gold-leaf, 15%) 100%);
+        color.adjust($gold-leaf, $lightness: -15%) 100%);
     border-radius: 2px;
   }
 }
@@ -1452,9 +1454,9 @@ $ink-black: #1a1a2e;
   // 多层漆面效果
   background:
     linear-gradient(180deg,
-      lighten($torii-red, 8%) 0%,
+      color.adjust($torii-red, $lightness: 8%) 0%,
       $torii-red 30%,
-      darken($torii-red, 12%) 100%),
+      color.adjust($torii-red, $lightness: -12%) 100%),
     // 木纹质感
     repeating-linear-gradient(90deg,
       transparent 0px,
@@ -1476,9 +1478,9 @@ $ink-black: #1a1a2e;
     height: 14px;
     background:
       linear-gradient(180deg,
-        lighten($torii-red, 12%) 0%,
+        color.adjust($torii-red, $lightness: 12%) 0%,
         $torii-red 50%,
-        darken($torii-red, 5%) 100%);
+        color.adjust($torii-red, $lightness: -5%) 100%);
     border-radius: 50% 50% 0 0;
     box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.2);
   }
@@ -1493,7 +1495,7 @@ $ink-black: #1a1a2e;
     height: 4px;
     background: linear-gradient(90deg,
         $gold-leaf 0%,
-        darken($gold-leaf, 10%) 50%,
+        color.adjust($gold-leaf, $lightness: -10%) 50%,
         $gold-leaf 100%);
     border-radius: 2px;
   }
@@ -1509,7 +1511,7 @@ $ink-black: #1a1a2e;
   background:
     linear-gradient(180deg,
       $torii-red 0%,
-      darken($torii-red, 8%) 100%),
+      color.adjust($torii-red, $lightness: -8%) 100%),
     repeating-linear-gradient(90deg,
       transparent 0px,
       transparent 15px,
@@ -1529,7 +1531,7 @@ $ink-black: #1a1a2e;
         transparent 0px,
         transparent 28px,
         $gold-leaf 28px,
-        darken($gold-leaf, 10%) 32px,
+        color.adjust($gold-leaf, $lightness: -10%) 32px,
         $gold-leaf 36px,
         transparent 36px);
   }
@@ -1544,11 +1546,11 @@ $ink-black: #1a1a2e;
   // 柱子漆面
   background:
     linear-gradient(90deg,
-      darken($torii-red, 12%) 0%,
-      darken($torii-red, 5%) 20%,
+      color.adjust($torii-red, $lightness: -12%) 0%,
+      color.adjust($torii-red, $lightness: -5%) 20%,
       $torii-red 50%,
-      darken($torii-red, 5%) 80%,
-      darken($torii-red, 12%) 100%),
+      color.adjust($torii-red, $lightness: -5%) 80%,
+      color.adjust($torii-red, $lightness: -12%) 100%),
     // 木纹
     repeating-linear-gradient(0deg,
       transparent 0px,
@@ -1833,8 +1835,8 @@ $ink-black: #1a1a2e;
   // 精细的穗子
   background: linear-gradient(180deg,
       $torii-red 0%,
-      darken($torii-red, 10%) 50%,
-      darken($torii-red, 25%) 100%);
+      color.adjust($torii-red, $lightness: -10%) 50%,
+      color.adjust($torii-red, $lightness: -25%) 100%);
   border-radius: 2px;
   box-shadow: 1px 0 2px rgba(0, 0, 0, 0.2);
 
@@ -1850,7 +1852,7 @@ $ink-black: #1a1a2e;
     background:
       radial-gradient(ellipse at center,
         $torii-red 0%,
-        darken($torii-red, 15%) 100%);
+        color.adjust($torii-red, $lightness: -15%) 100%);
     border-radius: 0 0 50% 50%;
     box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.3);
   }
@@ -1866,7 +1868,7 @@ $ink-black: #1a1a2e;
     height: 6px;
     background: linear-gradient(180deg,
         $gold-leaf 0%,
-        darken($gold-leaf, 15%) 100%);
+        color.adjust($gold-leaf, $lightness: -15%) 100%);
     border-radius: 3px 3px 1px 1px;
   }
 }
@@ -2052,7 +2054,7 @@ $ink-black: #1a1a2e;
   height: 25px;
   background: linear-gradient(180deg,
       $sakura-pink 0%,
-      darken($sakura-pink, 10%) 100%);
+      color.adjust($sakura-pink, $lightness: -10%) 100%);
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   transform-origin: center bottom;
   transform: translate(-50%, -100%) rotate(calc((var(--p) - 1) * 72deg));
@@ -2331,9 +2333,9 @@ $ink-black: #1a1a2e;
   right: 20%;
   height: 30px;
   background: linear-gradient(180deg,
-      lighten($torii-red, 10%) 0%,
+      color.adjust($torii-red, $lightness: 10%) 0%,
       $torii-red 50%,
-      darken($torii-red, 15%) 100%);
+      color.adjust($torii-red, $lightness: -15%) 100%);
   border-radius: 10px 10px 0 0;
   box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
 
@@ -2345,7 +2347,7 @@ $ink-black: #1a1a2e;
     right: -5%;
     height: 20px;
     background: linear-gradient(180deg,
-        lighten($torii-red, 15%) 0%,
+        color.adjust($torii-red, $lightness: 15%) 0%,
         $torii-red 100%);
     border-radius: 50% 50% 0 0;
   }
@@ -2359,7 +2361,7 @@ $ink-black: #1a1a2e;
   height: 20px;
   background: linear-gradient(180deg,
       $torii-red 0%,
-      darken($torii-red, 10%) 100%);
+      color.adjust($torii-red, $lightness: -10%) 100%);
 }
 
 .gate-pillar {
@@ -2368,9 +2370,9 @@ $ink-black: #1a1a2e;
   bottom: 20%;
   width: 30px;
   background: linear-gradient(90deg,
-      darken($torii-red, 10%) 0%,
+      color.adjust($torii-red, $lightness: -10%) 0%,
       $torii-red 50%,
-      darken($torii-red, 10%) 100%);
+      color.adjust($torii-red, $lightness: -10%) 100%);
 
   &.left {
     left: 22%;

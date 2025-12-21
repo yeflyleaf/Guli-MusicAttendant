@@ -674,6 +674,8 @@ defineExpose({ visible })
 </script>
 
 <style lang="scss" scoped>
+@use "sass:color";
+
 // ==================== 颜色变量 ====================
 $asphalt-black: #0a0a12;
 $midnight-purple: #1a0b2e;
@@ -693,7 +695,7 @@ $neon-magenta: #ff00ff;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(180deg, $midnight-purple 0%, $asphalt-black 50%, darken($asphalt-black, 3%) 100%);
+  background: linear-gradient(180deg, $midnight-purple 0%, $asphalt-black 50%, color.adjust($asphalt-black, $lightness: -3%) 100%);
   font-family: 'Orbitron', 'Rajdhani', 'Michroma', sans-serif;
 }
 

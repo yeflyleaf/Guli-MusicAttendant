@@ -726,6 +726,8 @@ defineExpose({ visible })
 </script>
 
 <style lang="scss" scoped>
+@use "sass:color";
+
 // ==================== 颜色变量 ====================
 $zero-white: #f5f7fa;
 $quantum-gray: #e0e5ec;
@@ -743,7 +745,7 @@ $holographic-yellow: #ffff00;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, $zero-white 0%, $quantum-gray 50%, darken($quantum-gray, 5%) 100%);
+  background: linear-gradient(135deg, $zero-white 0%, $quantum-gray 50%, color.adjust($quantum-gray, $lightness: -5%) 100%);
   font-family: 'Century Gothic', 'Futura', 'Avant Garde', sans-serif;
 }
 
