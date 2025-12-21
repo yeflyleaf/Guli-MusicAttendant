@@ -207,7 +207,7 @@ let time = 0
 
 // 生成陨石数据
 const random = (min: number, max: number) => Math.random() * (max - min) + min
-const meteors = Array.from({ length: 8 }, (_, i) => {
+const meteors = Array.from({ length: 15 }, (_, i) => {  // 增加陨石数量
   return {
     id: i,
     style: {
@@ -239,7 +239,7 @@ const initEmberSystem = () => {
   // 创建火星和灰烬
   const emberColors = ['#ff3300', '#ff6600', '#ff8800', '#ffaa00', '#ffd700', '#ffffff']
   const ashColors = ['#4a4a4a', '#3d3d3d', '#2e2e2e', '#1f1f1f']
-  const particleCount = 120
+  const particleCount = 200  // 增加粒子数量
 
   const createParticle = (): Ember => {
     const isEmber = Math.random() > 0.3
