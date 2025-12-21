@@ -392,20 +392,32 @@ export const usePlayerStore = defineStore('player', {
     },
 
     /**
-     * 更新当前歌曲的收藏状态
+     * 更新歌曲的收藏状态
      */
-    updateCurrentSongFavorite(isFavorite: boolean) {
-      if (this.currentSong) {
+    updateSongFavorite(musicId: number, isFavorite: boolean) {
+      // 1. 更新当前歌曲
+      if (this.currentSong && this.currentSong.id === musicId) {
         this.currentSong = {
           ...this.currentSong,
           is_favorite: isFavorite ? 1 : 0
         }
+      }
 
-        // 同步更新队列中的歌曲
-        const index = this.queue.findIndex(s => s.id === this.currentSong?.id)
-        if (index !== -1) {
-          this.queue[index] = { ...this.queue[index], is_favorite: isFavorite ? 1 : 0 }
-        }
+      // 2. 更新队列中的歌曲
+      const index = this.queue.findIndex(s => s.id === musicId)
+      if (index !== -1) {
+        // 创建新对象以触发响应式更新
+        const newSong = { ...this.queue[index], is_favorite: isFavorite ? 1 : 0 }
+        this.queue.splice(index, 1, newSong)
+      }
+    },
+
+    /**
+     * 更新当前歌曲的收藏状态 (Deprecated: use updateSongFavorite instead)
+     */
+    updateCurrentSongFavorite(isFavorite: boolean) {
+      if (this.currentSong) {
+        this.updateSongFavorite(this.currentSong.id, isFavorite)
       }
     },
 

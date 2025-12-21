@@ -177,6 +177,13 @@ export const useLibraryStore = defineStore('library', {
           }
         }
 
+        // 同步更新播放器中的状态
+        import('@/store/player.store').then(({ usePlayerStore }) => {
+          const playerStore = usePlayerStore()
+          const isFav = music?.is_favorite === 1
+          playerStore.updateSongFavorite(musicId, isFav)
+        })
+
         return true
       } catch (error) {
         console.error('[Library] 切换收藏失败:', error)

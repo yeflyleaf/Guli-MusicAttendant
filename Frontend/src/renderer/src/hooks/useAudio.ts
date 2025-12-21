@@ -114,7 +114,12 @@ function setupWatchers(
   const { currentSong, isPlaying, volume, isMuted } = storeToRefs(playerStore)
 
   // 监听当前歌曲变化
-  watch(currentSong, (newSong) => {
+  watch(currentSong, (newSong, oldSong) => {
+    // 如果歌曲 ID 没有变化，说明只是更新了元数据（如收藏状态），不需要重新加载音频
+    if (newSong && oldSong && newSong.id === oldSong.id) {
+      return
+    }
+
     if (newSong && globalAudio) {
       const normalizedPath = newSong.file_path.replace(/\\/g, '/')
       globalAudio.src = `local-audio://${normalizedPath}`
