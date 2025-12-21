@@ -498,30 +498,65 @@ export const usePlayerStore = defineStore('player', {
         }
 
         if (status.queue && Array.isArray(status.queue) && status.queue.length > 0) {
-          // 验证当前歌曲是否仍然存在于音乐库中
-          const currentSongFromQueue = status.queue[status.currentIndex]
-          if (currentSongFromQueue) {
-            // 检查这首歌是否还在音乐库中（通过 ID 查找）
-            const songExists = libraryStore.allMusic.some(m => m.id === currentSongFromQueue.id)
+          // 使用 file_path 匹配歌曲，比 ID 更可靠（ID 可能在重置数据库后改变）
+          // 同时使用库中的最新数据替换保存的数据（确保元数据最新）
+          const libraryMap = new Map<string, Music>()
+          for (const song of libraryStore.allMusic) {
+            libraryMap.set(song.file_path, song)
+          }
 
-            if (songExists) {
-              this.queue = status.queue
-              this.currentIndex = status.currentIndex
-              this.currentSong = currentSongFromQueue
+          const queue = status.queue as Music[]
+          const validQueue: Music[] = []
 
-              // 恢复进度
-              if (typeof status.currentTime === 'number') {
-                this.currentTime = status.currentTime
-              }
-
-              console.log('[Player] Restored playback status successfully:', {
-                currentSong: this.currentSong?.title,
-                currentTime: this.currentTime
-              })
-              return
-            } else {
-              console.log('[Player] Saved song no longer exists in library')
+          for (const savedSong of queue) {
+            const librarySong = libraryMap.get(savedSong.file_path)
+            if (librarySong) {
+              validQueue.push(librarySong)
             }
+          }
+
+          if (validQueue.length > 0) {
+            this.queue = validQueue
+
+            // 尝试恢复当前播放位置
+            let newIndex = 0
+            const savedCurrentSong = queue[status.currentIndex]
+
+            // 如果原来的当前歌曲还在有效队列中
+            if (savedCurrentSong) {
+              // 通过路径查找新位置
+              const foundIndex = validQueue.findIndex(s => s.file_path === savedCurrentSong.file_path)
+
+              if (foundIndex !== -1) {
+                newIndex = foundIndex
+                this.currentSong = validQueue[newIndex]
+
+                // 恢复进度
+                if (typeof status.currentTime === 'number') {
+                  this.currentTime = status.currentTime
+                }
+              } else {
+                // 原来的歌曲不在了，重置为第一首
+                this.currentSong = validQueue[0]
+                this.currentTime = 0
+                console.log('[Player] Saved current song no longer exists in library, resetting to start')
+              }
+            } else {
+               // 索引无效，重置
+               this.currentSong = validQueue[0]
+               this.currentTime = 0
+            }
+
+            this.currentIndex = newIndex
+
+            console.log('[Player] Restored playback status successfully:', {
+              currentSong: this.currentSong?.title,
+              currentTime: this.currentTime,
+              queueLength: this.queue.length
+            })
+            return
+          } else {
+            console.log('[Player] No valid songs found in saved queue (matched by path)')
           }
         }
 
