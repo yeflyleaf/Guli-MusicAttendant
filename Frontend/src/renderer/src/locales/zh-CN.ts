@@ -94,7 +94,9 @@ export default {
       splashThemeDesc: '选择开屏动画的视觉风格',
       splashThemeCosmic: '星际穿梭',
       splashThemeEmerald: '翡翠圣域',
-      splashThemeMolten: '热能冲击'
+      splashThemeMolten: '热能冲击',
+      splashThemeAbyss: '深蓝幽光',
+      splashThemeBrass: '黄铜纪元'
     },
     // 音乐库设置
     library: {

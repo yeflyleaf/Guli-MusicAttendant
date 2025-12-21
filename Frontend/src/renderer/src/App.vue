@@ -9,6 +9,12 @@
   <!-- 炼狱熔炉主题 -->
   <MoltenForgeSplash v-if="showSplash && settingsStore.splashTheme === 'molten'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 深蓝幽光主题 -->
+  <BioluminescentAbyssSplash v-if="showSplash && settingsStore.splashTheme === 'abyss'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+  <!-- 黄铜纪元主题 -->
+  <BrassEraSplash v-if="showSplash && settingsStore.splashTheme === 'brass'"
+    :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
   <div class="app-container">
     <!-- 自定义标题栏 -->
@@ -42,6 +48,8 @@
 </template>
 
 <script setup lang="ts">
+import BioluminescentAbyssSplash from '@/components/Layout/BioluminescentAbyssSplash.vue'
+import BrassEraSplash from '@/components/Layout/BrassEraSplash.vue'
 import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.vue'
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'

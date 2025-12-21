@@ -94,7 +94,9 @@ export default {
       splashThemeDesc: 'Choose the visual style for the splash screen',
       splashThemeCosmic: 'Cosmic Voyage',
       splashThemeEmerald: 'Emerald Sanctuary',
-      splashThemeMolten: 'Thermal Impact'
+      splashThemeMolten: 'Thermal Impact',
+      splashThemeAbyss: 'Bioluminescent Abyss',
+      splashThemeBrass: 'Brass Era'
     },
     // Library
     library: {

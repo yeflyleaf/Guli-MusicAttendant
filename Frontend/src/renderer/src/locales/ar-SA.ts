@@ -95,7 +95,9 @@ export default {
       splashThemeDesc: 'اختر النمط البصري لشاشة البداية',
       splashThemeCosmic: 'رحلة كونية',
       splashThemeEmerald: 'ملاذ الزمرد',
-      splashThemeMolten: 'تأثير حراري'
+      splashThemeMolten: 'تأثير حراري',
+      splashThemeAbyss: 'هاوية بيولوجية مضيئة',
+      splashThemeBrass: 'عصر النحاس'
     },
     // Library
     library: {

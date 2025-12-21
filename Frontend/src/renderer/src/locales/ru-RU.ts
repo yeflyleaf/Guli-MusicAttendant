@@ -86,7 +86,9 @@ export default {
       splashThemeDesc: 'Выберите визуальный стиль заставки',
       splashThemeCosmic: 'Космическое путешествие',
       splashThemeEmerald: 'Изумрудное убежище',
-      splashThemeMolten: 'Тепловой удар'
+      splashThemeMolten: 'Тепловой удар',
+      splashThemeAbyss: 'Биолюминесцентная бездна',
+      splashThemeBrass: 'Эра Латуни'
     },
     library: {
       title: 'Библиотека',
