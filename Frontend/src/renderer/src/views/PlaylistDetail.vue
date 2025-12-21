@@ -199,13 +199,14 @@
 </template>
 
 <script setup lang="ts">
+import { showConfirm } from '@/hooks/useConfirm'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import type { Music } from '@/types/music'
 import type { Playlist } from '@/types/playlist'
 import { formatDate, formatDuration } from '@/utils/format'
 import { Delete, Edit, Headset, Loading, Menu, Plus, Search, Setting, Tickets, VideoPlay } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import Sortable from 'sortablejs'
 import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
@@ -383,19 +384,12 @@ const handleDragEnd = async (evt: Sortable.SortableEvent) => {
 
 // 删除歌单
 const handleDelete = async () => {
-  try {
-    await ElMessageBox.confirm('确定要删除这个歌单吗？', '确认删除', {
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
+  const confirmed = await showConfirm({ message: '确定要删除这个歌单吗？', type: 'warning' })
+  if (!confirmed) return
 
-    await libraryStore.deletePlaylist(playlist.value!.id)
-    ElMessage.success('歌单已删除')
-    router.push('/')
-  } catch {
-    // 用户取消
-  }
+  await libraryStore.deletePlaylist(playlist.value!.id)
+  ElMessage.success('歌单已删除')
+  router.push('/')
 }
 
 // 从歌单移除歌曲
@@ -430,32 +424,24 @@ const handleSelect = (id: number, checked: boolean) => {
 const handleBatchRemove = async () => {
   if (selectedIds.value.size === 0 || !playlist.value) return
 
-  try {
-    await ElMessageBox.confirm(
-      `确定要从歌单中移除选中的 ${selectedIds.value.size} 首歌曲吗？`,
-      '确认移除',
-      {
-        confirmButtonText: '移除',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
+  const confirmed = await showConfirm({
+    message: `确定要从歌单中移除选中的 ${selectedIds.value.size} 首歌曲吗？`,
+    type: 'warning'
+  })
+  if (!confirmed) return
 
-    // 逐个移除（目前没有批量移除API）
-    for (const musicId of selectedIds.value) {
-      await window.electron.playlist.removeMusic(playlist.value.id, musicId)
-    }
-
-    // 更新本地状态
-    songs.value = songs.value.filter(s => !selectedIds.value.has(s.id))
-    selectedIds.value = new Set()
-    selectAll.value = false
-
-    await libraryStore.refreshPlaylists()
-    ElMessage.success('已移除选中的歌曲')
-  } catch {
-    // 用户取消
+  // 逐个移除（目前没有批量移除API）
+  for (const musicId of selectedIds.value) {
+    await window.electron.playlist.removeMusic(playlist.value.id, musicId)
   }
+
+  // 更新本地状态
+  songs.value = songs.value.filter(s => !selectedIds.value.has(s.id))
+  selectedIds.value = new Set()
+  selectAll.value = false
+
+  await libraryStore.refreshPlaylists()
+  ElMessage.success('已移除选中的歌曲')
 }
 
 // 保存编辑

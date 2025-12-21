@@ -84,6 +84,7 @@ import SiliconOrderSplash from '@/components/Layout/SiliconOrderSplash.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
 import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.vue'
+import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
@@ -91,7 +92,6 @@ import { useSettingsStore } from '@/store/settings.store'
 import type { Music } from '@/types/music'
 import { debounce } from '@/utils/debounce'
 import Lyrics from '@/views/Lyrics.vue'
-import { ElMessageBox } from 'element-plus'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -156,23 +156,24 @@ const handleMusicPathValidationFailed = async (event: CustomEvent<{
   message += `</div>`
 
   try {
-    await ElMessageBox.confirm(
+    const confirmed = await showConfirm({
       message,
-      t('player.pathValidationTitle'),
-      {
-        confirmButtonText: t('player.removeFromList'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-        dangerouslyUseHTMLString: true
-      }
-    )
+      title: t('player.pathValidationTitle'),
+      type: 'warning',
+      confirmText: t('player.removeFromList'),
+      cancelText: t('common.cancel')
+    })
 
-    // 用户选择从列表中删除
-    await libraryStore.deleteMusic(song.id)
-    console.log(`[App] Song "${song.title}" removed from library`)
-  } catch {
-    // 用户取消，不做任何操作
-    console.log(`[App] User cancelled removing song "${song.title}"`)
+    if (confirmed) {
+      // 用户选择从列表中删除
+      await libraryStore.deleteMusic(song.id)
+      console.log(`[App] Song "${song.title}" removed from library`)
+    } else {
+      // 用户取消，不做任何操作
+      console.log(`[App] User cancelled removing song "${song.title}"`)
+    }
+  } catch (error) {
+    console.error('[App] Error handling music path validation:', error)
   }
 }
 

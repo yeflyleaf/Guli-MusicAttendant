@@ -113,11 +113,12 @@
 
 <script setup lang="ts">
 import AddToPlaylistDialog from '@/components/Base/AddToPlaylistDialog.vue'
+import { showConfirm } from '@/hooks/useConfirm'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { formatDuration } from '@/utils/format'
 import { Close, Edit, Headset, MoreFilled, Search, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { computed, nextTick, onActivated, onMounted, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 
@@ -194,27 +195,19 @@ const handleSelect = (id: number, checked: boolean) => {
 const handleBatchUnfavorite = async () => {
   if (selectedIds.value.size === 0) return
 
-  try {
-    await ElMessageBox.confirm(
-      `确定要取消收藏选中的 ${selectedIds.value.size} 首歌曲吗？`,
-      '确认取消收藏',
-      {
-        confirmButtonText: '取消收藏',
-        cancelButtonText: '返回',
-        type: 'warning'
-      }
-    )
+  const confirmed = await showConfirm({
+    message: `确定要取消收藏选中的 ${selectedIds.value.size} 首歌曲吗？`,
+    type: 'warning'
+  })
+  if (!confirmed) return
 
-    for (const id of selectedIds.value) {
-      await libraryStore.toggleFavorite(id)
-    }
-
-    selectedIds.value = new Set()
-    selectAll.value = false
-    ElMessage.success('已取消收藏')
-  } catch {
-    // 用户取消
+  for (const id of selectedIds.value) {
+    await libraryStore.toggleFavorite(id)
   }
+
+  selectedIds.value = new Set()
+  selectAll.value = false
+  ElMessage.success('已取消收藏')
 }
 
 // 添加到歌单对话框状态

@@ -291,6 +291,7 @@
 </template>
 
 <script setup lang="ts">
+import { showConfirm } from '@/hooks/useConfirm'
 import { useIpc } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
 import { useSettingsStore } from '@/store/settings.store'
@@ -305,7 +306,7 @@ import {
   Plus,
   Refresh
 } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -314,7 +315,7 @@ useI18n()
 
 const settingsStore = useSettingsStore()
 const libraryStore = useLibraryStore()
-const { selectFolder, resetAndScanAllFolders, confirm } = useIpc()
+const { selectFolder, resetAndScanAllFolders } = useIpc()
 
 const isScanning = ref(false)
 
@@ -418,7 +419,7 @@ const handleAddFolder = async () => {
 }
 
 const handleRemoveFolder = async (folder: string) => {
-  const confirmed = await confirm(`确定要移除文件夹 "${folder}" 吗？\n（不会删除文件夹中的歌曲数据）`)
+  const confirmed = await showConfirm({ message: `确定要移除文件夹 "${folder}" 吗？\n（不会删除文件夹中的歌曲数据）`, type: 'warning' })
   if (!confirmed) return
 
   await settingsStore.removeMusicFolder(folder)
@@ -448,34 +449,27 @@ const handleScanAll = async () => {
 // --- 其他 ---
 
 const handleResetSettings = async () => {
-  try {
-    await ElMessageBox.confirm('确定要将所有设置恢复为默认值吗？', '重置设置', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
+  const confirmed = await showConfirm({ message: '确定要将所有设置恢复为默认值吗？', type: 'warning' })
+  if (!confirmed) return
 
-    await settingsStore.resetSettings()
+  await settingsStore.resetSettings()
 
-    // 更新本地状态
-    theme.value = settingsStore.theme
-    language.value = settingsStore.language
-    fontSize.value = settingsStore.fontSize
-    localMusicHeaders.value = settingsStore.localMusicHeaders
-    visualizerEnabled.value = settingsStore.visualizerEnabled
-    visualizationStyle.value = settingsStore.visualizationStyle
-    visualizationFrameRate.value = settingsStore.visualizationFrameRate
-    rememberPlaybackStatus.value = settingsStore.rememberPlaybackStatus
-    gaplessPlayback.value = settingsStore.gaplessPlayback
-    autoScan.value = settingsStore.autoScan
+  // 更新本地状态
+  theme.value = settingsStore.theme
+  language.value = settingsStore.language
+  fontSize.value = settingsStore.fontSize
+  localMusicHeaders.value = settingsStore.localMusicHeaders
+  visualizerEnabled.value = settingsStore.visualizerEnabled
+  visualizationStyle.value = settingsStore.visualizationStyle
+  visualizationFrameRate.value = settingsStore.visualizationFrameRate
+  rememberPlaybackStatus.value = settingsStore.rememberPlaybackStatus
+  gaplessPlayback.value = settingsStore.gaplessPlayback
+  autoScan.value = settingsStore.autoScan
 
-    // 刷新音乐库
-    await libraryStore.refreshMusic()
+  // 刷新音乐库
+  await libraryStore.refreshMusic()
 
-    ElMessage.success('设置已重置')
-  } catch {
-    // 用户取消
-  }
+  ElMessage.success('设置已重置')
 }
 </script>
 

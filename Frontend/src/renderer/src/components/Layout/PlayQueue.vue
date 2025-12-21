@@ -113,6 +113,7 @@
 </template>
 
 <script setup lang="ts">
+import { showConfirm } from '@/hooks/useConfirm'
 import { usePlayerStore } from '@/store/player.store'
 import type { Music } from '@/types/music'
 import { formatDuration } from '@/utils/format'
@@ -126,7 +127,7 @@ import {
     Sort,
     Switch
 } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { computed, nextTick, ref, watch } from 'vue'
 
 const playerStore = usePlayerStore()
@@ -178,21 +179,11 @@ const handleRemoveSong = (songId: number) => {
 
 // 清空队列
 const handleClearQueue = async () => {
-    try {
-        await ElMessageBox.confirm(
-            '确定要清空播放队列吗？',
-            '清空队列',
-            {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }
-        )
-        playerStore.clearQueue()
-        ElMessage.success('已清空播放队列')
-    } catch {
-        // 用户取消
-    }
+    const confirmed = await showConfirm({ message: '确定要清空播放队列吗？', type: 'warning' })
+    if (!confirmed) return
+
+    playerStore.clearQueue()
+    ElMessage.success('已清空播放队列')
 }
 
 // 当队列打开时，滚动到当前播放的歌曲
