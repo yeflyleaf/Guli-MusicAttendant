@@ -257,7 +257,7 @@ const initFireflySystem = () => {
   window.addEventListener('resize', resizeCanvas)
 
   // 创建萤火虫和花粉
-  const fireflyColors = ['#88cc00', '#ffd700', '#7dd3fc', '#22c55e']
+  const fireflyColors = ['#a3e635', '#fde047', '#38bdf8', '#4ade80']
   const fireflyCount = 80
 
   fireflies = Array.from({ length: fireflyCount }, () => ({
@@ -1178,16 +1178,26 @@ $crystal-green: rgba(20, 50, 30, 0.5);
 .crystal-panel {
   position: relative;
   z-index: 10;
-  padding: 48px 64px;
-  background: $crystal-green;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px;
-  border: 1px solid rgba(136, 204, 0, 0.2);
+  padding: 56px 72px;
+  background: rgba(20, 50, 30, 0.4);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.6),
-    0 0 80px rgba(136, 204, 0, 0.1),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    0 30px 60px -12px rgba(0, 0, 0, 0.7),
+    0 0 100px rgba(136, 204, 0, 0.15),
+    inset 0 0 40px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.05) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
   &.wind-shake {
     animation: windShake 0.1s ease-in-out infinite;
@@ -1402,30 +1412,38 @@ $crystal-green: rgba(20, 50, 30, 0.5);
 
 // ==================== 应用名称 ====================
 .app-name {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 32px;
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 40px;
   display: flex;
-  gap: 2px;
-  font-family: 'Noto Serif SC', 'Merriweather', 'Segoe UI', sans-serif;
+  gap: 4px;
+  font-family: 'Noto Serif SC', 'Merriweather', serif;
+  perspective: 1000px;
 
   .char {
     display: inline-block;
-    background: linear-gradient(135deg, $dawn-gold 0%, $sprout-green 50%, #22c55e 100%);
+    background: linear-gradient(120deg, $dawn-gold 0%, $sprout-green 25%, #4ade80 50%, $sprout-green 75%, $dawn-gold 100%);
+    background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: charReveal 0.6s ease-out forwards;
+    animation: charReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, shimmer 3s linear infinite;
     opacity: 0;
-    transform: translateY(20px) scale(0.8);
-    filter: drop-shadow(0 0 10px rgba(136, 204, 0, 0.3));
+    transform: translateY(30px) rotateX(20deg);
+    filter: drop-shadow(0 2px 15px rgba(136, 204, 0, 0.5));
   }
 }
 
 @keyframes charReveal {
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
   }
 }
 
@@ -1434,34 +1452,49 @@ $crystal-green: rgba(20, 50, 30, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  width: 100%;
 }
 
 .loading-bar {
   position: relative;
-  width: 200px;
-  height: 4px;
-  background: rgba(136, 204, 0, 0.2);
-  border-radius: 2px;
+  width: 240px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
   overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .loading-progress {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, $sprout-green 0%, $dawn-gold 50%, $sprout-green 100%);
-  border-radius: 2px;
-  animation: loadingFill 2s ease-in-out forwards;
+  background: linear-gradient(90deg, #4ade80 0%, #facc15 50%, #4ade80 100%);
+  background-size: 200% 100%;
+  border-radius: 3px;
+  animation: loadingFill 2.5s ease-in-out forwards, gradientFlow 2s linear infinite;
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .loading-sparkle {
   position: absolute;
-  top: -3px;
-  height: 10px;
-  width: 40px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
-  animation: sparkleMove 2s ease-in-out infinite;
-  border-radius: 5px;
+  top: -5px;
+  height: 16px;
+  width: 50px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, transparent 70%);
+  animation: sparkleMove 2.5s ease-in-out infinite;
+  mix-blend-mode: overlay;
+  filter: blur(2px);
 }
 
 @keyframes loadingFill {
@@ -1484,31 +1517,44 @@ $crystal-green: rgba(20, 50, 30, 0.5);
 
 @keyframes sparkleMove {
   0% {
-    left: -40px;
+    left: -50px;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
   }
 
   100% {
-    left: 200px;
+    left: 240px;
+    opacity: 0;
   }
 }
 
 .loading-text {
-  font-size: 0.929rem;
-  color: rgba(136, 204, 0, 0.8);
-  animation: textBreath 1.5s ease-in-out infinite;
-  letter-spacing: 2px;
+  font-size: 1rem;
+  color: rgba(220, 252, 231, 0.9);
+  animation: textBreath 2s ease-in-out infinite;
+  letter-spacing: 3px;
   font-family: 'Noto Serif SC', serif;
+  text-shadow: 0 0 10px rgba(136, 204, 0, 0.3);
 }
 
 @keyframes textBreath {
 
   0%,
   100% {
-    opacity: 0.6;
+    opacity: 0.7;
+    text-shadow: 0 0 10px rgba(136, 204, 0, 0.3);
   }
 
   50% {
     opacity: 1;
+    text-shadow: 0 0 20px rgba(136, 204, 0, 0.6);
   }
 }
 
