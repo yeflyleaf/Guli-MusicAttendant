@@ -24,13 +24,10 @@
       <div class="arch arch-2"></div>
     </div>
 
-    <!-- 流动薄雾 - 增强版 -->
+    <!-- 流动薄雾 - 性能优化版 (2层) -->
     <div class="mist-layer">
       <div class="mist mist-1"></div>
       <div class="mist mist-2"></div>
-      <div class="mist mist-3"></div>
-      <div class="mist mist-4"></div>
-      <div class="mist mist-5"></div>
       <div class="ground-fog"></div>
     </div>
 
@@ -174,8 +171,6 @@
       <!-- 光柱效果 -->
       <div class="light-beam beam-1"></div>
       <div class="light-beam beam-2"></div>
-      <div class="light-beam beam-3"></div>
-      <div class="light-beam beam-4"></div>
     </div>
 
     <!-- 尘埃粒子 Canvas -->
@@ -268,9 +263,8 @@
       <div class="candelabra-flame"></div>
     </div>
 
-    <!-- 顶层：暗角遮罩 - 增强版 -->
+    <!-- 顶层：暗角遮罩 - 性能优化版 -->
     <div class="vignette-overlay"></div>
-    <div class="vignette-gradient"></div>
   </div>
 </template>
 
@@ -605,8 +599,8 @@ const initFireflySystem = () => {
     }
   }
 
-  // 初始化流萤
-  for (let i = 0; i < 25; i++) {
+  // 初始化流萤 - 减少数量
+  for (let i = 0; i < 12; i++) {
     const ff = createFirefly()
     // 分散到屏幕各处
     ff.x = Math.random() * canvas.width
@@ -1019,24 +1013,6 @@ $warm-mist: rgba(255, 220, 180, 0.08);
     bottom: 5%;
     opacity: 0.5;
     animation: mistDrift 60s linear infinite reverse;
-  }
-
-  &.mist-3 {
-    bottom: 12%;
-    opacity: 0.4;
-    animation: mistDrift 80s linear infinite;
-  }
-
-  &.mist-4 {
-    bottom: 20%;
-    opacity: 0.3;
-    animation: mistDrift 100s linear infinite reverse;
-  }
-
-  &.mist-5 {
-    bottom: 28%;
-    opacity: 0.2;
-    animation: mistDrift 120s linear infinite;
   }
 }
 
@@ -1632,24 +1608,6 @@ $warm-mist: rgba(255, 220, 180, 0.08);
     bottom: 0;
     height: 50%;
     animation-delay: -2s;
-  }
-
-  &.beam-3 {
-    left: 25%;
-    bottom: 0;
-    height: 40%;
-    width: 80px;
-    opacity: 0.6;
-    animation-delay: -1s;
-  }
-
-  &.beam-4 {
-    right: 25%;
-    bottom: 0;
-    height: 40%;
-    width: 80px;
-    opacity: 0.6;
-    animation-delay: -3s;
   }
 }
 
