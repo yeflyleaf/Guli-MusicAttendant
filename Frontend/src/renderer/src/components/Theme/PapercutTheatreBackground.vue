@@ -95,6 +95,189 @@
         <path d="M80 165 Q70 120 60 80" stroke="rgba(20, 15, 25, 0.7)" stroke-width="2" fill="none" />
         <path d="M180 145 Q200 100 190 60" stroke="rgba(20, 15, 25, 0.7)" stroke-width="2" fill="none" />
       </svg>
+
+      <!-- 大型拱桥 - 跨越整个屏幕 -->
+      <svg class="grand-arch-bridge" viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <!-- 主桥身 -->
+        <path d="M-50 180 Q300 40 600 30 Q900 40 1250 180" stroke="rgba(20, 15, 25, 0.7)" stroke-width="6"
+          fill="none" />
+        <path d="M-50 195 Q300 60 600 50 Q900 60 1250 195" stroke="rgba(20, 15, 25, 0.55)" stroke-width="4"
+          fill="none" />
+        <!-- 桥拱装饰线 -->
+        <path d="M-50 170 Q300 30 600 20 Q900 30 1250 170" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2"
+          fill="none" />
+        <!-- 桥栏杆 - 更多密集的支柱 -->
+        <g class="bridge-railings">
+          <line x1="50" y1="140" x2="50" y2="165" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="150" y1="95" x2="150" y2="120" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="250" y1="60" x2="250" y2="85" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="350" y1="42" x2="350" y2="67" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="450" y1="32" x2="450" y2="57" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="550" y1="28" x2="550" y2="53" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="650" y1="28" x2="650" y2="53" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="750" y1="32" x2="750" y2="57" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="850" y1="42" x2="850" y2="67" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="950" y1="60" x2="950" y2="85" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="1050" y1="95" x2="1050" y2="120" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="1150" y1="140" x2="1150" y2="165" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+        </g>
+        <!-- 桥顶栏杆横梁 -->
+        <path d="M50 140 Q300 25 600 15 Q900 25 1150 140" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2"
+          fill="none" />
+        <!-- 桥墩装饰 -->
+        <ellipse cx="100" cy="185" rx="40" ry="15" fill="rgba(20, 15, 25, 0.4)" />
+        <ellipse cx="1100" cy="185" rx="40" ry="15" fill="rgba(20, 15, 25, 0.4)" />
+        <!-- 桥面装饰花纹 -->
+        <circle cx="600" cy="35" r="8" fill="none" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2" />
+        <circle cx="400" cy="48" r="6" fill="none" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" />
+        <circle cx="800" cy="48" r="6" fill="none" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" />
+      </svg>
+
+      <!-- 中心区域装饰：圆形月门 -->
+      <svg class="moon-gate" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r="60" stroke="rgba(20, 15, 25, 0.5)" stroke-width="6" fill="none" />
+        <circle cx="75" cy="75" r="52" stroke="rgba(20, 15, 25, 0.35)" stroke-width="2" fill="none" />
+        <!-- 内部装饰纹 -->
+        <path d="M40 75 Q55 55 75 55 Q95 55 110 75" stroke="rgba(20, 15, 25, 0.3)" stroke-width="1.5" fill="none" />
+        <path d="M40 75 Q55 95 75 95 Q95 95 110 75" stroke="rgba(20, 15, 25, 0.3)" stroke-width="1.5" fill="none" />
+      </svg>
+
+      <!-- 第二个月门 - 左侧 -->
+      <svg class="moon-gate moon-gate-left" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r="50" stroke="rgba(20, 15, 25, 0.4)" stroke-width="5" fill="none" />
+        <circle cx="75" cy="75" r="42" stroke="rgba(20, 15, 25, 0.28)" stroke-width="2" fill="none" />
+      </svg>
+
+      <!-- 中心八角窗棂 -->
+      <svg class="octagon-window" viewBox="0 0 100 100">
+        <polygon points="30,10 70,10 90,30 90,70 70,90 30,90 10,70 10,30" stroke="rgba(20, 15, 25, 0.45)"
+          stroke-width="3" fill="none" />
+        <polygon points="38,20 62,20 78,38 78,62 62,78 38,78 22,62 22,38" stroke="rgba(20, 15, 25, 0.3)"
+          stroke-width="1.5" fill="none" />
+        <!-- 内部十字纹 -->
+        <line x1="50" y1="20" x2="50" y2="78" stroke="rgba(20, 15, 25, 0.25)" stroke-width="1.5" />
+        <line x1="22" y1="50" x2="78" y2="50" stroke="rgba(20, 15, 25, 0.25)" stroke-width="1.5" />
+      </svg>
+
+      <!-- 六边形窗棂 -->
+      <svg class="hexagon-window" viewBox="0 0 100 100">
+        <polygon points="50,5 93,27 93,73 50,95 7,73 7,27" stroke="rgba(20, 15, 25, 0.4)" stroke-width="3"
+          fill="none" />
+        <polygon points="50,18 80,34 80,66 50,82 20,66 20,34" stroke="rgba(20, 15, 25, 0.28)" stroke-width="1.5"
+          fill="none" />
+      </svg>
+
+      <!-- 扇形装饰 -->
+      <svg class="fan-decoration" viewBox="0 0 120 80">
+        <path d="M60 75 L10 20 Q60 -10 110 20 Z" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" fill="none" />
+        <path d="M60 75 L25 25" stroke="rgba(20, 15, 25, 0.3)" stroke-width="1" />
+        <path d="M60 75 L40 18" stroke="rgba(20, 15, 25, 0.3)" stroke-width="1" />
+        <path d="M60 75 L60 10" stroke="rgba(20, 15, 25, 0.3)" stroke-width="1" />
+        <path d="M60 75 L80 18" stroke="rgba(20, 15, 25, 0.3)" stroke-width="1" />
+        <path d="M60 75 L95 25" stroke="rgba(20, 15, 25, 0.3)" stroke-width="1" />
+      </svg>
+
+      <!-- 如意云纹装饰1 -->
+      <svg class="ruyi-cloud ruyi-1" viewBox="0 0 100 60">
+        <path d="M10 50 Q30 30 50 35 Q70 25 90 45" stroke="rgba(50, 60, 90, 0.35)" stroke-width="3" fill="none" />
+        <circle cx="15" cy="45" r="8" stroke="rgba(50, 60, 90, 0.3)" stroke-width="2" fill="none" />
+        <circle cx="50" cy="30" r="10" stroke="rgba(50, 60, 90, 0.3)" stroke-width="2" fill="none" />
+        <circle cx="85" cy="40" r="8" stroke="rgba(50, 60, 90, 0.3)" stroke-width="2" fill="none" />
+      </svg>
+
+      <!-- 如意云纹装饰2 -->
+      <svg class="ruyi-cloud ruyi-2" viewBox="0 0 80 50">
+        <path d="M5 40 Q20 20 40 25 Q60 18 75 35" stroke="rgba(50, 60, 90, 0.3)" stroke-width="2.5" fill="none" />
+        <circle cx="10" cy="35" r="6" stroke="rgba(50, 60, 90, 0.25)" stroke-width="1.5" fill="none" />
+        <circle cx="40" cy="22" r="8" stroke="rgba(50, 60, 90, 0.25)" stroke-width="1.5" fill="none" />
+      </svg>
+
+      <!-- 悬挂宫灯装饰 -->
+      <svg class="palace-lantern" viewBox="0 0 60 100">
+        <!-- 顶部挂钩 -->
+        <path d="M30 0 L30 10" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2" />
+        <ellipse cx="30" cy="15" rx="8" ry="5" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2" fill="none" />
+        <!-- 灯身 -->
+        <path d="M15 20 L10 50 L15 80 L45 80 L50 50 L45 20 Z" stroke="rgba(180, 80, 70, 0.5)" stroke-width="2"
+          fill="rgba(180, 80, 70, 0.15)" />
+        <!-- 灯光 -->
+        <ellipse cx="30" cy="50" rx="12" ry="20" fill="rgba(255, 200, 100, 0.15)" />
+        <!-- 底部流苏 -->
+        <line x1="20" y1="80" x2="18" y2="95" stroke="rgba(180, 80, 70, 0.4)" stroke-width="1.5" />
+        <line x1="30" y1="80" x2="30" y2="98" stroke="rgba(180, 80, 70, 0.4)" stroke-width="1.5" />
+        <line x1="40" y1="80" x2="42" y2="95" stroke="rgba(180, 80, 70, 0.4)" stroke-width="1.5" />
+      </svg>
+
+      <!-- 飞鹤群 -->
+      <svg class="flying-cranes" viewBox="0 0 200 100">
+        <!-- 鹤1 -->
+        <g class="crane crane-1">
+          <path d="M20 50 Q30 40 50 45 L55 42 L50 45 Q65 50 80 45" stroke="rgba(20, 15, 25, 0.55)" stroke-width="2"
+            fill="none" />
+          <path d="M35 45 Q40 35 45 45" stroke="rgba(20, 15, 25, 0.5)" stroke-width="1.5" fill="none" />
+          <path d="M55 47 Q60 37 65 47" stroke="rgba(20, 15, 25, 0.5)" stroke-width="1.5" fill="none" />
+        </g>
+        <!-- 鹤2 -->
+        <g class="crane crane-2">
+          <path d="M100 30 Q110 22 125 25 L130 22 L125 25 Q140 28 155 24" stroke="rgba(20, 15, 25, 0.45)"
+            stroke-width="1.8" fill="none" />
+          <path d="M112 25 Q117 18 122 25" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.2" fill="none" />
+          <path d="M132 26 Q137 19 142 26" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.2" fill="none" />
+        </g>
+        <!-- 鹤3 -->
+        <g class="crane crane-3">
+          <path d="M140 60 Q150 52 165 56 L170 53 L165 56 Q175 59 188 55" stroke="rgba(20, 15, 25, 0.4)"
+            stroke-width="1.5" fill="none" />
+          <path d="M152 55 Q156 48 160 55" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1" fill="none" />
+        </g>
+      </svg>
+
+      <!-- 梅花枝 -->
+      <svg class="plum-branch plum-left" viewBox="0 0 180 250">
+        <path d="M0 250 Q30 200 50 150 Q70 100 90 60 Q100 30 95 0" stroke="rgba(20, 15, 25, 0.6)" stroke-width="3"
+          fill="none" />
+        <path d="M50 150 Q80 140 100 160" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2" fill="none" />
+        <path d="M70 110 Q40 90 30 60" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2" fill="none" />
+        <!-- 梅花 -->
+        <circle cx="100" cy="165" r="6" fill="rgba(180, 80, 70, 0.4)" />
+        <circle cx="30" cy="55" r="5" fill="rgba(180, 80, 70, 0.35)" />
+        <circle cx="95" cy="55" r="4" fill="rgba(180, 80, 70, 0.3)" />
+        <circle cx="55" cy="145" r="4" fill="rgba(180, 80, 70, 0.35)" />
+      </svg>
+
+      <!-- 右侧梅花枝 -->
+      <svg class="plum-branch plum-right" viewBox="0 0 180 250">
+        <path d="M180 250 Q150 200 130 150 Q110 100 90 60 Q80 30 85 0" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3"
+          fill="none" />
+        <path d="M130 150 Q100 135 85 155" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" fill="none" />
+        <!-- 梅花 -->
+        <circle cx="85" cy="160" r="5" fill="rgba(180, 80, 70, 0.35)" />
+        <circle cx="88" cy="55" r="4" fill="rgba(180, 80, 70, 0.3)" />
+        <circle cx="125" cy="145" r="5" fill="rgba(180, 80, 70, 0.35)" />
+      </svg>
+
+      <!-- 浮云装饰 -->
+      <svg class="floating-cloud cloud-center-1" viewBox="0 0 120 50">
+        <path d="M10 40 Q20 20 40 25 Q50 10 70 20 Q90 15 100 30 Q110 35 110 40" stroke="rgba(50, 60, 90, 0.25)"
+          stroke-width="2" fill="none" />
+      </svg>
+      <svg class="floating-cloud cloud-center-2" viewBox="0 0 100 40">
+        <path d="M5 35 Q15 15 35 20 Q50 8 70 18 Q85 12 95 30" stroke="rgba(50, 60, 90, 0.2)" stroke-width="1.5"
+          fill="none" />
+      </svg>
+
+      <!-- 竹叶装饰 -->
+      <svg class="bamboo-leaves bamboo-center" viewBox="0 0 100 200">
+        <path d="M50 200 L50 0" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2" fill="none" />
+        <path d="M50 40 Q30 30 20 50" stroke="rgba(20, 15, 25, 0.45)" stroke-width="1.5" fill="none" />
+        <path d="M50 40 Q70 30 80 50" stroke="rgba(20, 15, 25, 0.45)" stroke-width="1.5" fill="none" />
+        <path d="M50 80 Q25 70 15 90" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.5" fill="none" />
+        <path d="M50 80 Q75 70 85 90" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.5" fill="none" />
+        <path d="M50 120 Q30 110 22 130" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.5" fill="none" />
+        <path d="M50 120 Q70 110 78 130" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.5" fill="none" />
+        <path d="M50 160 Q35 150 28 170" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" fill="none" />
+        <path d="M50 160 Q65 150 72 170" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" fill="none" />
+      </svg>
     </div>
 
     <!-- 近景：摇曳边框 -->
@@ -160,6 +343,139 @@
           </g>
           <g class="willow-branch branch-10">
             <path d="M75 0 Q90 80 100 160 Q110 240 115 320" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.8"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 顶部左侧垂柳组 -->
+      <div class="willow willow-top-left-2">
+        <svg viewBox="0 0 180 380" class="willow-svg">
+          <g class="willow-branch branch-11">
+            <path d="M160 0 Q140 90 120 180 Q105 270 95 360" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2.5"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-12">
+            <path d="M140 0 Q110 100 85 200 Q65 290 55 370" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-13">
+            <path d="M120 0 Q80 80 50 160 Q30 240 20 340" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.8"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 顶部右侧垂柳组 -->
+      <div class="willow willow-top-right-2">
+        <svg viewBox="0 0 180 380" class="willow-svg">
+          <g class="willow-branch branch-14">
+            <path d="M20 0 Q40 90 60 180 Q75 270 85 360" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2.5"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-15">
+            <path d="M40 0 Q70 100 95 200 Q115 290 125 370" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-16">
+            <path d="M60 0 Q100 80 130 160 Q150 240 160 340" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.8"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 右侧中部垂柳 -->
+      <div class="willow willow-right-mid">
+        <svg viewBox="0 0 160 320" class="willow-svg">
+          <g class="willow-branch branch-17">
+            <path d="M10 0 Q30 70 50 140 Q65 210 75 300" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2.2"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-18">
+            <path d="M30 0 Q55 80 75 160 Q90 240 100 310" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.8"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 左侧中部垂柳 -->
+      <div class="willow willow-left-mid">
+        <svg viewBox="0 0 160 320" class="willow-svg">
+          <g class="willow-branch branch-19">
+            <path d="M150 0 Q130 70 110 140 Q95 210 85 300" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2.2"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-20">
+            <path d="M130 0 Q105 80 85 160 Q70 240 60 310" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.8"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 右下角垂柳 -->
+      <div class="willow willow-bottom-right">
+        <svg viewBox="0 0 180 280" class="willow-svg">
+          <g class="willow-branch branch-21">
+            <path d="M20 280 Q40 200 60 120 Q75 60 85 0" stroke="rgba(20, 15, 25, 0.48)" stroke-width="2.3"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-22">
+            <path d="M40 280 Q65 190 90 100 Q110 40 120 0" stroke="rgba(20, 15, 25, 0.42)" stroke-width="1.9"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 顶部中左垂柳 -->
+      <div class="willow willow-top-center-left">
+        <svg viewBox="0 0 120 300" class="willow-svg">
+          <g class="willow-branch branch-23">
+            <path d="M100 0 Q85 70 70 140 Q55 210 45 280" stroke="rgba(20, 15, 25, 0.42)" stroke-width="1.8"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-24">
+            <path d="M80 0 Q60 80 45 160 Q30 230 25 290" stroke="rgba(20, 15, 25, 0.38)" stroke-width="1.5"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 顶部中右垂柳 -->
+      <div class="willow willow-top-center-right">
+        <svg viewBox="0 0 120 300" class="willow-svg">
+          <g class="willow-branch branch-25">
+            <path d="M20 0 Q35 70 50 140 Q65 210 75 280" stroke="rgba(20, 15, 25, 0.42)" stroke-width="1.8"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-26">
+            <path d="M40 0 Q60 80 75 160 Q90 230 95 290" stroke="rgba(20, 15, 25, 0.38)" stroke-width="1.5"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 底部中央垂柳 -->
+      <div class="willow willow-bottom-center">
+        <svg viewBox="0 0 200 250" class="willow-svg">
+          <g class="willow-branch branch-27">
+            <path d="M100 250 Q85 180 70 110 Q60 50 55 0" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2" fill="none" />
+          </g>
+          <g class="willow-branch branch-28">
+            <path d="M100 250 Q115 180 130 110 Q140 50 145 0" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2"
+              fill="none" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- 左上角额外垂柳 -->
+      <div class="willow willow-left-extra">
+        <svg viewBox="0 0 150 350" class="willow-svg">
+          <g class="willow-branch branch-29">
+            <path d="M130 0 Q110 85 90 170 Q75 250 65 330" stroke="rgba(20, 15, 25, 0.43)" stroke-width="2"
+              fill="none" />
+          </g>
+          <g class="willow-branch branch-30">
+            <path d="M110 0 Q85 90 60 180 Q40 260 30 340" stroke="rgba(20, 15, 25, 0.38)" stroke-width="1.7"
               fill="none" />
           </g>
         </svg>
@@ -785,6 +1101,279 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
     height: auto;
     opacity: 0.7;
   }
+
+  // 大型拱桥 - 跨越整个屏幕
+  .grand-arch-bridge {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 20%;
+    width: 100%;
+    height: 180px;
+    opacity: 0.8;
+    filter: drop-shadow(0 4px 10px $paper-shadow);
+    pointer-events: none;
+  }
+
+  // 月门
+  .moon-gate {
+    position: absolute;
+    left: 55%;
+    top: 25%;
+    width: 120px;
+    height: auto;
+    opacity: 0.55;
+    animation: moonGateFloat 8s ease-in-out infinite;
+  }
+
+  .moon-gate-left {
+    left: 18%;
+    top: 35%;
+    width: 90px;
+    opacity: 0.45;
+    animation-delay: -3s;
+  }
+
+  // 八角窗棂
+  .octagon-window {
+    position: absolute;
+    left: 42%;
+    top: 40%;
+    width: 80px;
+    height: auto;
+    opacity: 0.5;
+    animation: moonGateFloat 10s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+
+  // 六边形窗棂
+  .hexagon-window {
+    position: absolute;
+    right: 30%;
+    top: 45%;
+    width: 70px;
+    height: auto;
+    opacity: 0.45;
+    animation: moonGateFloat 9s ease-in-out infinite;
+    animation-delay: -4s;
+  }
+
+  // 扇形装饰
+  .fan-decoration {
+    position: absolute;
+    left: 35%;
+    top: 55%;
+    width: 100px;
+    height: auto;
+    opacity: 0.5;
+    animation: fanSway 12s ease-in-out infinite;
+  }
+
+  // 如意云纹
+  .ruyi-cloud {
+    position: absolute;
+    opacity: 0.6;
+  }
+
+  .ruyi-1 {
+    top: 35%;
+    left: 25%;
+    width: 120px;
+    height: auto;
+    animation: cloudFloat 18s ease-in-out infinite;
+  }
+
+  .ruyi-2 {
+    top: 50%;
+    right: 22%;
+    width: 100px;
+    height: auto;
+    animation: cloudFloat 15s ease-in-out infinite reverse;
+  }
+
+  // 宫灯装饰
+  .palace-lantern {
+    position: absolute;
+    top: 8%;
+    left: 48%;
+    width: 50px;
+    height: auto;
+    opacity: 0.6;
+    animation: lanternSway 5s ease-in-out infinite;
+    transform-origin: top center;
+  }
+
+  // 飞鹤群
+  .flying-cranes {
+    position: absolute;
+    top: 20%;
+    left: 30%;
+    width: 180px;
+    height: auto;
+    opacity: 0.6;
+    animation: cranesGlide 20s linear infinite;
+  }
+
+  .crane-1 {
+    animation: craneFly 3s ease-in-out infinite;
+  }
+
+  .crane-2 {
+    animation: craneFly 3.5s ease-in-out infinite;
+    animation-delay: -1s;
+  }
+
+  .crane-3 {
+    animation: craneFly 4s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+
+  // 梅花枝
+  .plum-branch {
+    position: absolute;
+    filter: drop-shadow(0 3px 6px $paper-shadow);
+  }
+
+  .plum-left {
+    left: 20%;
+    bottom: 40%;
+    width: 120px;
+    height: auto;
+    opacity: 0.6;
+  }
+
+  .plum-right {
+    right: 25%;
+    bottom: 45%;
+    width: 110px;
+    height: auto;
+    opacity: 0.55;
+  }
+
+  // 浮云装饰
+  .floating-cloud {
+    position: absolute;
+    opacity: 0.5;
+  }
+
+  .cloud-center-1 {
+    top: 40%;
+    left: 40%;
+    width: 100px;
+    height: auto;
+    animation: cloudFloat 15s ease-in-out infinite;
+  }
+
+  .cloud-center-2 {
+    top: 50%;
+    right: 35%;
+    width: 80px;
+    height: auto;
+    animation: cloudFloat 18s ease-in-out infinite reverse;
+  }
+
+  // 竹叶装饰
+  .bamboo-leaves {
+    position: absolute;
+    filter: drop-shadow(0 2px 4px $paper-shadow);
+  }
+
+  .bamboo-center {
+    right: 40%;
+    bottom: 30%;
+    width: 60px;
+    height: auto;
+    opacity: 0.55;
+    animation: bambooSway 6s ease-in-out infinite;
+  }
+}
+
+@keyframes moonGateFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes cranesGlide {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(50px);
+  }
+}
+
+@keyframes craneFly {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes cloudFloat {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translate(15px, -5px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes bambooSway {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(1deg);
+  }
+
+  75% {
+    transform: rotate(-1deg);
+  }
+}
+
+@keyframes fanSway {
+
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(2deg) translateY(-3px);
+  }
+}
+
+@keyframes lanternSway {
+
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+
+  50% {
+    transform: rotate(2deg);
+  }
 }
 
 // 近景：摇曳边框
@@ -856,6 +1445,109 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
     animation: willowSway 6s ease-in-out infinite;
     animation-delay: -2.5s;
   }
+
+  // 新增柳枝动画 11-30
+  .branch-11 {
+    animation: willowSway 5.3s ease-in-out infinite;
+    animation-delay: -0.3s;
+  }
+
+  .branch-12 {
+    animation: willowSway 5.8s ease-in-out infinite;
+    animation-delay: -1.2s;
+  }
+
+  .branch-13 {
+    animation: willowSway 6.2s ease-in-out infinite;
+    animation-delay: -2.1s;
+  }
+
+  .branch-14 {
+    animation: willowSwayReverse 5.4s ease-in-out infinite;
+    animation-delay: -0.6s;
+  }
+
+  .branch-15 {
+    animation: willowSwayReverse 5.9s ease-in-out infinite;
+    animation-delay: -1.5s;
+  }
+
+  .branch-16 {
+    animation: willowSwayReverse 6.3s ease-in-out infinite;
+    animation-delay: -2.4s;
+  }
+
+  .branch-17 {
+    animation: willowSwayReverse 5.1s ease-in-out infinite;
+    animation-delay: -0.4s;
+  }
+
+  .branch-18 {
+    animation: willowSwayReverse 5.6s ease-in-out infinite;
+    animation-delay: -1.3s;
+  }
+
+  .branch-19 {
+    animation: willowSway 5.2s ease-in-out infinite;
+    animation-delay: -0.7s;
+  }
+
+  .branch-20 {
+    animation: willowSway 5.7s ease-in-out infinite;
+    animation-delay: -1.6s;
+  }
+
+  .branch-21 {
+    animation: willowSwayBottom 4.8s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+
+  .branch-22 {
+    animation: willowSwayBottom 5.3s ease-in-out infinite;
+    animation-delay: -0.9s;
+    transform-origin: bottom center;
+  }
+
+  .branch-23 {
+    animation: willowSway 4.9s ease-in-out infinite;
+    animation-delay: -0.5s;
+  }
+
+  .branch-24 {
+    animation: willowSway 5.4s ease-in-out infinite;
+    animation-delay: -1.4s;
+  }
+
+  .branch-25 {
+    animation: willowSwayReverse 5s ease-in-out infinite;
+    animation-delay: -0.8s;
+  }
+
+  .branch-26 {
+    animation: willowSwayReverse 5.5s ease-in-out infinite;
+    animation-delay: -1.7s;
+  }
+
+  .branch-27 {
+    animation: willowSwayBottom 4.6s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+
+  .branch-28 {
+    animation: willowSwayBottom 5.1s ease-in-out infinite;
+    animation-delay: -1.1s;
+    transform-origin: bottom center;
+  }
+
+  .branch-29 {
+    animation: willowSway 5.15s ease-in-out infinite;
+    animation-delay: -0.6s;
+  }
+
+  .branch-30 {
+    animation: willowSway 5.65s ease-in-out infinite;
+    animation-delay: -1.8s;
+  }
 }
 
 .willow-left {
@@ -885,6 +1577,79 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
   width: 150px;
   height: 350px;
   opacity: 0.7;
+}
+
+// 新增垂柳位置
+.willow-top-left-2 {
+  top: 0;
+  left: 15%;
+  width: 180px;
+  height: 380px;
+  opacity: 0.65;
+}
+
+.willow-top-right-2 {
+  top: 0;
+  right: 15%;
+  width: 180px;
+  height: 380px;
+  opacity: 0.65;
+}
+
+.willow-right-mid {
+  top: 25%;
+  right: 0;
+  width: 160px;
+  height: 320px;
+  opacity: 0.6;
+}
+
+.willow-left-mid {
+  top: 25%;
+  left: 0;
+  width: 160px;
+  height: 320px;
+  opacity: 0.6;
+}
+
+.willow-bottom-right {
+  bottom: 0;
+  right: 8%;
+  width: 180px;
+  height: 280px;
+  opacity: 0.55;
+}
+
+.willow-top-center-left {
+  top: 0;
+  left: 25%;
+  width: 120px;
+  height: 300px;
+  opacity: 0.55;
+}
+
+.willow-top-center-right {
+  top: 0;
+  right: 25%;
+  width: 120px;
+  height: 300px;
+  opacity: 0.55;
+}
+
+.willow-bottom-center {
+  bottom: 0;
+  left: 45%;
+  width: 200px;
+  height: 250px;
+  opacity: 0.5;
+}
+
+.willow-left-extra {
+  top: 5%;
+  left: 8%;
+  width: 150px;
+  height: 350px;
+  opacity: 0.6;
 }
 
 @keyframes willowSway {
