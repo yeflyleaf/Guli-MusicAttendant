@@ -225,6 +225,102 @@
         </div>
       </div>
 
+      <!-- 顶部中央灯笼组 -->
+      <div class="lantern-group lantern-group-top-center">
+        <div class="lantern lantern-7">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-8">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-9">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+      </div>
+
+      <!-- 右侧中部灯笼组 -->
+      <div class="lantern-group lantern-group-right-mid">
+        <div class="lantern lantern-10">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-11">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+      </div>
+
+      <!-- 左下角灯笼组 -->
+      <div class="lantern-group lantern-group-bottom-left">
+        <div class="lantern lantern-12">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-13">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+      </div>
+
+      <!-- 底部中央灯笼组 -->
+      <div class="lantern-group lantern-group-bottom-center">
+        <div class="lantern lantern-14">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-15">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-16">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+      </div>
+
       <!-- 右下角松针 -->
       <div class="pine-needle-cluster">
         <svg viewBox="0 0 150 200" class="pine-needle-svg">
@@ -859,6 +955,32 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
   right: 25%;
 }
 
+.lantern-group-top-center {
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  gap: 40px;
+}
+
+.lantern-group-right-mid {
+  right: 5%;
+  top: 45%;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.lantern-group-bottom-left {
+  left: 15%;
+  bottom: 10%;
+  gap: 25px;
+}
+
+.lantern-group-bottom-center {
+  bottom: 8%;
+  left: 40%;
+  gap: 35px;
+}
+
 .lantern {
   display: flex;
   flex-direction: column;
@@ -954,6 +1076,66 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
 .lantern-6 {
   animation: lanternSwing 5s ease-in-out infinite;
   animation-delay: -2.5s;
+  transform: scale(0.8);
+}
+
+.lantern-7 {
+  animation: lanternSwing 4.3s ease-in-out infinite;
+  animation-delay: -0.8s;
+  transform: scale(0.85);
+}
+
+.lantern-8 {
+  animation: lanternSwing 4.7s ease-in-out infinite;
+  animation-delay: -1.8s;
+  transform: scale(0.7);
+}
+
+.lantern-9 {
+  animation: lanternSwing 5.2s ease-in-out infinite;
+  animation-delay: -3s;
+  transform: scale(0.75);
+}
+
+.lantern-10 {
+  animation: lanternSwing 4.1s ease-in-out infinite;
+  animation-delay: -0.3s;
+  transform: scale(0.82);
+}
+
+.lantern-11 {
+  animation: lanternSwing 4.6s ease-in-out infinite;
+  animation-delay: -2.2s;
+  transform: scale(0.68);
+}
+
+.lantern-12 {
+  animation: lanternSwing 3.9s ease-in-out infinite;
+  animation-delay: -1.2s;
+  transform: scale(0.78);
+}
+
+.lantern-13 {
+  animation: lanternSwing 4.4s ease-in-out infinite;
+  animation-delay: -2.8s;
+  transform: scale(0.65);
+}
+
+.lantern-14 {
+  animation: lanternSwing 4.9s ease-in-out infinite;
+  animation-delay: -0.6s;
+  transform: scale(0.88);
+}
+
+.lantern-15 {
+  animation: lanternSwing 5.1s ease-in-out infinite;
+  animation-delay: -1.4s;
+  transform: scale(0.72);
+}
+
+.lantern-16 {
+  animation: lanternSwing 4s ease-in-out infinite;
+  animation-delay: -2s;
   transform: scale(0.8);
 }
 
