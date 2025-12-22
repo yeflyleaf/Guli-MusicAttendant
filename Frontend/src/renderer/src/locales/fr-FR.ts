@@ -52,6 +52,7 @@ export default {
       themeLight: 'Mode clair',
       themeInterstellar: 'Croisière Interstellaire',
       themeGothic: 'Ombres de Chandelle',
+      themePapercut: 'Théâtre de Papier Découpé',
       language: 'Langue',
       languageDesc: 'Choisir la langue de l\'application',
       fontSize: 'Taille de police',

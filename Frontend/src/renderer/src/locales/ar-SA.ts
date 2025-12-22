@@ -52,6 +52,7 @@ export default {
       themeLight: 'الوضع الفاتح',
       themeInterstellar: 'رحلة بين النجوم',
       themeGothic: 'ظلال الشموع',
+      themePapercut: 'مسرح القصاصات الورقية',
       language: 'اللغة',
       languageDesc: 'اختر لغة التطبيق',
       fontSize: 'حجم الخط',

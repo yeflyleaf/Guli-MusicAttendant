@@ -45,6 +45,7 @@ export default {
       themeLight: 'Светлый режим',
       themeInterstellar: 'Межзвёздный Круиз',
       themeGothic: 'Тени Свечей',
+      themePapercut: 'Бумажный Театр',
       language: 'Язык',
       languageDesc: 'Выберите язык приложения',
       fontSize: 'Размер шрифта',

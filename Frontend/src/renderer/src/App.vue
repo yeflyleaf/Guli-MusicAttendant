@@ -5,6 +5,9 @@
   <!-- 暗夜哥特动态背景 -->
   <GothicSanctuaryBackground v-if="showGothicBackground" />
 
+  <!-- 剪纸戏梦动态背景 -->
+  <PapercutTheatreBackground v-if="showPapercutBackground" />
+
   <!-- 启动屏幕 - 等待设置加载完成后再渲染，避免使用默认主题值导致闪烁 -->
   <!-- 窗口在设置加载完成后才显示，确保用户看到的第一帧就是正确的过场动画 -->
   <!-- 星际穿梭主题 -->
@@ -73,6 +76,8 @@
         <InterstellarCruiseBackground v-if="settingsStore.theme === 'interstellar'" :embedded="true" />
         <!-- 歌词页面的暗夜哥特背景 -->
         <GothicSanctuaryBackground v-if="settingsStore.theme === 'gothic'" :embedded="true" />
+        <!-- 歌词页面的剪纸戏梦背景 -->
+        <PapercutTheatreBackground v-if="settingsStore.theme === 'papercut'" :embedded="true" />
         <Lyrics />
       </div>
     </transition>
@@ -97,6 +102,7 @@ import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
 import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.vue'
 import GothicSanctuaryBackground from '@/components/Theme/GothicSanctuaryBackground.vue'
 import InterstellarCruiseBackground from '@/components/Theme/InterstellarCruiseBackground.vue'
+import PapercutTheatreBackground from '@/components/Theme/PapercutTheatreBackground.vue'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
@@ -127,6 +133,11 @@ const showInterstellarBackground = computed(() => {
 // 暗夜哥特动态背景显示控制
 const showGothicBackground = computed(() => {
   return settingsStore.isLoaded && settingsStore.theme === 'gothic' && !showSplash.value
+})
+
+// 剪纸戏梦动态背景显示控制
+const showPapercutBackground = computed(() => {
+  return settingsStore.isLoaded && settingsStore.theme === 'papercut' && !showSplash.value
 })
 
 const handleSplashFinish = () => {
@@ -417,6 +428,11 @@ window.addEventListener('beforeunload', () => {
 // 暗夜哥特主题下歌词页面使用黑曜石背景色（背景组件会覆盖）
 :global(html.gothic) .lyrics-overlay {
   background: #050505;
+}
+
+// 剪纸戏梦主题下歌词页面使用暮山紫背景色（背景组件会覆盖）
+:global(html.papercut) .lyrics-overlay {
+  background: #1a1c29;
 }
 
 /* 动画效果 */

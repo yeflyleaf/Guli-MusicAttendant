@@ -215,6 +215,56 @@ html.gothic {
   --scrollbar-thumb-hover: rgba(197, 160, 89, 0.35);
 }
 
+// 剪纸戏梦主题 - 新中式光影纸境风格
+html.papercut {
+  // 主色调 - 暖月白与烛台黄
+  --primary-color: #fdf6e3; // 月白
+  --primary-color-rgb: 253, 246, 227;
+  --primary-light: #ffecb3; // 烛台黄
+  --primary-dark: #d4c5a0;
+  --accent-color: #b45046; // 朱砂红 (降饱和度)
+
+  // 背景色 - 透明以显示动态背景
+  --bg-primary: transparent;
+  --bg-primary-rgb: 26, 28, 41;
+  --bg-secondary: rgba(26, 28, 41, 0.75);
+  --bg-secondary-rgb: 26, 28, 41;
+  --bg-tertiary: rgba(36, 32, 56, 0.8);
+  --bg-card: rgba(30, 28, 45, 0.6);
+  --bg-hover: rgba(253, 246, 227, 0.06);
+
+  // 文字颜色 - 暖白色调
+  --text-primary: #fdf6e3; // 月白色
+  --text-secondary: #c9c0a8; // 浅米色
+  --text-muted: #7a7260; // 棕灰色
+
+  // 边框颜色 - 暖光边缘
+  --border-color: rgba(253, 246, 227, 0.1);
+  --border-color-light: rgba(253, 246, 227, 0.05);
+  --border-color-hover: rgba(253, 246, 227, 0.2);
+  --border-color-active: rgba(255, 236, 179, 0.35);
+
+  // 渐变 - 暮山紫与黛蓝
+  --gradient-primary: linear-gradient(135deg, #fdf6e3 0%, #ffecb3 50%, #b45046 100%);
+  --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(26, 28, 41, 0.5) 100%);
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(253, 246, 227, 0.05) 0%,
+    rgba(180, 80, 70, 0.05) 100%
+  );
+
+  // 阴影 - 柔和暖光效果
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.65);
+  --shadow-glow: 0 0 20px rgba(255, 236, 179, 0.15);
+  --shadow-glow-strong: 0 0 40px rgba(255, 236, 179, 0.25);
+
+  // 滚动条 - 暖月色风格
+  --scrollbar-thumb: rgba(253, 246, 227, 0.15);
+  --scrollbar-thumb-hover: rgba(253, 246, 227, 0.25);
+}
+
 // ==================== 重置样式 ====================
 *,
 *::before,
