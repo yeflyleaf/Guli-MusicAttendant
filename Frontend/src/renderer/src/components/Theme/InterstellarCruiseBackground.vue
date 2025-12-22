@@ -1,5 +1,5 @@
 <template>
-  <div class="interstellar-background" ref="containerRef" @mousemove="handleMouseMove">
+  <div class="interstellar-background" :class="{ embedded: embedded }" ref="containerRef" @mousemove="handleMouseMove">
     <!-- 底层：深空渐变背景 -->
     <div class="deep-space-bg"></div>
 
@@ -125,7 +125,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+
+// Props
+const props = defineProps<{
+  embedded?: boolean
+}>()
 
 const containerRef = ref<HTMLElement | null>(null)
 const stardustCanvas = ref<HTMLCanvasElement | null>(null)
@@ -407,6 +412,12 @@ onUnmounted(() => {
   overflow: hidden;
   z-index: -1;
   pointer-events: none;
+
+  // 嵌入模式 - 用于歌词页面等容器内
+  &.embedded {
+    position: absolute;
+    z-index: 0;
+  }
 }
 
 // 深空渐变背景

@@ -66,6 +66,8 @@
     <!-- 歌词全屏覆盖层 -->
     <transition name="slide-up">
       <div v-if="playerStore.showLyrics" class="lyrics-overlay">
+        <!-- 歌词页面的星际巡航背景 -->
+        <InterstellarCruiseBackground v-if="settingsStore.theme === 'interstellar'" :embedded="true" />
         <Lyrics />
       </div>
     </transition>
@@ -380,6 +382,25 @@ window.addEventListener('beforeunload', () => {
   z-index: 1010;
   /* Below FooterPlayer (1020) but above everything else */
   background: $bg-primary;
+  overflow: hidden;
+
+  // 歌词页面内的星际巡航背景
+  .lyrics-interstellar-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  // 确保歌词组件在背景之上
+  :deep(.lyrics-container) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// 星际巡航主题下歌词页面使用深空背景色（背景组件会覆盖）
+:global(html.interstellar) .lyrics-overlay {
+  background: #090a0f;
 }
 
 /* 动画效果 */
