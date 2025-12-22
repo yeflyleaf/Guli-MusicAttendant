@@ -91,21 +91,39 @@ export const usePlayerStore = defineStore('player', {
      * @param skipValidation 是否跳过路径验证（内部使用）
      */
     async play(song: Music, addToQueue = true, skipValidation = false) {
-      // 验证歌曲路径是否在音乐文件夹中
-      if (!skipValidation && window.electron?.dialog?.validateMusicPath) {
+      // 验证歌曲路径：优先检查文件是否存在
+      if (!skipValidation && window.electron?.dialog) {
         try {
-          const result = await window.electron.dialog.validateMusicPath(song.file_path)
+          // 首先检查文件是否存在
+          const fileExists = await window.electron.dialog.checkFileExists(song.file_path)
 
-          if (!result.valid) {
-            // 歌曲不在音乐文件夹中，触发警告事件
+          if (!fileExists) {
+            // 文件不存在，直接触发警告事件
             window.dispatchEvent(new CustomEvent('music-path-validation-failed', {
               detail: {
                 song,
-                fileExists: result.fileExists,
-                musicFolders: result.musicFolders
+                fileExists: false,
+                musicFolders: await window.electron.settings.getMusicFolders()
               }
             }))
             return
+          }
+
+          // 如果文件存在，再检查是否在有效音乐文件夹中
+          if (window.electron.dialog.validateMusicPath) {
+            const result = await window.electron.dialog.validateMusicPath(song.file_path)
+
+            if (!result.valid) {
+              // 歌曲不在音乐文件夹中，触发警告事件
+              window.dispatchEvent(new CustomEvent('music-path-validation-failed', {
+                detail: {
+                  song,
+                  fileExists: result.fileExists,
+                  musicFolders: result.musicFolders
+                }
+              }))
+              return
+            }
           }
         } catch (error) {
           console.error('[Player] Failed to validate music path:', error)

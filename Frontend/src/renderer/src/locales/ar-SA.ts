@@ -163,7 +163,8 @@ export default {
     removeSuccess: 'تمت الإزالة من قائمة الموسيقى المحلية',
     removeSelected: 'إزالة المحدد',
     showInFolder: 'عرض في المجلد',
-    invalidPathTooltip: 'هذه الأغنية ليست في مجلد موسيقى صالح'
+    invalidPathTooltip: 'هذه الأغنية ليست في مجلد موسيقى صالح',
+    missingFileTooltip: 'الملف المحلي غير موجود'
   },
 
   // Favorites

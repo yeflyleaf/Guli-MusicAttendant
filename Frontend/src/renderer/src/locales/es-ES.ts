@@ -148,7 +148,8 @@ export default {
     removeSuccess: 'Eliminado de la lista de música local',
     removeSelected: 'Quitar',
     showInFolder: 'Mostrar en carpeta',
-    invalidPathTooltip: 'Esta canción no está en una carpeta de música válida'
+    invalidPathTooltip: 'Esta canción no está en una carpeta de música válida',
+    missingFileTooltip: 'El archivo local no existe'
   },
   favoriteMusic: {
     title: 'Favoritos',

@@ -25,6 +25,8 @@ interface LibraryState {
   filteredMusic: Music[]
   // 无效歌曲 ID 集合（不在有效音乐文件夹中的歌曲）
   invalidMusicIds: Set<number>
+  // 文件不存在的歌曲 ID 集合
+  missingFileIds: Set<number>
 }
 
 export const useLibraryStore = defineStore('library', {
@@ -37,7 +39,8 @@ export const useLibraryStore = defineStore('library', {
     isLoading: false,
     searchKeyword: '',
     filteredMusic: [],
-    invalidMusicIds: new Set()
+    invalidMusicIds: new Set(),
+    missingFileIds: new Set()
   }),
 
   getters: {
@@ -50,8 +53,11 @@ export const useLibraryStore = defineStore('library', {
     // 收藏数量
     favoriteCount: (state): number => state.favorites.length,
 
-    // 无效歌曲数量
+    // 无效歌曲数量（不在有效文件夹中）
     invalidMusicCount: (state): number => state.invalidMusicIds.size,
+
+    // 文件不存在的歌曲数量
+    missingFileCount: (state): number => state.missingFileIds.size,
 
     // 显示的歌曲列表（搜索筛选后）
     displayMusic: (state): Music[] => {
@@ -323,40 +329,62 @@ export const useLibraryStore = defineStore('library', {
     },
 
     /**
-     * 验证所有歌曲路径是否在有效的音乐文件夹中
-     * 在删除音乐文件夹后调用，标记不在有效路径中的歌曲
+     * 验证所有歌曲路径是否在有效的音乐文件夹中，以及文件是否实际存在
+     * 分别标记：不在有效文件夹中的歌曲、文件不存在的歌曲
      */
     async validateMusicPaths() {
       try {
         // 获取当前设置的音乐文件夹列表
         const folders = await window.electron.settings.getMusicFolders()
 
-        // 如果没有设置任何文件夹，则所有歌曲都标记为无效
+        // 如果没有设置任何文件夹，则所有歌曲都标记为"不在有效文件夹中"
         if (folders.length === 0) {
-          // 将所有歌曲标记为无效
           const allIds = new Set<number>(this.allMusic.map(m => m.id))
           this.invalidMusicIds = allIds
-          console.log(`[Library] 无音乐文件夹设置，所有 ${allIds.size} 首歌曲标记为无效`)
+          this.missingFileIds = new Set()
+          console.log(`[Library] 无音乐文件夹设置，所有 ${allIds.size} 首歌曲标记为不在有效文件夹中`)
           return
         }
 
         // 标准化文件夹路径用于比较
         const normalizedFolders = folders.map(f => f.replace(/\\/g, '/').toLowerCase())
 
-        // 检查每首歌曲的路径是否在某个有效文件夹中
-        const invalidIds = new Set<number>()
+        // 收集所有需要检查的文件路径
+        const allFilePaths = this.allMusic.map(m => m.file_path)
+        const favoritePaths = this.favorites.map(m => m.file_path)
+        const recentPaths = this.recentlyPlayed.map(m => m.file_path)
+        const uniquePaths = [...new Set([...allFilePaths, ...favoritePaths, ...recentPaths])]
 
-        for (const music of this.allMusic) {
+        // 批量检查文件是否存在
+        const fileExistsMap = await window.electron.dialog.checkFilesExist(uniquePaths)
+
+        // 分别收集两种无效情况
+        const invalidIds = new Set<number>()    // 不在有效文件夹中（但文件存在）
+        const missingIds = new Set<number>()    // 文件不存在
+
+        // 辅助函数：检查并分类歌曲
+        const checkMusic = (music: { id: number; file_path: string }) => {
           const normalizedPath = music.file_path.replace(/\\/g, '/').toLowerCase()
           const isInFolder = normalizedFolders.some(folder => normalizedPath.startsWith(folder))
+          const fileExists = fileExistsMap[music.file_path] ?? false
 
-          if (!isInFolder) {
+          if (!fileExists) {
+            // 文件不存在
+            missingIds.add(music.id)
+          } else if (!isInFolder) {
+            // 文件存在但不在有效文件夹中
             invalidIds.add(music.id)
           }
         }
 
+        // 检查所有列表
+        this.allMusic.forEach(checkMusic)
+        this.favorites.forEach(checkMusic)
+        this.recentlyPlayed.forEach(checkMusic)
+
         this.invalidMusicIds = invalidIds
-        console.log(`[Library] 路径验证完成: ${invalidIds.size} 首歌曲不在有效文件夹中`)
+        this.missingFileIds = missingIds
+        console.log(`[Library] 路径验证完成: ${invalidIds.size} 首不在有效文件夹中, ${missingIds.size} 首文件不存在`)
 
       } catch (error) {
         console.error('[Library] 验证歌曲路径失败:', error)
@@ -371,10 +399,18 @@ export const useLibraryStore = defineStore('library', {
     },
 
     /**
+     * 检查指定歌曲的文件是否不存在
+     */
+    isMissingFile(musicId: number): boolean {
+      return this.missingFileIds.has(musicId)
+    },
+
+    /**
      * 清除无效歌曲标记
      */
     clearInvalidMusic() {
       this.invalidMusicIds = new Set()
+      this.missingFileIds = new Set()
     },
 
     /**

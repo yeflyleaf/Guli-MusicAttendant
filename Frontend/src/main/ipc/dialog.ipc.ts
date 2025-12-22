@@ -235,5 +235,19 @@ export function setupDialogIpc(): void {
     }
   })
 
+  // 检查单个文件是否存在
+  ipcMain.handle('dialog:checkFileExists', (_event, filePath: string) => {
+    return fs.existsSync(filePath)
+  })
+
+  // 批量检查文件是否存在
+  ipcMain.handle('dialog:checkFilesExist', (_event, filePaths: string[]) => {
+    const result: Record<string, boolean> = {}
+    for (const filePath of filePaths) {
+      result[filePath] = fs.existsSync(filePath)
+    }
+    return result
+  })
+
   console.log('[IPC] Dialog handler registered')
 }

@@ -55,7 +55,8 @@
       <div v-for="(song, index) in visibleFavorites" :key="song.id" class="list-item" :class="{
         active: playerStore.currentSong?.id === song.id,
         selected: selectedIds.has(song.id),
-        invalid: libraryStore.invalidMusicIds.has(song.id)
+        invalid: libraryStore.invalidMusicIds.has(song.id),
+        missing: libraryStore.missingFileIds.has(song.id)
       }" @dblclick="handlePlay(index)">
         <span class="col-index">
           <el-checkbox v-if="isEditMode" :model-value="selectedIds.has(song.id)"
@@ -74,7 +75,15 @@
           <div class="song-info">
             <div class="song-name-wrapper">
               <span class="song-name truncate" :title="song.title">{{ song.title }}</span>
-              <el-tooltip v-if="libraryStore.invalidMusicIds.has(song.id)"
+              <!-- 文件不存在警告 -->
+              <el-tooltip v-if="libraryStore.missingFileIds.has(song.id)" :content="$t('localMusic.missingFileTooltip')"
+                placement="top">
+                <el-icon class="missing-icon">
+                  <WarningFilled />
+                </el-icon>
+              </el-tooltip>
+              <!-- 不在有效文件夹中警告 -->
+              <el-tooltip v-else-if="libraryStore.invalidMusicIds.has(song.id)"
                 :content="$t('localMusic.invalidPathTooltip')" placement="top">
                 <el-icon class="invalid-icon">
                   <WarningFilled />
@@ -453,14 +462,31 @@ const handleCommand = (command: string, song: Music) => {
   }
 
   &.invalid {
-    opacity: 0.6;
-    border-left: 3px solid #f56c6c;
+    opacity: 0.7;
+    border-left: 3px solid #e6a23c;
 
     .song-name {
       color: $text-muted;
     }
 
     .invalid-icon {
+      color: #e6a23c;
+      font-size: 14px;
+      margin-left: 6px;
+      animation: pulse-warning 2s infinite;
+    }
+  }
+
+  &.missing {
+    opacity: 0.5;
+    border-left: 3px solid #f56c6c;
+
+    .song-name {
+      color: $text-muted;
+      text-decoration: line-through;
+    }
+
+    .missing-icon {
       color: #f56c6c;
       font-size: 14px;
       margin-left: 6px;

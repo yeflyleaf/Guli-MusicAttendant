@@ -162,7 +162,13 @@ const electronAPI = {
       inFolder: boolean
       fileExists?: boolean
       musicFolders?: string[]
-    }> => ipcRenderer.invoke('dialog:validateMusicPath', filePath)
+    }> => ipcRenderer.invoke('dialog:validateMusicPath', filePath),
+
+    checkFileExists: (filePath: string): Promise<boolean> =>
+      ipcRenderer.invoke('dialog:checkFileExists', filePath),
+
+    checkFilesExist: (filePaths: string[]): Promise<Record<string, boolean>> =>
+      ipcRenderer.invoke('dialog:checkFilesExist', filePaths)
   },
 
   // ==================== 窗口控制 ====================

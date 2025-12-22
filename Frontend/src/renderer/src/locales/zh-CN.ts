@@ -162,7 +162,8 @@ export default {
     removeSuccess: '已从本地音乐列表移除',
     removeSelected: '移除选中',
     showInFolder: '在文件夹中显示',
-    invalidPathTooltip: '此歌曲不在有效的音乐文件夹中'
+    invalidPathTooltip: '此歌曲不在有效的音乐文件夹中',
+    missingFileTooltip: '本地文件不存在'
   },
 
   // 我喜欢

@@ -67,6 +67,8 @@ declare global {
           fileExists?: boolean
           musicFolders?: string[]
         }>
+        checkFileExists: (filePath: string) => Promise<boolean>
+        checkFilesExist: (filePaths: string[]) => Promise<Record<string, boolean>>
       }
 
       // 窗口控制

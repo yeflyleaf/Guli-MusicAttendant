@@ -148,7 +148,8 @@ export default {
     removeSuccess: 'Убрано из списка локальной музыки',
     removeSelected: 'Убрать',
     showInFolder: 'Показать в папке',
-    invalidPathTooltip: 'Эта песня не находится в допустимой папке с музыкой'
+    invalidPathTooltip: 'Эта песня не находится в допустимой папке с музыкой',
+    missingFileTooltip: 'Локальный файл не существует'
   },
   favoriteMusic: {
     title: 'Избранное',

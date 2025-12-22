@@ -163,7 +163,8 @@ export default {
     removeSuccess: 'Retiré de la liste de musique locale',
     removeSelected: 'Retirer la sélection',
     showInFolder: 'Afficher dans le dossier',
-    invalidPathTooltip: 'Cette chanson n\'est pas dans un dossier de musique valide'
+    invalidPathTooltip: 'Cette chanson n\'est pas dans un dossier de musique valide',
+    missingFileTooltip: 'Le fichier local n\'existe pas'
   },
 
   // Favorites

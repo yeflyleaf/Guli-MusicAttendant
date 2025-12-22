@@ -162,7 +162,8 @@ export default {
     removeSuccess: 'Removed from local music list',
     removeSelected: 'Remove Selected',
     showInFolder: 'Show in Folder',
-    invalidPathTooltip: 'This song is not in a valid music folder'
+    invalidPathTooltip: 'This song is not in a valid music folder',
+    missingFileTooltip: 'Local file does not exist'
   },
 
   // Favorites
