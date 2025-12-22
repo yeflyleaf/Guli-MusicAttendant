@@ -78,6 +78,7 @@ declare global {
         close: () => void
         isMaximized: () => Promise<boolean>
         setTitle: (title: string) => void
+        show: () => void
       }
 
       // 设置相关
