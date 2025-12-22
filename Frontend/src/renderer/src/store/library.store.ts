@@ -175,6 +175,12 @@ export const useLibraryStore = defineStore('library', {
           } else {
             this.favorites = this.favorites.filter(m => m.id !== musicId)
           }
+
+          // 同步更新最近播放列表中的收藏状态
+          const recentSong = this.recentlyPlayed.find(m => m.id === musicId)
+          if (recentSong) {
+            recentSong.is_favorite = music.is_favorite
+          }
         }
 
         // 同步更新播放器中的状态
