@@ -85,5 +85,25 @@ export function setupMusicIpc(): void {
     return musicRepo.updateMusic(id, data)
   })
 
+  // 从本地音乐列表隐藏歌曲（不删除数据）
+  ipcMain.handle('music:hideFromLocal', (_event, id: number) => {
+    return musicRepo.hideFromLocal(id)
+  })
+
+  // 批量从本地音乐列表隐藏歌曲
+  ipcMain.handle('music:hideFromLocalBatch', (_event, ids: number[]) => {
+    return musicRepo.hideFromLocalBatch(ids)
+  })
+
+  // 恢复本地音乐列表中的隐藏歌曲
+  ipcMain.handle('music:unhideFromLocal', (_event, id: number) => {
+    return musicRepo.unhideFromLocal(id)
+  })
+
+  // 恢复所有隐藏的歌曲
+  ipcMain.handle('music:unhideAllFromLocal', () => {
+    return musicRepo.unhideAllFromLocal()
+  })
+
   console.log('[IPC] Music handler registered')
 }

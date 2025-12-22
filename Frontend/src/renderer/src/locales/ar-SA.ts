@@ -157,9 +157,10 @@ export default {
     searchPlaceholder: 'البحث...',
     noMusic: 'لا توجد موسيقى',
     noSearchResult: 'لم يتم العثور',
-    confirmDelete: 'هل أنت متأكد من حذف {count} أغنية محددة؟',
-    confirmDeleteSingle: 'هل أنت متأكد من حذف هذه الأغنية؟',
+    confirmDelete: 'هل أنت متأكد من إزالة {count} أغنية من الموسيقى المحلية؟',
+    confirmDeleteSingle: 'هل أنت متأكد من إزالة هذه الأغنية من الموسيقى المحلية؟',
     deleteSuccess: 'تم حذف {count} أغنية',
+    removeSuccess: 'تمت الإزالة من قائمة الموسيقى المحلية',
     removeSelected: 'إزالة المحدد',
     showInFolder: 'عرض في المجلد',
     invalidPathTooltip: 'هذه الأغنية ليست في مجلد موسيقى صالح'

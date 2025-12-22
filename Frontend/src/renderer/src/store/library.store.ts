@@ -375,6 +375,60 @@ export const useLibraryStore = defineStore('library', {
      */
     clearInvalidMusic() {
       this.invalidMusicIds = new Set()
+    },
+
+    /**
+     * 从本地音乐列表隐藏歌曲（不删除数据，不影响收藏/最近播放/歌单）
+     */
+    async hideFromLocal(musicId: number) {
+      try {
+        await window.electron.music.hideFromLocal(musicId)
+
+        // 仅从本地音乐列表移除，保留收藏和最近播放
+        this.allMusic = this.allMusic.filter(m => m.id !== musicId)
+        this.filteredMusic = this.filteredMusic.filter(m => m.id !== musicId)
+
+        return true
+      } catch (error) {
+        console.error('[Library] 隐藏歌曲失败:', error)
+        return false
+      }
+    },
+
+    /**
+     * 批量从本地音乐列表隐藏歌曲（不删除数据，不影响收藏/最近播放/歌单）
+     */
+    async hideFromLocalBatch(musicIds: number[]) {
+      try {
+        await window.electron.music.hideFromLocalBatch(musicIds)
+
+        const idSet = new Set(musicIds)
+        // 仅从本地音乐列表移除，保留收藏和最近播放
+        this.allMusic = this.allMusic.filter(m => !idSet.has(m.id))
+        this.filteredMusic = this.filteredMusic.filter(m => !idSet.has(m.id))
+
+        return true
+      } catch (error) {
+        console.error('[Library] 批量隐藏歌曲失败:', error)
+        return false
+      }
+    },
+
+    /**
+     * 恢复所有隐藏的歌曲到本地音乐列表
+     */
+    async unhideAllFromLocal() {
+      try {
+        const count = await window.electron.music.unhideAllFromLocal()
+        if (count > 0) {
+          // 重新加载音乐列表以获取恢复的歌曲
+          await this.refreshMusic()
+        }
+        return count
+      } catch (error) {
+        console.error('[Library] 恢复隐藏歌曲失败:', error)
+        return 0
+      }
     }
   }
 })

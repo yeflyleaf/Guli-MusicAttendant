@@ -412,20 +412,28 @@ const handleSelect = (id: number, checked: boolean) => {
   selectedIds.value = new Set(selectedIds.value) // 触发响应式
 }
 
-// 刷新音乐库
+// 刷新音乐库（同时恢复所有隐藏的歌曲）
 const isRefreshing = ref(false)
 const handleRefresh = async () => {
   if (isRefreshing.value) return
   isRefreshing.value = true
 
   try {
-    ElMessage.info('正在刷新音乐库...')
+    ElMessage.info(t('common.loading') || '正在刷新音乐库...')
+
+    // 先恢复所有隐藏的歌曲
+    await libraryStore.unhideAllFromLocal()
+
+    // 然后扫描所有文件夹
     await scanAllFolders()
+
+    // 刷新音乐列表
     await libraryStore.refreshMusic()
-    ElMessage.success('刷新完成')
+
+    ElMessage.success(t('common.refresh') + ' ' + t('common.success') || '刷新完成')
   } catch (error) {
     console.error(error)
-    ElMessage.error('刷新失败')
+    ElMessage.error(t('common.error') || '刷新失败')
   } finally {
     isRefreshing.value = false
   }
@@ -465,14 +473,14 @@ const handleToggleFavorite = async (id: number) => {
   await libraryStore.toggleFavorite(id)
 }
 
-// 删除选中
+// 从本地音乐列表移除选中（不删除数据，不影响其他列表）
 const handleDeleteSelected = async () => {
   const confirmed = await showConfirm({ message: t('localMusic.confirmDelete', { count: selectedIds.value.size }), type: 'warning' })
   if (!confirmed) return
 
-  await libraryStore.deleteMusicBatch(Array.from(selectedIds.value))
+  await libraryStore.hideFromLocalBatch(Array.from(selectedIds.value))
   selectedIds.value = new Set()
-  ElMessage.success('删除成功')
+  ElMessage.success(t('localMusic.removeSuccess') || '已从本地音乐列表移除')
 }
 
 // 下拉菜单命令
@@ -495,8 +503,8 @@ const handleCommand = async (command: string, song: Music) => {
     case 'delete':
       const confirmed = await showConfirm({ message: t('localMusic.confirmDeleteSingle'), type: 'warning' })
       if (confirmed) {
-        await libraryStore.deleteMusic(song.id)
-        ElMessage.success('删除成功')
+        await libraryStore.hideFromLocal(song.id)
+        ElMessage.success(t('localMusic.removeSuccess') || '已从本地音乐列表移除')
       }
       break
   }

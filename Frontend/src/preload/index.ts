@@ -57,7 +57,23 @@ const electronAPI = {
       coverPath: string
       lyricsPath: string
     }>): Promise<boolean> =>
-      ipcRenderer.invoke('music:update', id, data)
+      ipcRenderer.invoke('music:update', id, data),
+
+    // 从本地音乐列表隐藏歌曲（不删除数据）
+    hideFromLocal: (id: number): Promise<boolean> =>
+      ipcRenderer.invoke('music:hideFromLocal', id),
+
+    // 批量从本地音乐列表隐藏歌曲
+    hideFromLocalBatch: (ids: number[]): Promise<number> =>
+      ipcRenderer.invoke('music:hideFromLocalBatch', ids),
+
+    // 恢复本地音乐列表中的隐藏歌曲
+    unhideFromLocal: (id: number): Promise<boolean> =>
+      ipcRenderer.invoke('music:unhideFromLocal', id),
+
+    // 恢复所有隐藏的歌曲
+    unhideAllFromLocal: (): Promise<number> =>
+      ipcRenderer.invoke('music:unhideAllFromLocal')
   },
 
   // ==================== 歌单相关 ====================

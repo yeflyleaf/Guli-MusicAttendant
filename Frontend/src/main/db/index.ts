@@ -129,6 +129,9 @@ export function initDatabase(): Database.Database {
   const schema = getSchema()
   db.exec(schema)
 
+  // 执行数据库迁移
+  runMigrations(db)
+
   console.timeEnd('[Database] Initialization')
   console.log('[Database] Initialization complete')
 
@@ -229,6 +232,26 @@ export function invalidatePlaylistCache(): void {
 }
 
 /**
+ * 数据库迁移：安全地添加新字段
+ * 检查列是否存在，只在需要时添加
+ */
+function runMigrations(database: Database.Database): void {
+  console.log('[Database] Running migrations...')
+
+  // 获取 music 表的列信息
+  const columns = database.prepare("PRAGMA table_info(music)").all() as { name: string }[]
+  const columnNames = new Set(columns.map(c => c.name))
+
+  // 迁移 1: 添加 hidden_from_local 字段
+  if (!columnNames.has('hidden_from_local')) {
+    console.log('[Database] Migration: Adding hidden_from_local column')
+    database.exec('ALTER TABLE music ADD COLUMN hidden_from_local INTEGER DEFAULT 0')
+  }
+
+  console.log('[Database] Migrations complete')
+}
+
+/**
  * 获取数据库表结构
  */
 function getSchema(): string {
@@ -249,6 +272,7 @@ function getSchema(): string {
         lyrics_path TEXT,
         play_count INTEGER DEFAULT 0,
         is_favorite INTEGER DEFAULT 0,
+        hidden_from_local INTEGER DEFAULT 0,
         last_played_at TEXT,
         created_at TEXT DEFAULT (datetime('now', 'localtime')),
         updated_at TEXT DEFAULT (datetime('now', 'localtime'))

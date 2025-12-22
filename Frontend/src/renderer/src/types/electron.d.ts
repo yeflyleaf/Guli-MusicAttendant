@@ -19,6 +19,11 @@ declare global {
         clearRecentlyPlayed: () => Promise<boolean>
         getMostPlayed: (limit?: number) => Promise<any[]>
         update: (id: number, data: any) => Promise<boolean>
+        // 从本地音乐列表隐藏歌曲（不删除数据）
+        hideFromLocal: (id: number) => Promise<boolean>
+        hideFromLocalBatch: (ids: number[]) => Promise<number>
+        unhideFromLocal: (id: number) => Promise<boolean>
+        unhideAllFromLocal: () => Promise<number>
       }
 
       // 歌单相关

@@ -156,9 +156,10 @@ export default {
     searchPlaceholder: 'Search local music...',
     noMusic: 'No local music',
     noSearchResult: 'No matching songs found',
-    confirmDelete: 'Are you sure you want to delete {count} selected song(s)?',
-    confirmDeleteSingle: 'Are you sure you want to delete this song?',
+    confirmDelete: 'Are you sure you want to remove {count} selected song(s) from local music?',
+    confirmDeleteSingle: 'Are you sure you want to remove this song from local music?',
     deleteSuccess: 'Deleted {count} song(s)',
+    removeSuccess: 'Removed from local music list',
     removeSelected: 'Remove Selected',
     showInFolder: 'Show in Folder',
     invalidPathTooltip: 'This song is not in a valid music folder'

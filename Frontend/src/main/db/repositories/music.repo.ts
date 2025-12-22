@@ -21,7 +21,7 @@ export function getAllMusic(params?: MusicQueryParams): Music[] {
     }
   }
 
-  let sql = 'SELECT * FROM music WHERE 1=1'
+  let sql = 'SELECT * FROM music WHERE hidden_from_local = 0'
   const bindParams: unknown[] = []
 
   if (params?.keyword) {
@@ -344,4 +344,79 @@ export function getMusicByDirectory(dirPath: string): { id: number, file_path: s
     'SELECT id, file_path FROM music WHERE file_path LIKE ?',
     [`${dirPath}%`]
   )
+}
+
+/**
+ * 从本地音乐列表隐藏歌曲（不删除数据）
+ */
+export function hideFromLocal(id: number): boolean {
+  const result = execute(`
+    UPDATE music
+    SET hidden_from_local = 1,
+        updated_at = datetime('now', 'localtime')
+    WHERE id = ?
+  `, [id])
+
+  if (result.changes > 0) {
+    invalidateMusicCache()
+  }
+
+  return result.changes > 0
+}
+
+/**
+ * 批量从本地音乐列表隐藏歌曲（不删除数据）
+ */
+export function hideFromLocalBatch(ids: number[]): number {
+  if (ids.length === 0) return 0
+
+  const placeholders = ids.map(() => '?').join(',')
+  const result = execute(`
+    UPDATE music
+    SET hidden_from_local = 1,
+        updated_at = datetime('now', 'localtime')
+    WHERE id IN (${placeholders})
+  `, ids)
+
+  if (result.changes > 0) {
+    invalidateMusicCache()
+  }
+
+  return result.changes
+}
+
+/**
+ * 恢复本地音乐列表中的隐藏歌曲
+ */
+export function unhideFromLocal(id: number): boolean {
+  const result = execute(`
+    UPDATE music
+    SET hidden_from_local = 0,
+        updated_at = datetime('now', 'localtime')
+    WHERE id = ?
+  `, [id])
+
+  if (result.changes > 0) {
+    invalidateMusicCache()
+  }
+
+  return result.changes > 0
+}
+
+/**
+ * 恢复所有隐藏的歌曲
+ */
+export function unhideAllFromLocal(): number {
+  const result = execute(`
+    UPDATE music
+    SET hidden_from_local = 0,
+        updated_at = datetime('now', 'localtime')
+    WHERE hidden_from_local = 1
+  `)
+
+  if (result.changes > 0) {
+    invalidateMusicCache()
+  }
+
+  return result.changes
 }
