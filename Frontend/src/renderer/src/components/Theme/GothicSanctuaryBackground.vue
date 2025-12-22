@@ -155,22 +155,12 @@
       <div class="candle-glow candle-16"></div>
       <div class="candle-glow candle-17"></div>
       <div class="candle-glow candle-18"></div>
-      <div class="candle-glow candle-19"></div>
-      <div class="candle-glow candle-20"></div>
-      <div class="candle-glow candle-21"></div>
-      <div class="candle-glow candle-22"></div>
-      <div class="candle-glow candle-23"></div>
-      <div class="candle-glow candle-24"></div>
-      <div class="candle-glow candle-25"></div>
-      <div class="candle-glow candle-26"></div>
-      <div class="candle-glow candle-27"></div>
-      <div class="candle-glow candle-28"></div>
       <!-- 烛火火焰 (1-4 原有) -->
       <div class="candle-flame flame-1"></div>
       <div class="candle-flame flame-2"></div>
       <div class="candle-flame flame-3"></div>
       <div class="candle-flame flame-4"></div>
-      <!-- 新增烛火火焰 (5-24) - 对应新蜡烛 -->
+      <!-- 新增烛火火焰 (5-14) - 对应新蜡烛 -->
       <div class="candle-flame flame-5"></div>
       <div class="candle-flame flame-6"></div>
       <div class="candle-flame flame-7"></div>
@@ -181,12 +171,6 @@
       <div class="candle-flame flame-12"></div>
       <div class="candle-flame flame-13"></div>
       <div class="candle-flame flame-14"></div>
-      <div class="candle-flame flame-15"></div>
-      <div class="candle-flame flame-16"></div>
-      <div class="candle-flame flame-17"></div>
-      <div class="candle-flame flame-18"></div>
-      <div class="candle-flame flame-19"></div>
-      <div class="candle-flame flame-20"></div>
       <!-- 光柱效果 -->
       <div class="light-beam beam-1"></div>
       <div class="light-beam beam-2"></div>
@@ -421,8 +405,8 @@ const initDustSystem = () => {
     }
   }
 
-  // 初始化粒子 - 增加数量
-  for (let i = 0; i < 200; i++) {
+  // 初始化粒子 - 减少数量以优化性能
+  for (let i = 0; i < 100; i++) {
     const p = createParticle()
     p.opacity = Math.random() * 0.3
     dustParticles.push(p)
@@ -1521,128 +1505,6 @@ $warm-mist: rgba(255, 220, 180, 0.08);
         transparent 85%);
     animation-delay: -0.4s;
   }
-
-  &.candle-19 {
-    left: 2%;
-    bottom: 35%;
-    width: 90px;
-    height: 90px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.15) 0%,
-        rgba($amber-gold, 0.04) 60%,
-        transparent 85%);
-    animation-delay: -2s;
-  }
-
-  &.candle-20 {
-    right: 2%;
-    bottom: 35%;
-    width: 90px;
-    height: 90px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.15) 0%,
-        rgba($amber-gold, 0.04) 60%,
-        transparent 85%);
-    animation-delay: -1.7s;
-  }
-
-  // 新增烛光 21-24: 更高位置
-  &.candle-21 {
-    left: 5%;
-    bottom: 45%;
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.12) 0%,
-        rgba($amber-gold, 0.03) 60%,
-        transparent 85%);
-    animation-delay: -0.8s;
-  }
-
-  &.candle-22 {
-    right: 5%;
-    bottom: 45%;
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.12) 0%,
-        rgba($amber-gold, 0.03) 60%,
-        transparent 85%);
-    animation-delay: -1.5s;
-  }
-
-  &.candle-23 {
-    left: 8%;
-    bottom: 55%;
-    width: 70px;
-    height: 70px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.1) 0%,
-        rgba($amber-gold, 0.025) 60%,
-        transparent 85%);
-    animation-delay: -2.2s;
-  }
-
-  &.candle-24 {
-    right: 8%;
-    bottom: 55%;
-    width: 70px;
-    height: 70px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.1) 0%,
-        rgba($amber-gold, 0.025) 60%,
-        transparent 85%);
-    animation-delay: -0.3s;
-  }
-
-  // 新增烛光 25-28: 中间区域补充
-  &.candle-25 {
-    left: 45%;
-    bottom: 12%;
-    width: 110px;
-    height: 100px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.18) 0%,
-        rgba($amber-gold, 0.05) 55%,
-        transparent 85%);
-    animation-delay: -1.9s;
-  }
-
-  &.candle-26 {
-    right: 45%;
-    bottom: 12%;
-    width: 110px;
-    height: 100px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.18) 0%,
-        rgba($amber-gold, 0.05) 55%,
-        transparent 85%);
-    animation-delay: -0.6s;
-  }
-
-  &.candle-27 {
-    left: 25%;
-    bottom: 25%;
-    width: 90px;
-    height: 85px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.14) 0%,
-        rgba($amber-gold, 0.04) 60%,
-        transparent 85%);
-    animation-delay: -1.2s;
-  }
-
-  &.candle-28 {
-    right: 25%;
-    bottom: 25%;
-    width: 90px;
-    height: 85px;
-    background: radial-gradient(ellipse at center,
-        rgba($amber-gold, 0.14) 0%,
-        rgba($amber-gold, 0.04) 60%,
-        transparent 85%);
-    animation-delay: -2.1s;
-  }
 }
 
 // 烛火火焰
@@ -1743,42 +1605,6 @@ $warm-mist: rgba(255, 220, 180, 0.08);
     right: 4%;
     bottom: 26%;
     transform: scale(0.5);
-  }
-
-  &.flame-15 {
-    left: 4%;
-    bottom: 38%;
-    transform: scale(0.45);
-  }
-
-  &.flame-16 {
-    right: 4%;
-    bottom: 38%;
-    transform: scale(0.45);
-  }
-
-  &.flame-17 {
-    left: 7%;
-    bottom: 48%;
-    transform: scale(0.4);
-  }
-
-  &.flame-18 {
-    right: 7%;
-    bottom: 48%;
-    transform: scale(0.4);
-  }
-
-  &.flame-19 {
-    left: 47%;
-    bottom: 17%;
-    transform: scale(0.55);
-  }
-
-  &.flame-20 {
-    right: 47%;
-    bottom: 17%;
-    transform: scale(0.55);
   }
 }
 
