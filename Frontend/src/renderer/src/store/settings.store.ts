@@ -104,11 +104,11 @@ export const useSettingsStore = defineStore('settings', {
      * 应用主题
      */
     applyTheme() {
-      document.documentElement.classList.remove('light', 'dark')
+      document.documentElement.classList.remove('light', 'dark', 'interstellar')
       document.documentElement.classList.add(this.theme)
 
-      // Element Plus 暗色模式
-      if (this.theme === 'dark') {
+      // Element Plus 暗色模式（interstellar 也使用暗色模式）
+      if (this.theme === 'dark' || this.theme === 'interstellar') {
         document.documentElement.classList.add('dark')
       }
     },

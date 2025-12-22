@@ -49,6 +49,7 @@ export default {
       themeDesc: '选择应用程序的外观主题',
       themeDark: '深色模式',
       themeLight: '浅色模式',
+      themeInterstellar: '星际巡航',
       language: '语言',
       languageDesc: '选择应用程序语言',
       fontSize: '文字大小',

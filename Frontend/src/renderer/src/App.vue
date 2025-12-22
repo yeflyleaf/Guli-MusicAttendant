@@ -1,4 +1,7 @@
 <template>
+  <!-- 星际巡航动态背景 -->
+  <InterstellarCruiseBackground v-if="showInterstellarBackground" />
+
   <!-- 启动屏幕 - 等待设置加载完成后再渲染，避免使用默认主题值导致闪烁 -->
   <!-- 窗口在设置加载完成后才显示，确保用户看到的第一帧就是正确的过场动画 -->
   <!-- 星际穿梭主题 -->
@@ -85,6 +88,7 @@ import SiliconOrderSplash from '@/components/Layout/SiliconOrderSplash.vue'
 import SplashScreen from '@/components/Layout/SplashScreen.vue'
 import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
 import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.vue'
+import InterstellarCruiseBackground from '@/components/Theme/InterstellarCruiseBackground.vue'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
@@ -93,7 +97,7 @@ import { useSettingsStore } from '@/store/settings.store'
 import type { Music } from '@/types/music'
 import { debounce } from '@/utils/debounce'
 import Lyrics from '@/views/Lyrics.vue'
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
@@ -107,6 +111,11 @@ const { t } = useI18n()
 const showSplash = ref(true)
 const isStartup = ref(true)
 
+// 星际巡航动态背景显示控制
+const showInterstellarBackground = computed(() => {
+  return settingsStore.isLoaded && settingsStore.theme === 'interstellar' && !showSplash.value
+})
+
 const handleSplashFinish = () => {
   showSplash.value = false
   isStartup.value = false
@@ -118,15 +127,36 @@ watch(
   () => settingsStore.isLoaded,
   async (isLoaded) => {
     if (isLoaded) {
+      console.log('[App] Settings loaded, theme:', settingsStore.theme, 'splashTheme:', settingsStore.splashTheme, 'disableSplash:', settingsStore.disableSplashScreen)
+
       // 等待 DOM 更新，确保过场动画组件已经挂载
       await nextTick()
 
       // 额外给予一点渲染时间，确保过场动画完全上屏
       // 彻底杜绝"先显示主页再显示过场"的闪烁问题
       setTimeout(() => {
-        window.electron.window.show()
-        console.log('[App] Settings loaded, window shown')
+        // 安全调用 show 方法
+        if (window.electron?.window?.show) {
+          window.electron.window.show()
+        }
+        console.log('[App] Window shown')
       }, 100)
+
+      // 如果过场动画被禁用，立即显示主界面
+      if (settingsStore.disableSplashScreen) {
+        console.log('[App] Splash disabled, showing main content immediately')
+        handleSplashFinish()
+        return
+      }
+
+      // 安全超时：如果 6 秒后过场动画仍未完成，强制显示主界面
+      // 正常过场动画约 5 秒完成，这是异常情况的后备机制
+      setTimeout(() => {
+        if (isStartup.value) {
+          console.warn('[App] Splash screen timeout, forcing main content display')
+          handleSplashFinish()
+        }
+      }, 6000)
     }
   },
   { immediate: true }

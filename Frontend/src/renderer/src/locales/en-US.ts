@@ -49,6 +49,7 @@ export default {
       themeDesc: 'Choose the application appearance theme',
       themeDark: 'Dark Mode',
       themeLight: 'Light Mode',
+      themeInterstellar: 'Interstellar Cruise',
       language: 'Language',
       languageDesc: 'Choose the application language',
       fontSize: 'Font Size',

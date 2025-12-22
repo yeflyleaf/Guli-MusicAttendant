@@ -50,6 +50,7 @@ export default {
       themeDesc: 'Choisir le thème d\'apparence de l\'application',
       themeDark: 'Mode sombre',
       themeLight: 'Mode clair',
+      themeInterstellar: 'Croisière Interstellaire',
       language: 'Langue',
       languageDesc: 'Choisir la langue de l\'application',
       fontSize: 'Taille de police',

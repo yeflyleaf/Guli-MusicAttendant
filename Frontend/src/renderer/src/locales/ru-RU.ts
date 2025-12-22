@@ -43,6 +43,7 @@ export default {
       themeDesc: 'Выберите тему оформления',
       themeDark: 'Тёмный режим',
       themeLight: 'Светлый режим',
+      themeInterstellar: 'Межзвёздный Круиз',
       language: 'Язык',
       languageDesc: 'Выберите язык приложения',
       fontSize: 'Размер шрифта',

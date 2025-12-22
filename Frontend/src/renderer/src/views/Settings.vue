@@ -23,9 +23,10 @@
                 <span>{{ $t('settings.appearance.theme') }}</span>
                 <span class="setting-desc">{{ $t('settings.appearance.themeDesc') }}</span>
               </div>
-              <el-select v-model="theme" style="width: 120px" @change="handleThemeChange">
+              <el-select v-model="theme" style="width: 140px" @change="handleThemeChange">
                 <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
                 <el-option :label="$t('settings.appearance.themeLight')" value="light" />
+                <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
               </el-select>
             </div>
 

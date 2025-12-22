@@ -43,6 +43,7 @@ export default {
       themeDesc: 'Elegir el tema',
       themeDark: 'Modo oscuro',
       themeLight: 'Modo claro',
+      themeInterstellar: 'Crucero Interestelar',
       language: 'Idioma',
       languageDesc: 'Elegir el idioma',
       fontSize: 'Tamaño de fuente',

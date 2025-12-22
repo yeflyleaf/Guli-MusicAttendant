@@ -1,7 +1,7 @@
 /**
  * 全局主样式
  */
-@use "sass:color";
+@use 'sass:color';
 @use './theme-tokens.scss' as tokens;
 
 // ==================== CSS 变量 (供 JS 动态修改) ====================
@@ -9,15 +9,24 @@
 :root {
   // 颜色变量 - 默认深色
   --primary-color: #{tokens.$primary-color};
-  --primary-color-rgb: #{color.channel(tokens.$primary-color, "red", $space: rgb)}, #{color.channel(tokens.$primary-color, "green", $space: rgb)}, #{color.channel(tokens.$primary-color, "blue", $space: rgb)};
+  --primary-color-rgb:
+    #{color.channel(tokens.$primary-color, 'red', $space: rgb)},
+    #{color.channel(tokens.$primary-color, 'green', $space: rgb)},
+    #{color.channel(tokens.$primary-color, 'blue', $space: rgb)};
   --primary-light: #{tokens.$primary-light};
   --primary-dark: #{tokens.$primary-dark};
   --accent-color: #{tokens.$accent-color};
 
   --bg-primary: #{tokens.$bg-primary};
-  --bg-primary-rgb: #{color.channel(tokens.$bg-primary, "red", $space: rgb)}, #{color.channel(tokens.$bg-primary, "green", $space: rgb)}, #{color.channel(tokens.$bg-primary, "blue", $space: rgb)};
+  --bg-primary-rgb:
+    #{color.channel(tokens.$bg-primary, 'red', $space: rgb)},
+    #{color.channel(tokens.$bg-primary, 'green', $space: rgb)},
+    #{color.channel(tokens.$bg-primary, 'blue', $space: rgb)};
   --bg-secondary: #{tokens.$bg-secondary};
-  --bg-secondary-rgb: #{color.channel(tokens.$bg-secondary, "red", $space: rgb)}, #{color.channel(tokens.$bg-secondary, "green", $space: rgb)}, #{color.channel(tokens.$bg-secondary, "blue", $space: rgb)};
+  --bg-secondary-rgb:
+    #{color.channel(tokens.$bg-secondary, 'red', $space: rgb)},
+    #{color.channel(tokens.$bg-secondary, 'green', $space: rgb)},
+    #{color.channel(tokens.$bg-secondary, 'blue', $space: rgb)};
   --bg-tertiary: #{tokens.$bg-tertiary};
   --bg-card: #{tokens.$bg-card};
   --bg-hover: #{tokens.$bg-hover};
@@ -38,7 +47,11 @@
 
   --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
   --gradient-bg: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-  --gradient-card: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%); // Could be dynamic
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.1) 0%,
+    rgba(236, 72, 153, 0.1) 100%
+  ); // Could be dynamic
 
   --shadow-sm: #{tokens.$shadow-sm};
   --shadow-md: #{tokens.$shadow-md};
@@ -66,14 +79,23 @@
 html.light {
   // 颜色变量 - 浅色模式
   --primary-color: #{tokens.$primary-dark}; // 使用深紫色以提升浅色背景下的对比度
-  --primary-color-rgb: #{color.channel(tokens.$primary-dark, "red", $space: rgb)}, #{color.channel(tokens.$primary-dark, "green", $space: rgb)}, #{color.channel(tokens.$primary-dark, "blue", $space: rgb)};
+  --primary-color-rgb:
+    #{color.channel(tokens.$primary-dark, 'red', $space: rgb)},
+    #{color.channel(tokens.$primary-dark, 'green', $space: rgb)},
+    #{color.channel(tokens.$primary-dark, 'blue', $space: rgb)};
   --primary-light: #{tokens.$primary-light};
   --primary-dark: #{tokens.$primary-dark};
 
   --bg-primary: #{tokens.$bg-primary-light};
-  --bg-primary-rgb: #{color.channel(tokens.$bg-primary-light, "red", $space: rgb)}, #{color.channel(tokens.$bg-primary-light, "green", $space: rgb)}, #{color.channel(tokens.$bg-primary-light, "blue", $space: rgb)};
+  --bg-primary-rgb:
+    #{color.channel(tokens.$bg-primary-light, 'red', $space: rgb)},
+    #{color.channel(tokens.$bg-primary-light, 'green', $space: rgb)},
+    #{color.channel(tokens.$bg-primary-light, 'blue', $space: rgb)};
   --bg-secondary: #{tokens.$bg-secondary-light};
-  --bg-secondary-rgb: #{color.channel(tokens.$bg-secondary-light, "red", $space: rgb)}, #{color.channel(tokens.$bg-secondary-light, "green", $space: rgb)}, #{color.channel(tokens.$bg-secondary-light, "blue", $space: rgb)};
+  --bg-secondary-rgb:
+    #{color.channel(tokens.$bg-secondary-light, 'red', $space: rgb)},
+    #{color.channel(tokens.$bg-secondary-light, 'green', $space: rgb)},
+    #{color.channel(tokens.$bg-secondary-light, 'blue', $space: rgb)};
   --bg-tertiary: #{tokens.$bg-tertiary-light};
   --bg-card: #{tokens.$bg-card-light};
   --bg-hover: #{tokens.$bg-hover-light};
@@ -91,6 +113,56 @@ html.light {
   // 滚动条变量 - 浅色模式
   --scrollbar-thumb: rgba(0, 0, 0, 0.25);
   --scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+}
+
+// 星际巡航主题 - 深空赛博风格
+html.interstellar {
+  // 主色调 - 电光青与霓虹紫
+  --primary-color: #00f2fe;
+  --primary-color-rgb: 0, 242, 254;
+  --primary-light: #4facfe;
+  --primary-dark: #00d4e6;
+  --accent-color: #8b5cf6;
+
+  // 背景色 - 透明以显示动态背景
+  --bg-primary: transparent;
+  --bg-primary-rgb: 9, 10, 15;
+  --bg-secondary: rgba(9, 10, 15, 0.6);
+  --bg-secondary-rgb: 9, 10, 15;
+  --bg-tertiary: rgba(15, 15, 30, 0.7);
+  --bg-card: rgba(15, 20, 40, 0.5);
+  --bg-hover: rgba(0, 242, 254, 0.08);
+
+  // 文字颜色 - 高对比度白色
+  --text-primary: #f0f9ff;
+  --text-secondary: #a5b4fc;
+  --text-muted: #6b7280;
+
+  // 边框颜色 - 赛博青边缘
+  --border-color: rgba(0, 242, 254, 0.15);
+  --border-color-light: rgba(0, 242, 254, 0.08);
+  --border-color-hover: rgba(0, 242, 254, 0.3);
+  --border-color-active: rgba(0, 242, 254, 0.5);
+
+  // 渐变
+  --gradient-primary: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #8b5cf6 100%);
+  --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(9, 10, 15, 0.4) 100%);
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(0, 242, 254, 0.08) 0%,
+    rgba(139, 92, 246, 0.08) 100%
+  );
+
+  // 阴影 - 发光效果
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 20px rgba(0, 242, 254, 0.3);
+  --shadow-glow-strong: 0 0 40px rgba(0, 242, 254, 0.5);
+
+  // 滚动条 - 赛博风格
+  --scrollbar-thumb: rgba(0, 242, 254, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 242, 254, 0.35);
 }
 
 // ==================== 重置样式 ====================

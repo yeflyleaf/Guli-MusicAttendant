@@ -50,6 +50,7 @@ export default {
       themeDesc: 'اختر سمة مظهر التطبيق',
       themeDark: 'الوضع الداكن',
       themeLight: 'الوضع الفاتح',
+      themeInterstellar: 'رحلة بين النجوم',
       language: 'اللغة',
       languageDesc: 'اختر لغة التطبيق',
       fontSize: 'حجم الخط',
