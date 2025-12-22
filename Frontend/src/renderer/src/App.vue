@@ -240,6 +240,20 @@ watch(
   }
 )
 
+watch(
+  () => playerStore.volume,
+  () => {
+    saveStatus()
+  }
+)
+
+watch(
+  () => playerStore.isMuted,
+  () => {
+    saveStatus()
+  }
+)
+
 // 每30秒保存一次进度（如果在播放）
 let progressSaveInterval: number | null = null
 watch(

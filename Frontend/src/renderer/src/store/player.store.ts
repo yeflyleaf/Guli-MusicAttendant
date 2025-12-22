@@ -445,7 +445,9 @@ export const usePlayerStore = defineStore('player', {
         queue: queueToSave,
         currentIndex: this.currentIndex,
         currentTime: this.currentTime,
-        playMode: this.playMode
+        playMode: this.playMode,
+        volume: this.volume,
+        isMuted: this.isMuted
       }
       try {
         localStorage.setItem('player_status', JSON.stringify(status))
@@ -453,7 +455,9 @@ export const usePlayerStore = defineStore('player', {
           queueLength: queueToSave.length,
           currentIndex: this.currentIndex,
           currentTime: this.currentTime,
-          playMode: this.playMode
+          playMode: this.playMode,
+          volume: this.volume,
+          isMuted: this.isMuted
         })
       } catch (e) {
         console.error('[Player] Failed to save playback status', e)
@@ -490,11 +494,21 @@ export const usePlayerStore = defineStore('player', {
           queueLength: status.queue?.length,
           currentIndex: status.currentIndex,
           currentTime: status.currentTime,
-          playMode: status.playMode
+          playMode: status.playMode,
+          volume: status.volume,
+          isMuted: status.isMuted
         })
 
         if (status.playMode) {
           this.playMode = status.playMode
+        }
+
+        // 恢复音量设置
+        if (typeof status.volume === 'number') {
+          this.volume = status.volume
+        }
+        if (typeof status.isMuted === 'boolean') {
+          this.isMuted = status.isMuted
         }
 
         if (status.queue && Array.isArray(status.queue) && status.queue.length > 0) {

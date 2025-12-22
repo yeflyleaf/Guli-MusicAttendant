@@ -80,7 +80,7 @@ export default {
       title: 'Behavior',
       sectionTitle: 'Behavior Settings',
       rememberPlaybackStatus: 'Playback Status',
-      rememberPlaybackStatusDesc: 'Remember playback status after restart (queue, progress, loop, shuffle)',
+      rememberPlaybackStatusDesc: 'Remember playback status after restart (queue, progress, play mode, volume)',
       gaplessPlayback: 'Gapless Playback',
       gaplessPlaybackDesc: 'Eliminate gaps when switching songs',
       autoScan: 'Auto Scan on Startup',

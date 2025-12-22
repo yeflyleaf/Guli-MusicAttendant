@@ -81,7 +81,7 @@ export default {
       title: 'Comportement',
       sectionTitle: 'Paramètres de comportement',
       rememberPlaybackStatus: 'État de lecture',
-      rememberPlaybackStatusDesc: 'Mémoriser l\'état de lecture après redémarrage (file d\'attente, progression, boucle, aléatoire)',
+      rememberPlaybackStatusDesc: 'Mémoriser l\'état de lecture après redémarrage (file d\'attente, progression, mode de lecture, volume)',
       gaplessPlayback: 'Lecture sans interruption',
       gaplessPlaybackDesc: 'Éliminer les pauses lors du changement de chanson',
       autoScan: 'Analyse auto au démarrage',

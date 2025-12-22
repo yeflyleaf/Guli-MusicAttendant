@@ -72,7 +72,7 @@ export default {
       title: 'Поведение',
       sectionTitle: 'Настройки поведения',
       rememberPlaybackStatus: 'Состояние',
-      rememberPlaybackStatusDesc: 'Запоминать состояние',
+      rememberPlaybackStatusDesc: 'Запоминать состояние (очередь, прогресс, режим воспроизведения, громкость)',
       gaplessPlayback: 'Бесшовное',
       gaplessPlaybackDesc: 'Без пауз',
       autoScan: 'Автосканирование',

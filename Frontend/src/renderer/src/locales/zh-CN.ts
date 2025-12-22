@@ -80,7 +80,7 @@ export default {
       title: '行为',
       sectionTitle: '行为设置',
       rememberPlaybackStatus: '播放状态',
-      rememberPlaybackStatusDesc: '重启后记住上一次的播放状态（队列、进度、循环、随机）',
+      rememberPlaybackStatusDesc: '重启后记住上一次的播放状态（队列、进度、播放模式、音量）',
       gaplessPlayback: '无缝播放',
       gaplessPlaybackDesc: '歌曲切换时消除间隙',
       autoScan: '启动时自动扫描',

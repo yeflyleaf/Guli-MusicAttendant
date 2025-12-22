@@ -72,7 +72,7 @@ export default {
       title: 'Comportamiento',
       sectionTitle: 'Configuración de comportamiento',
       rememberPlaybackStatus: 'Estado',
-      rememberPlaybackStatusDesc: 'Recordar estado',
+      rememberPlaybackStatusDesc: 'Recordar estado (cola, progreso, modo de reproducción, volumen)',
       gaplessPlayback: 'Sin pausas',
       gaplessPlaybackDesc: 'Eliminar pausas',
       autoScan: 'Escaneo automático',

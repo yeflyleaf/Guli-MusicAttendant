@@ -81,7 +81,7 @@ export default {
       title: 'السلوك',
       sectionTitle: 'إعدادات السلوك',
       rememberPlaybackStatus: 'حالة التشغيل',
-      rememberPlaybackStatusDesc: 'تذكر حالة التشغيل بعد إعادة التشغيل (القائمة، التقدم، التكرار، العشوائي)',
+      rememberPlaybackStatusDesc: 'تذكر حالة التشغيل بعد إعادة التشغيل (القائمة، التقدم، وضع التشغيل، مستوى الصوت)',
       gaplessPlayback: 'تشغيل بدون فجوات',
       gaplessPlaybackDesc: 'إزالة الفجوات عند تبديل الأغاني',
       autoScan: 'مسح تلقائي عند بدء التشغيل',
