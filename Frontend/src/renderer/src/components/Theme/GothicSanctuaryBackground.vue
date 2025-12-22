@@ -157,6 +157,9 @@
     <!-- 尘埃粒子 Canvas -->
     <canvas ref="dustCanvas" class="dust-canvas"></canvas>
 
+    <!-- 流萤 Canvas -->
+    <canvas ref="fireflyCanvas" class="firefly-canvas"></canvas>
+
     <!-- 装饰元素：哥特式边角 - 增强版 -->
     <div class="gothic-corners">
       <div class="corner corner-tl">
@@ -257,6 +260,7 @@ defineProps<{
 
 const containerRef = ref<HTMLElement | null>(null)
 const dustCanvas = ref<HTMLCanvasElement | null>(null)
+const fireflyCanvas = ref<HTMLCanvasElement | null>(null)
 
 // 鼠标位置用于视差效果
 const mouseX = ref(0.5)
@@ -516,13 +520,197 @@ const initDustSystem = () => {
   animate()
 }
 
+// 流萤粒子系统
+interface Firefly {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  size: number
+  opacity: number
+  pulsePhase: number
+  pulseSpeed: number
+  tailLength: number
+  trail: { x: number; y: number; opacity: number }[]
+}
+
+let fireflies: Firefly[] = []
+let fireflyAnimationId: number | null = null
+
+const initFireflySystem = () => {
+  const canvas = fireflyCanvas.value
+  if (!canvas) return
+
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  // 设置画布尺寸
+  const resize = () => {
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+  }
+  resize()
+  window.addEventListener('resize', resize)
+
+  // 创建流萤
+  const createFirefly = (): Firefly => {
+    // 从右上方生成
+    const startFromRight = Math.random() > 0.3
+    const x = startFromRight
+      ? canvas.width + Math.random() * 100
+      : Math.random() * canvas.width * 0.5 + canvas.width * 0.5
+    const y = startFromRight
+      ? Math.random() * canvas.height * 0.4
+      : -Math.random() * 50
+
+    // 向左下方移动
+    const speed = 1.5 + Math.random() * 2
+    const angle = Math.PI * 0.65 + (Math.random() - 0.5) * 0.3 // 约135°方向
+
+    return {
+      x,
+      y,
+      vx: -Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      size: 2 + Math.random() * 3,
+      opacity: 0.6 + Math.random() * 0.4,
+      pulsePhase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.05 + Math.random() * 0.05,
+      tailLength: 15 + Math.floor(Math.random() * 15),
+      trail: []
+    }
+  }
+
+  // 初始化流萤
+  for (let i = 0; i < 25; i++) {
+    const ff = createFirefly()
+    // 分散到屏幕各处
+    ff.x = Math.random() * canvas.width
+    ff.y = Math.random() * canvas.height
+    fireflies.push(ff)
+  }
+
+  // 动画循环
+  const animate = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    fireflies.forEach((ff, index) => {
+      // 更新位置
+      ff.x += ff.vx
+      ff.y += ff.vy
+
+      // 添加微小的波动
+      ff.x += Math.sin(ff.pulsePhase * 0.5) * 0.3
+      ff.y += Math.cos(ff.pulsePhase * 0.7) * 0.2
+
+      // 更新脉冲相位
+      ff.pulsePhase += ff.pulseSpeed
+
+      // 记录轨迹
+      ff.trail.unshift({ x: ff.x, y: ff.y, opacity: ff.opacity })
+      if (ff.trail.length > ff.tailLength) {
+        ff.trail.pop()
+      }
+
+      // 超出屏幕则重置
+      if (ff.x < -100 || ff.y > canvas.height + 100) {
+        fireflies[index] = createFirefly()
+      }
+
+      // 计算当前亮度(呼吸效果)
+      const breathe = 0.7 + Math.sin(ff.pulsePhase) * 0.3
+      const currentOpacity = ff.opacity * breathe
+
+      // 绘制尾迹
+      ff.trail.forEach((point, i) => {
+        const trailOpacity = currentOpacity * (1 - i / ff.trail.length) * 0.6
+        const trailSize = ff.size * (1 - i / ff.trail.length * 0.7)
+
+        if (trailOpacity > 0.02) {
+          // 尾迹光晕
+          const gradient = ctx.createRadialGradient(
+            point.x, point.y, 0,
+            point.x, point.y, trailSize * 3
+          )
+          gradient.addColorStop(0, `rgba(255, 200, 100, ${trailOpacity})`)
+          gradient.addColorStop(0.4, `rgba(255, 170, 50, ${trailOpacity * 0.5})`)
+          gradient.addColorStop(1, 'transparent')
+
+          ctx.fillStyle = gradient
+          ctx.beginPath()
+          ctx.arc(point.x, point.y, trailSize * 3, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      })
+
+      // 绘制流萤本体
+      // 外层光晕
+      const outerGlow = ctx.createRadialGradient(
+        ff.x, ff.y, 0,
+        ff.x, ff.y, ff.size * 8
+      )
+      outerGlow.addColorStop(0, `rgba(255, 191, 0, ${currentOpacity * 0.4})`)
+      outerGlow.addColorStop(0.3, `rgba(255, 160, 50, ${currentOpacity * 0.2})`)
+      outerGlow.addColorStop(0.6, `rgba(255, 140, 30, ${currentOpacity * 0.08})`)
+      outerGlow.addColorStop(1, 'transparent')
+
+      ctx.fillStyle = outerGlow
+      ctx.beginPath()
+      ctx.arc(ff.x, ff.y, ff.size * 8, 0, Math.PI * 2)
+      ctx.fill()
+
+      // 中层光晕
+      const midGlow = ctx.createRadialGradient(
+        ff.x, ff.y, 0,
+        ff.x, ff.y, ff.size * 4
+      )
+      midGlow.addColorStop(0, `rgba(255, 210, 120, ${currentOpacity * 0.7})`)
+      midGlow.addColorStop(0.5, `rgba(255, 180, 80, ${currentOpacity * 0.4})`)
+      midGlow.addColorStop(1, 'transparent')
+
+      ctx.fillStyle = midGlow
+      ctx.beginPath()
+      ctx.arc(ff.x, ff.y, ff.size * 4, 0, Math.PI * 2)
+      ctx.fill()
+
+      // 核心亮点
+      const coreGlow = ctx.createRadialGradient(
+        ff.x, ff.y, 0,
+        ff.x, ff.y, ff.size * 1.5
+      )
+      coreGlow.addColorStop(0, `rgba(255, 250, 220, ${currentOpacity})`)
+      coreGlow.addColorStop(0.3, `rgba(255, 230, 150, ${currentOpacity * 0.9})`)
+      coreGlow.addColorStop(1, `rgba(255, 200, 100, ${currentOpacity * 0.5})`)
+
+      ctx.fillStyle = coreGlow
+      ctx.beginPath()
+      ctx.arc(ff.x, ff.y, ff.size * 1.5, 0, Math.PI * 2)
+      ctx.fill()
+
+      // 最亮的中心点
+      ctx.fillStyle = `rgba(255, 255, 240, ${currentOpacity})`
+      ctx.beginPath()
+      ctx.arc(ff.x, ff.y, ff.size * 0.4, 0, Math.PI * 2)
+      ctx.fill()
+    })
+
+    fireflyAnimationId = requestAnimationFrame(animate)
+  }
+
+  animate()
+}
+
 onMounted(() => {
   initDustSystem()
+  initFireflySystem()
 })
 
 onUnmounted(() => {
   if (dustAnimationId) {
     cancelAnimationFrame(dustAnimationId)
+  }
+  if (fireflyAnimationId) {
+    cancelAnimationFrame(fireflyAnimationId)
   }
 })
 </script>
@@ -1296,6 +1484,15 @@ $warm-mist: rgba(255, 220, 180, 0.08);
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+// 流萤画布
+.firefly-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 // 哥特式装饰边角 - 增强版
