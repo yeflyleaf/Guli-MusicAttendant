@@ -73,6 +73,7 @@ export interface ElectronAPI {
     minimize: () => void
     maximize: () => void
     close: () => void
+    show: () => void
     isMaximized: () => Promise<boolean>
     setTitle: (title: string) => void
   }

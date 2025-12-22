@@ -1887,13 +1887,7 @@ $chrome-silver: #c0c0c0;
 }
 
 // ==================== 过渡动画 ====================
-.chronos-fade-enter-active,
 .chronos-fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.chronos-fade-enter-from,
-.chronos-fade-leave-to {
-  opacity: 0;
+  animation: chronosFadeOut 0.8s cubic-bezier(0.7, 0, 0.3, 1);
 }
 </style>

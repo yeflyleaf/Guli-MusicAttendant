@@ -2550,22 +2550,8 @@ $ink-black: #1a1a2e;
 }
 
 // ==================== 过渡动画 ====================
-.zen-fade-enter-active {
-  animation: zenFadeIn 0.5s ease-out;
-}
-
 .zen-fade-leave-active {
   animation: zenFadeOut 0.5s ease-in;
-}
-
-@keyframes zenFadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 
 @keyframes zenFadeOut {

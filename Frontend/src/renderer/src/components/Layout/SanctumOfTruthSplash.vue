@@ -626,30 +626,19 @@ $parchment-bg: rgba(240, 230, 210, 0.15);
   }
 }
 
-@keyframes shelfFloat {
-
-  0%,
-  100% {
-    transform: translateY(0) rotateY(-15deg);
+// ==================== 动画 ====================
+@keyframes sanctumFadeOut {
+  from {
+    opacity: 1;
   }
 
-  50% {
-    transform: translateY(-20px) rotateY(-15deg);
+  to {
+    opacity: 0;
   }
 }
 
-@keyframes twinkle {
-
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.5);
-  }
+.sanctum-fade-leave-active {
+  animation: sanctumFadeOut 0.8s ease-in-out;
 }
 
 // ==================== 第1层 - 符文 Canvas ====================

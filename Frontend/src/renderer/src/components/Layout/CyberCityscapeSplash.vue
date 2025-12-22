@@ -2206,24 +2206,8 @@ $neon-magenta: #ff00ff;
 }
 
 // ==================== 过渡动画 ====================
-.cyber-fade-enter-active {
-  animation: cyberEnter 0.5s ease-out;
-}
-
 .cyber-fade-leave-active {
   animation: cyberLeave 0.5s ease-in forwards;
-}
-
-@keyframes cyberEnter {
-  0% {
-    opacity: 0;
-    filter: brightness(2) blur(10px);
-  }
-
-  100% {
-    opacity: 1;
-    filter: brightness(1) blur(0);
-  }
 }
 
 @keyframes cyberLeave {

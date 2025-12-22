@@ -37,10 +37,9 @@ export function createMainWindow(): BrowserWindow {
     }
   })
 
-  // 窗口准备好后再显示，避免白屏
-  mainWindow.on('ready-to-show', () => {
-    mainWindow?.show()
-  })
+  // 注意：不再在 ready-to-show 时自动显示窗口
+  // 改为由渲染进程在设置加载完成后通知主进程显示窗口
+  // 这样可以确保用户看到的第一帧就是正确的过场动画
 
   // 处理外部链接
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -93,6 +92,10 @@ export function maximizeWindow(): void {
 
 export function closeWindow(): void {
   mainWindow?.close()
+}
+
+export function showWindow(): void {
+  mainWindow?.show()
 }
 
 export function isMaximized(): boolean {

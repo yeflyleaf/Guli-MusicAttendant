@@ -1792,22 +1792,8 @@ $ivory: #fffef0;
 }
 
 // ==================== 过渡动画 ====================
-.brass-fade-enter-active {
-  animation: brassFadeIn 0.5s ease-out;
-}
-
 .brass-fade-leave-active {
-  animation: brassFadeOut 0.5s ease-in;
-}
-
-@keyframes brassFadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  animation: brassFadeOut 0.8s ease-in-out;
 }
 
 @keyframes brassFadeOut {

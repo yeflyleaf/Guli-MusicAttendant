@@ -1639,12 +1639,8 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
 }
 
 // ==================== 过渡动画 ====================
-.prism-fade-enter-active {
-    transition: opacity 0.5s ease;
-}
-
 .prism-fade-leave-active {
-    transition: opacity 0.3s ease;
+    animation: prismFadeOut 0.8s ease-in-out;
 }
 
 .prism-fade-enter-from,
@@ -1652,3 +1648,4 @@ $glacial-glass: rgba(5, 19, 39, 0.75);
     opacity: 0;
 }
 </style>
+```

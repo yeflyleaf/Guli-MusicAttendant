@@ -1,43 +1,44 @@
 <template>
-  <!-- 启动屏幕 -->
+  <!-- 启动屏幕 - 等待设置加载完成后再渲染，避免使用默认主题值导致闪烁 -->
+  <!-- 窗口在设置加载完成后才显示，确保用户看到的第一帧就是正确的过场动画 -->
   <!-- 星际穿梭主题 -->
-  <SplashScreen v-if="showSplash && settingsStore.splashTheme === 'cosmic'"
+  <SplashScreen v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'cosmic'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 翡翠圣域主题 -->
-  <EmeraldSanctuarySplash v-if="showSplash && settingsStore.splashTheme === 'emerald'"
+  <EmeraldSanctuarySplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'emerald'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 炼狱熔炉主题 -->
-  <MoltenForgeSplash v-if="showSplash && settingsStore.splashTheme === 'molten'"
+  <MoltenForgeSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'molten'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 深蓝幽光主题 -->
-  <BioluminescentAbyssSplash v-if="showSplash && settingsStore.splashTheme === 'abyss'"
+  <BioluminescentAbyssSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'abyss'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 黄铜纪元主题 -->
-  <BrassEraSplash v-if="showSplash && settingsStore.splashTheme === 'brass'"
+  <BrassEraSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'brass'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 零度棱镜主题 -->
-  <SubzeroPrismSplash v-if="showSplash && settingsStore.splashTheme === 'prism'"
+  <SubzeroPrismSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'prism'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 真理殿堂主题 -->
-  <SanctumOfTruthSplash v-if="showSplash && settingsStore.splashTheme === 'sanctum'"
+  <SanctumOfTruthSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'sanctum'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 硅基秩序主题 -->
-  <SiliconOrderSplash v-if="showSplash && settingsStore.splashTheme === 'silicon'"
+  <SiliconOrderSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'silicon'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 幻象几何主题 -->
-  <EtherealGeometrySplash v-if="showSplash && settingsStore.splashTheme === 'ethereal'"
+  <EtherealGeometrySplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'ethereal'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 未来都市主题 -->
-  <CyberCityscapeSplash v-if="showSplash && settingsStore.splashTheme === 'cyber'"
+  <CyberCityscapeSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'cyber'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 和风落樱主题 -->
-  <ZenCherryBlossomSplash v-if="showSplash && settingsStore.splashTheme === 'sakura'"
+  <ZenCherryBlossomSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'sakura'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
   <!-- 时空裂隙主题 -->
-  <ChronosRiftSplash v-if="showSplash && settingsStore.splashTheme === 'chronos'"
+  <ChronosRiftSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'chronos'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
-  <div class="app-container">
+  <div class="app-container" :style="{ opacity: isStartup ? 0 : 1 }">
     <!-- 自定义标题栏 -->
     <Header />
 
@@ -92,7 +93,7 @@ import { useSettingsStore } from '@/store/settings.store'
 import type { Music } from '@/types/music'
 import { debounce } from '@/utils/debounce'
 import Lyrics from '@/views/Lyrics.vue'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
@@ -111,10 +112,32 @@ const handleSplashFinish = () => {
   isStartup.value = false
 }
 
+// 监听设置加载完成，然后通知主进程显示窗口
+// 这样窗口显示时就直接是用户选择的过场动画
+watch(
+  () => settingsStore.isLoaded,
+  async (isLoaded) => {
+    if (isLoaded) {
+      // 等待 DOM 更新，确保过场动画组件已经挂载
+      await nextTick()
+
+      // 额外给予一点渲染时间，确保过场动画完全上屏
+      // 彻底杜绝"先显示主页再显示过场"的闪烁问题
+      setTimeout(() => {
+        window.electron.window.show()
+        console.log('[App] Settings loaded, window shown')
+      }, 100)
+    }
+  },
+  { immediate: true }
+)
+
 // 监听显示启动屏幕事件
 window.addEventListener('show-splash-screen', () => {
   showSplash.value = true
 })
+
+// 处理音乐路径验证失败事件
 
 // 处理音乐路径验证失败事件
 const handleMusicPathValidationFailed = async (event: CustomEvent<{

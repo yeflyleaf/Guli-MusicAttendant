@@ -1599,9 +1599,8 @@ $hydro-glass: rgba(2, 16, 25, 0.7);
 }
 
 // ==================== 过渡动画 ====================
-.abyss-fade-enter-active,
 .abyss-fade-leave-active {
-  transition: opacity 0.5s ease-out;
+  animation: abyssFadeOut 0.8s ease-in-out;
 }
 
 .abyss-fade-enter-from,

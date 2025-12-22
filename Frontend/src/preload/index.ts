@@ -185,6 +185,10 @@ const electronAPI = {
       ipcRenderer.send('window:close')
     },
 
+    show: (): void => {
+      ipcRenderer.send('window:show')
+    },
+
     isMaximized: (): Promise<boolean> =>
       ipcRenderer.invoke('window:isMaximized'),
 

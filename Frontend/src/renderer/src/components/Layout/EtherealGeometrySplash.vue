@@ -1380,12 +1380,10 @@ $holographic-yellow: #ffff00;
 }
 
 // ==================== 过渡动画 ====================
-.ethereal-fade-enter-active,
 .ethereal-fade-leave-active {
   transition: opacity 0.5s ease;
 }
 
-.ethereal-fade-enter-from,
 .ethereal-fade-leave-to {
   opacity: 0;
 }
