@@ -44,6 +44,7 @@ export default {
       themeDark: 'Modo oscuro',
       themeLight: 'Modo claro',
       themeInterstellar: 'Crucero Interestelar',
+      themeGothic: 'Gótico Oscuro',
       language: 'Idioma',
       languageDesc: 'Elegir el idioma',
       fontSize: 'Tamaño de fuente',

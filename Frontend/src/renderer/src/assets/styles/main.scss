@@ -165,6 +165,56 @@ html.interstellar {
   --scrollbar-thumb-hover: rgba(0, 242, 254, 0.35);
 }
 
+// 暗夜哥特主题 - 幽邃圣所风格
+html.gothic {
+  // 主色调 - 琥珀金与深红
+  --primary-color: #C5A059; // 暗金色
+  --primary-color-rgb: 197, 160, 89;
+  --primary-light: #D4B97A;
+  --primary-dark: #A68B45;
+  --accent-color: #720e1e; // 深红宝石
+
+  // 背景色 - 透明以显示动态背景
+  --bg-primary: transparent;
+  --bg-primary-rgb: 5, 5, 5;
+  --bg-secondary: rgba(18, 18, 18, 0.7);
+  --bg-secondary-rgb: 18, 18, 18;
+  --bg-tertiary: rgba(25, 20, 25, 0.8);
+  --bg-card: rgba(20, 15, 20, 0.6);
+  --bg-hover: rgba(197, 160, 89, 0.08);
+
+  // 文字颜色 - 暖色调
+  --text-primary: #f5f0e8; // 暖白色
+  --text-secondary: #b8a88e; // 暗金次要文字
+  --text-muted: #6b5f4f; // 棕灰色
+
+  // 边框颜色 - 暗金边缘
+  --border-color: rgba(197, 160, 89, 0.12);
+  --border-color-light: rgba(197, 160, 89, 0.06);
+  --border-color-hover: rgba(197, 160, 89, 0.25);
+  --border-color-active: rgba(197, 160, 89, 0.4);
+
+  // 渐变
+  --gradient-primary: linear-gradient(135deg, #C5A059 0%, #720e1e 50%, #0f2c67 100%);
+  --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(5, 5, 5, 0.5) 100%);
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(197, 160, 89, 0.06) 0%,
+    rgba(114, 14, 30, 0.06) 100%
+  );
+
+  // 阴影 - 暖光效果
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 20px rgba(197, 160, 89, 0.2);
+  --shadow-glow-strong: 0 0 40px rgba(197, 160, 89, 0.35);
+
+  // 滚动条 - 暗金风格
+  --scrollbar-thumb: rgba(197, 160, 89, 0.2);
+  --scrollbar-thumb-hover: rgba(197, 160, 89, 0.35);
+}
+
 // ==================== 重置样式 ====================
 *,
 *::before,

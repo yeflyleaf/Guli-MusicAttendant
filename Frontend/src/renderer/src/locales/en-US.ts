@@ -50,6 +50,7 @@ export default {
       themeDark: 'Dark Mode',
       themeLight: 'Light Mode',
       themeInterstellar: 'Interstellar Cruise',
+      themeGothic: 'Dark Gothic',
       language: 'Language',
       languageDesc: 'Choose the application language',
       fontSize: 'Font Size',
