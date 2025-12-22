@@ -69,7 +69,8 @@
         <div v-for="(song, index) in songs" :key="song.id" :data-id="song.id" class="list-item" :class="{
           active: playerStore.currentSong?.id === song.id,
           selected: selectedIds.has(song.id),
-          'is-draggable': isEditMode
+          'is-draggable': isEditMode,
+          invalid: libraryStore.invalidMusicIds.has(song.id)
         }" @dblclick="handlePlay(index)">
           <!-- 拖拽手柄 -->
           <span class="col-drag" v-if="isEditMode">
@@ -93,7 +94,15 @@
               </el-icon>
             </div>
             <div class="song-info">
-              <div class="song-name truncate" :title="song.title">{{ song.title }}</div>
+              <div class="song-name-wrapper">
+                <span class="song-name truncate" :title="song.title">{{ song.title }}</span>
+                <el-tooltip v-if="libraryStore.invalidMusicIds.has(song.id)"
+                  :content="$t('localMusic.invalidPathTooltip')" placement="top">
+                  <el-icon class="invalid-icon">
+                    <WarningFilled />
+                  </el-icon>
+                </el-tooltip>
+              </div>
               <div class="song-artist truncate" :title="song.artist">{{ song.artist }}</div>
             </div>
           </div>
@@ -205,7 +214,7 @@ import { usePlayerStore } from '@/store/player.store'
 import type { Music } from '@/types/music'
 import type { Playlist } from '@/types/playlist'
 import { formatDate, formatDuration } from '@/utils/format'
-import { Delete, Edit, Headset, Loading, Menu, Plus, Search, Setting, Tickets, VideoPlay } from '@element-plus/icons-vue'
+import { Delete, Edit, Headset, Loading, Menu, Plus, Search, Setting, Tickets, VideoPlay, WarningFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import Sortable from 'sortablejs'
 import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -682,6 +691,34 @@ const handleImportSongs = async () => {
   &.is-draggable {
     cursor: move;
   }
+
+  &.invalid {
+    opacity: 0.6;
+    border-left: 3px solid #f56c6c;
+
+    .song-name {
+      color: $text-muted;
+    }
+
+    .invalid-icon {
+      color: #f56c6c;
+      font-size: 14px;
+      margin-left: 6px;
+      animation: pulse-warning 2s infinite;
+    }
+  }
+}
+
+@keyframes pulse-warning {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 // 拖拽手柄列
@@ -765,6 +802,13 @@ const handleImportSongs = async () => {
   }
 
   .song-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .song-name-wrapper {
+    display: flex;
+    align-items: center;
     min-width: 0;
   }
 

@@ -54,7 +54,8 @@
     <div class="music-list" ref="scrollContainer" v-if="displayedFavorites.length > 0">
       <div v-for="(song, index) in visibleFavorites" :key="song.id" class="list-item" :class="{
         active: playerStore.currentSong?.id === song.id,
-        selected: selectedIds.has(song.id)
+        selected: selectedIds.has(song.id),
+        invalid: libraryStore.invalidMusicIds.has(song.id)
       }" @dblclick="handlePlay(index)">
         <span class="col-index">
           <el-checkbox v-if="isEditMode" :model-value="selectedIds.has(song.id)"
@@ -71,7 +72,15 @@
             </el-icon>
           </div>
           <div class="song-info">
-            <div class="song-name truncate" :title="song.title">{{ song.title }}</div>
+            <div class="song-name-wrapper">
+              <span class="song-name truncate" :title="song.title">{{ song.title }}</span>
+              <el-tooltip v-if="libraryStore.invalidMusicIds.has(song.id)"
+                :content="$t('localMusic.invalidPathTooltip')" placement="top">
+                <el-icon class="invalid-icon">
+                  <WarningFilled />
+                </el-icon>
+              </el-tooltip>
+            </div>
             <div class="song-artist truncate" :title="song.artist">{{ song.artist }}</div>
           </div>
         </div>
@@ -117,7 +126,7 @@ import { showConfirm } from '@/hooks/useConfirm'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { formatDuration } from '@/utils/format'
-import { Close, Edit, Headset, MoreFilled, Search, Star, StarFilled, VideoPlay } from '@element-plus/icons-vue'
+import { Close, Edit, Headset, MoreFilled, Search, Star, StarFilled, VideoPlay, WarningFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, nextTick, onActivated, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -442,6 +451,34 @@ const handleCommand = (command: string, song: Music) => {
   &.selected {
     background: rgba(var(--primary-color-rgb), 0.1);
   }
+
+  &.invalid {
+    opacity: 0.6;
+    border-left: 3px solid #f56c6c;
+
+    .song-name {
+      color: $text-muted;
+    }
+
+    .invalid-icon {
+      color: #f56c6c;
+      font-size: 14px;
+      margin-left: 6px;
+      animation: pulse-warning 2s infinite;
+    }
+  }
+}
+
+@keyframes pulse-warning {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .col-index {
@@ -484,6 +521,13 @@ const handleCommand = (command: string, song: Music) => {
   }
 
   .song-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .song-name-wrapper {
+    display: flex;
+    align-items: center;
     min-width: 0;
   }
 
