@@ -159,6 +159,13 @@ export const useSettingsStore = defineStore('settings', {
       try {
         await window.electron.settings.addMusicFolder(folder)
         this.musicFolders.push(folder)
+
+        // 添加文件夹后，重新验证所有歌曲路径（之前无效的歌曲可能现在有效了）
+        import('@/store/library.store').then(({ useLibraryStore }) => {
+          const libraryStore = useLibraryStore()
+          libraryStore.validateMusicPaths()
+        })
+
         return true
       } catch (error) {
         console.error('[Settings] 添加音乐文件夹失败:', error)
@@ -173,6 +180,13 @@ export const useSettingsStore = defineStore('settings', {
       try {
         await window.electron.settings.removeMusicFolder(folder)
         this.musicFolders = this.musicFolders.filter(f => f !== folder)
+
+        // 删除文件夹后，验证所有歌曲路径，标记无效歌曲
+        import('@/store/library.store').then(({ useLibraryStore }) => {
+          const libraryStore = useLibraryStore()
+          libraryStore.validateMusicPaths()
+        })
+
         return true
       } catch (error) {
         console.error('[Settings] 移除音乐文件夹失败:', error)

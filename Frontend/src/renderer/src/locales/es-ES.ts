@@ -146,7 +146,8 @@ export default {
     confirmDeleteSingle: '¿Eliminar esta canción?',
     deleteSuccess: '{count} eliminadas',
     removeSelected: 'Eliminar',
-    showInFolder: 'Mostrar en carpeta'
+    showInFolder: 'Mostrar en carpeta',
+    invalidPathTooltip: 'Esta canción no está en una carpeta de música válida'
   },
   favoriteMusic: {
     title: 'Favoritos',
@@ -208,6 +209,7 @@ export default {
     filePath: 'Ruta del archivo: {path}',
     notInMusicFolder: 'Esta canción no está en las carpetas de música configuradas.',
     currentMusicFolders: 'Carpetas de música actuales:',
+    noMusicFolders: 'Aún no ha configurado ninguna carpeta de música. Por favor, agregue una en "Configuración" → "Biblioteca".',
     fileExistsButNotInFolder: 'Nota: El archivo no está en las carpetas de música especificadas.',
     fileNotFound: 'Nota: Este archivo no existe localmente.',
     removeFromList: 'Eliminar de la lista'

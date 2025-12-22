@@ -160,7 +160,8 @@ export default {
     confirmDeleteSingle: '确定要删除这首歌曲吗？',
     deleteSuccess: '已删除 {count} 首歌曲',
     removeSelected: '删除选中',
-    showInFolder: '在文件夹中显示'
+    showInFolder: '在文件夹中显示',
+    invalidPathTooltip: '此歌曲不在有效的音乐文件夹中'
   },
 
   // 我喜欢
@@ -231,6 +232,7 @@ export default {
     filePath: '文件路径：{path}',
     notInMusicFolder: '该歌曲不在设置的音乐文件夹中。',
     currentMusicFolders: '当前设置的音乐文件夹：',
+    noMusicFolders: '您还没有设置任何音乐文件夹，请在"设置"→"音乐库"中添加。',
     fileExistsButNotInFolder: '提示：文件不在指定音乐文件夹内。您可以在"设置"→"音乐库"中添加对应的文件夹。',
     fileNotFound: '提示：该文件在本地不存在，可能已被移动或删除。',
     removeFromList: '从列表中删除'

@@ -160,7 +160,8 @@ export default {
     confirmDeleteSingle: 'Are you sure you want to delete this song?',
     deleteSuccess: 'Deleted {count} song(s)',
     removeSelected: 'Remove Selected',
-    showInFolder: 'Show in Folder'
+    showInFolder: 'Show in Folder',
+    invalidPathTooltip: 'This song is not in a valid music folder'
   },
 
   // Favorites
@@ -231,6 +232,7 @@ export default {
     filePath: 'File path: {path}',
     notInMusicFolder: 'This song is not in the configured music folders.',
     currentMusicFolders: 'Current music folders:',
+    noMusicFolders: 'You have not set up any music folders yet. Please add one in "Settings" → "Library".',
     fileExistsButNotInFolder: 'Note: The file is not in the specified music folders. You can add the corresponding folder in "Settings" → "Library".',
     fileNotFound: 'Note: This file does not exist locally, it may have been moved or deleted.',
     removeFromList: 'Remove from List'

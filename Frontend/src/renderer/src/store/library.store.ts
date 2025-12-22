@@ -23,6 +23,8 @@ interface LibraryState {
   searchKeyword: string
   // 筛选后的歌曲
   filteredMusic: Music[]
+  // 无效歌曲 ID 集合（不在有效音乐文件夹中的歌曲）
+  invalidMusicIds: Set<number>
 }
 
 export const useLibraryStore = defineStore('library', {
@@ -34,7 +36,8 @@ export const useLibraryStore = defineStore('library', {
     isLoaded: false,
     isLoading: false,
     searchKeyword: '',
-    filteredMusic: []
+    filteredMusic: [],
+    invalidMusicIds: new Set()
   }),
 
   getters: {
@@ -46,6 +49,9 @@ export const useLibraryStore = defineStore('library', {
 
     // 收藏数量
     favoriteCount: (state): number => state.favorites.length,
+
+    // 无效歌曲数量
+    invalidMusicCount: (state): number => state.invalidMusicIds.size,
 
     // 显示的歌曲列表（搜索筛选后）
     displayMusic: (state): Music[] => {
@@ -84,6 +90,9 @@ export const useLibraryStore = defineStore('library', {
         this.isLoaded = true
 
         console.log(`[Library] Loaded ${allMusic.length} songs`)
+
+        // 验证歌曲路径，标记不在有效文件夹中的歌曲
+        this.validateMusicPaths()
 
       } catch (error) {
         console.error('[Library] 加载数据失败:', error)
@@ -311,6 +320,61 @@ export const useLibraryStore = defineStore('library', {
         console.error('[Library] 添加到歌单失败:', error)
         return false
       }
+    },
+
+    /**
+     * 验证所有歌曲路径是否在有效的音乐文件夹中
+     * 在删除音乐文件夹后调用，标记不在有效路径中的歌曲
+     */
+    async validateMusicPaths() {
+      try {
+        // 获取当前设置的音乐文件夹列表
+        const folders = await window.electron.settings.getMusicFolders()
+
+        // 如果没有设置任何文件夹，则所有歌曲都标记为无效
+        if (folders.length === 0) {
+          // 将所有歌曲标记为无效
+          const allIds = new Set<number>(this.allMusic.map(m => m.id))
+          this.invalidMusicIds = allIds
+          console.log(`[Library] 无音乐文件夹设置，所有 ${allIds.size} 首歌曲标记为无效`)
+          return
+        }
+
+        // 标准化文件夹路径用于比较
+        const normalizedFolders = folders.map(f => f.replace(/\\/g, '/').toLowerCase())
+
+        // 检查每首歌曲的路径是否在某个有效文件夹中
+        const invalidIds = new Set<number>()
+
+        for (const music of this.allMusic) {
+          const normalizedPath = music.file_path.replace(/\\/g, '/').toLowerCase()
+          const isInFolder = normalizedFolders.some(folder => normalizedPath.startsWith(folder))
+
+          if (!isInFolder) {
+            invalidIds.add(music.id)
+          }
+        }
+
+        this.invalidMusicIds = invalidIds
+        console.log(`[Library] 路径验证完成: ${invalidIds.size} 首歌曲不在有效文件夹中`)
+
+      } catch (error) {
+        console.error('[Library] 验证歌曲路径失败:', error)
+      }
+    },
+
+    /**
+     * 检查指定歌曲是否无效（不在有效文件夹中）
+     */
+    isInvalidMusic(musicId: number): boolean {
+      return this.invalidMusicIds.has(musicId)
+    },
+
+    /**
+     * 清除无效歌曲标记
+     */
+    clearInvalidMusic() {
+      this.invalidMusicIds = new Set()
     }
   }
 })

@@ -136,7 +136,7 @@ const handleMusicPathValidationFailed = async (event: CustomEvent<{
   // 第三行：该歌曲不在设置的音乐文件夹中
   message += `<p style="margin: 0 0 12px 0;">${t('player.notInMusicFolder')}</p>`
 
-  // 第三行：当前设置的音乐文件夹
+  // 显示当前设置的音乐文件夹，或者提示没有设置
   if (musicFolders && musicFolders.length > 0) {
     message += `<p style="margin: 0 0 8px 0;">${t('player.currentMusicFolders')}</p>`
     message += `<ul style="margin: 0 0 12px 0; padding-left: 20px;">`
@@ -144,6 +144,9 @@ const handleMusicPathValidationFailed = async (event: CustomEvent<{
       message += `<li style="word-break: break-all;">${folder}</li>`
     })
     message += `</ul>`
+  } else {
+    // 没有设置任何音乐文件夹
+    message += `<p style="margin: 0 0 12px 0; color: #e6a23c; font-weight: bold;">${t('player.noMusicFolders')}</p>`
   }
 
   // 第四行：提示（标红加粗）

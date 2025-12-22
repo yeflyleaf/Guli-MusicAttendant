@@ -161,7 +161,8 @@ export default {
     confirmDeleteSingle: 'هل أنت متأكد من حذف هذه الأغنية؟',
     deleteSuccess: 'تم حذف {count} أغنية',
     removeSelected: 'إزالة المحدد',
-    showInFolder: 'عرض في المجلد'
+    showInFolder: 'عرض في المجلد',
+    invalidPathTooltip: 'هذه الأغنية ليست في مجلد موسيقى صالح'
   },
 
   // Favorites
@@ -231,6 +232,7 @@ export default {
     filePath: 'مسار الملف: {path}',
     notInMusicFolder: 'هذه الأغنية ليست في مجلدات الموسيقى المحددة.',
     currentMusicFolders: 'مجلدات الموسيقى الحالية:',
+    noMusicFolders: 'لم تقم بإعداد أي مجلدات موسيقى بعد. يرجى إضافة واحد في "الإعدادات" → "المكتبة".',
     fileExistsButNotInFolder: 'ملاحظة: الملف ليس في مجلدات الموسيقى المحددة.',
     fileNotFound: 'ملاحظة: هذا الملف غير موجود محلياً.',
     removeFromList: 'إزالة من القائمة'

@@ -203,8 +203,15 @@ export function setupDialogIpc(): void {
     const folders = settingRepo.getMusicFolders()
 
     if (folders.length === 0) {
-      // 没有设置任何音乐文件夹，允许播放
-      return { valid: true, inFolder: false }
+      // 没有设置任何音乐文件夹，所有歌曲都视为无效
+      // 检查文件是否实际存在于本地
+      const fileExists = fs.existsSync(filePath)
+      return {
+        valid: false,
+        inFolder: false,
+        fileExists,
+        musicFolders: []
+      }
     }
 
     // 标准化路径用于比较

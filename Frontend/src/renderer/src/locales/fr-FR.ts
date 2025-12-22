@@ -161,7 +161,8 @@ export default {
     confirmDeleteSingle: 'Êtes-vous sûr de vouloir supprimer cette chanson ?',
     deleteSuccess: '{count} chanson(s) supprimée(s)',
     removeSelected: 'Supprimer la sélection',
-    showInFolder: 'Afficher dans le dossier'
+    showInFolder: 'Afficher dans le dossier',
+    invalidPathTooltip: 'Cette chanson n\'est pas dans un dossier de musique valide'
   },
 
   // Favorites
@@ -231,6 +232,7 @@ export default {
     filePath: 'Chemin du fichier : {path}',
     notInMusicFolder: 'Cette chanson n\'est pas dans les dossiers de musique configurés.',
     currentMusicFolders: 'Dossiers de musique actuels :',
+    noMusicFolders: 'Vous n\'avez pas encore configuré de dossier de musique. Veuillez en ajouter un dans "Paramètres" → "Bibliothèque".',
     fileExistsButNotInFolder: 'Note : Le fichier n\'est pas dans les dossiers de musique spécifiés.',
     fileNotFound: 'Note : Ce fichier n\'existe pas localement.',
     removeFromList: 'Supprimer de la liste'

@@ -146,7 +146,8 @@ export default {
     confirmDeleteSingle: 'Удалить эту песню?',
     deleteSuccess: 'Удалено {count}',
     removeSelected: 'Удалить',
-    showInFolder: 'Показать в папке'
+    showInFolder: 'Показать в папке',
+    invalidPathTooltip: 'Эта песня не находится в допустимой папке с музыкой'
   },
   favoriteMusic: {
     title: 'Избранное',
@@ -208,6 +209,7 @@ export default {
     filePath: 'Путь к файлу: {path}',
     notInMusicFolder: 'Эта песня не находится в настроенных папках музыки.',
     currentMusicFolders: 'Текущие папки музыки:',
+    noMusicFolders: 'Вы еще не настроили папки с музыкой. Добавьте одну в "Настройки" → "Библиотека".',
     fileExistsButNotInFolder: 'Примечание: Файл не находится в указанных папках музыки.',
     fileNotFound: 'Примечание: Этот файл не существует локально.',
     removeFromList: 'Удалить из списка'
