@@ -50,7 +50,7 @@ export default {
       themeDark: '深色模式',
       themeLight: '浅色模式',
       themeInterstellar: '星际巡航',
-      themeGothic: '暗夜哥特',
+      themeGothic: '烛光曳影',
       language: '语言',
       languageDesc: '选择应用程序语言',
       fontSize: '文字大小',

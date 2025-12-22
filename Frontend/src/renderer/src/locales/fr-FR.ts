@@ -51,7 +51,7 @@ export default {
       themeDark: 'Mode sombre',
       themeLight: 'Mode clair',
       themeInterstellar: 'Croisière Interstellaire',
-      themeGothic: 'Gothique Sombre',
+      themeGothic: 'Ombres de Chandelle',
       language: 'Langue',
       languageDesc: 'Choisir la langue de l\'application',
       fontSize: 'Taille de police',

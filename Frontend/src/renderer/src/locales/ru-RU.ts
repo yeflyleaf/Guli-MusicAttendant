@@ -44,7 +44,7 @@ export default {
       themeDark: 'Тёмный режим',
       themeLight: 'Светлый режим',
       themeInterstellar: 'Межзвёздный Круиз',
-      themeGothic: 'Тёмная Готика',
+      themeGothic: 'Тени Свечей',
       language: 'Язык',
       languageDesc: 'Выберите язык приложения',
       fontSize: 'Размер шрифта',

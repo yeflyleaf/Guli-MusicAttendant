@@ -51,7 +51,7 @@ export default {
       themeDark: 'الوضع الداكن',
       themeLight: 'الوضع الفاتح',
       themeInterstellar: 'رحلة بين النجوم',
-      themeGothic: 'القوطي المظلم',
+      themeGothic: 'ظلال الشموع',
       language: 'اللغة',
       languageDesc: 'اختر لغة التطبيق',
       fontSize: 'حجم الخط',
