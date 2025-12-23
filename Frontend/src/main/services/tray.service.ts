@@ -32,14 +32,26 @@ export function createTray(): Tray | null {
     // 生产环境 - 图标在 resources 目录
     iconPath = join(process.resourcesPath, 'build/icons/icon.ico')
   } else {
-    // 开发环境 - __dirname 在 dist-electron/main，图标在项目根目录的 build/icons
-    iconPath = join(__dirname, '../../../build/icons/icon.ico')
+    // 开发环境 - 使用 app.getAppPath() 获取项目根目录
+    iconPath = join(app.getAppPath(), 'build/icons/icon.ico')
   }
+
+  console.log('[Tray] Icon path:', iconPath)
 
   try {
     // 创建托盘图标
     const icon = nativeImage.createFromPath(iconPath)
-    tray = new Tray(icon.isEmpty() ? nativeImage.createEmpty() : icon)
+
+    if (icon.isEmpty()) {
+      console.warn('[Tray] Icon is empty, using default icon path')
+      // 尝试备用路径
+      const altPath = join(__dirname, '../../../build/icons/icon.ico')
+      const altIcon = nativeImage.createFromPath(altPath)
+      console.log('[Tray] Alternative icon path:', altPath, 'isEmpty:', altIcon.isEmpty())
+      tray = new Tray(altIcon.isEmpty() ? nativeImage.createEmpty() : altIcon)
+    } else {
+      tray = new Tray(icon)
+    }
 
     // 设置托盘提示文字
     tray.setToolTip('故里音乐助手')

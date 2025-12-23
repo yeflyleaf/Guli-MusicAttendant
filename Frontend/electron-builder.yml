@@ -17,6 +17,11 @@ files:
 asarUnpack:
   - resources/**
   - node_modules/better-sqlite3/**
+extraResources:
+  - from: build/icons
+    to: build/icons
+    filter:
+      - '**/*'
 win:
   # 应用程序主图标
   icon: build/icons/icon.ico
