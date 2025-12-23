@@ -51,7 +51,7 @@
   <MiniPlayer v-if="isMiniPlayerMode && !showSplash" />
 
   <!-- 完整播放器模式 -->
-  <div v-else-if="!isMiniPlayerMode" class="app-container" :style="{ opacity: isStartup ? 0 : 1 }">
+  <div v-show="!isMiniPlayerMode" class="app-container" :style="{ opacity: isStartup ? 0 : 1 }">
     <!-- 自定义标题栏 -->
     <Header />
 
