@@ -837,30 +837,41 @@ const initParticleSystem = () => {
     }
   }
 
-  // 初始化粒子 - 加倍数量
-  for (let i = 0; i < 50; i++) {
+  // 初始化粒子 - 优化数量
+  for (let i = 0; i < 22; i++) {
     const p = createParticle()
     p.y = Math.random() * canvas.height
     particles.push(p)
   }
 
-  // 动画循环
-  const animate = () => {
+  // 动画循环 - 限制到 30fps 以优化性能
+  let lastFrameTime = 0
+  const targetFPS = 30
+  const frameInterval = 1000 / targetFPS
+
+  const animate = (currentTime: number) => {
+    animationId = requestAnimationFrame(animate)
+
+    // 帧率限制：跳过不需要渲染的帧
+    const deltaTime = currentTime - lastFrameTime
+    if (deltaTime < frameInterval) return
+    lastFrameTime = currentTime - (deltaTime % frameInterval)
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     // 光影呼吸效果 (8-10秒周期)
-    lightBreathPhase += 0.008
+    lightBreathPhase += 0.016 // 调整为30fps的步进值
     const breathFactor = 0.9 + Math.sin(lightBreathPhase) * 0.1
 
     // 更新月光强度 (通过 CSS 变量)
     document.documentElement.style.setProperty('--moon-breath', breathFactor.toString())
 
     particles.forEach((particle, index) => {
-      // 摇摆效果
-      particle.swayPhase += particle.swaySpeed
+      // 摇摆效果 - 调整为30fps的步进值
+      particle.swayPhase += particle.swaySpeed * 2
       particle.x += particle.vx + Math.sin(particle.swayPhase) * 0.5
-      particle.y += particle.vy
-      particle.rotation += particle.rotationSpeed
+      particle.y += particle.vy * 2 // 加倍移动速度以补偿帧率降低
+      particle.rotation += particle.rotationSpeed * 2
 
       // 边界检查
       if (particle.y > canvas.height + 20 || particle.x < -50 || particle.x > canvas.width + 50) {
@@ -893,11 +904,9 @@ const initParticleSystem = () => {
 
       ctx.restore()
     })
-
-    animationId = requestAnimationFrame(animate)
   }
 
-  animate()
+  animate(0)
 }
 
 onMounted(() => {
@@ -1455,7 +1464,7 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
   position: absolute;
   inset: 0;
   transition: transform 0.15s ease-out;
-  filter: blur(2px); // 景深模糊
+  filter: blur(0.8px); // 景深模糊 - 优化性能
 }
 
 // 垂柳
