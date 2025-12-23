@@ -38,6 +38,17 @@ export default {
     settings: '设置'
   },
 
+  // 标题栏
+  header: {
+    switchToMiniPlayer: '切换到迷你播放器'
+  },
+
+  // 迷你播放器
+  miniPlayer: {
+    switchToFull: '切换到完整播放器',
+    noPlaying: '暂无播放'
+  },
+
   // 设置页面
   settings: {
     title: '设置',

@@ -136,3 +136,89 @@ export function setTitle(title: string): void {
 export function sendToRenderer(channel: string, ...args: unknown[]): void {
   mainWindow?.webContents.send(channel, ...args)
 }
+
+// 迷你播放器状态
+let isMiniPlayerMode = false
+let savedWindowBounds: Electron.Rectangle | null = null
+let wasMaximized = false
+
+// 迷你播放器尺寸
+const MINI_PLAYER_WIDTH = 300
+const MINI_PLAYER_HEIGHT = 360
+
+/**
+ * 切换到迷你播放器模式
+ */
+export function switchToMiniPlayer(): void {
+  if (!mainWindow || isMiniPlayerMode) return
+
+  // 保存当前窗口状态
+  wasMaximized = mainWindow.isMaximized()
+  if (wasMaximized) {
+    mainWindow.unmaximize()
+  }
+  savedWindowBounds = mainWindow.getBounds()
+
+  // 获取当前窗口位置，计算迷你播放器位置（右下角）
+  const { screen } = require('electron')
+  const currentDisplay = screen.getDisplayNearestPoint({
+    x: savedWindowBounds.x,
+    y: savedWindowBounds.y
+  })
+  const { workArea } = currentDisplay
+
+  // 将迷你播放器放在屏幕右下角，留出 20px 边距
+  const miniX = workArea.x + workArea.width - MINI_PLAYER_WIDTH - 20
+  const miniY = workArea.y + workArea.height - MINI_PLAYER_HEIGHT - 20
+
+  // 设置迷你播放器属性
+  mainWindow.setMinimumSize(MINI_PLAYER_WIDTH, MINI_PLAYER_HEIGHT)
+  mainWindow.setMaximumSize(MINI_PLAYER_WIDTH, MINI_PLAYER_HEIGHT)
+  mainWindow.setSize(MINI_PLAYER_WIDTH, MINI_PLAYER_HEIGHT)
+  mainWindow.setPosition(miniX, miniY)
+  mainWindow.setResizable(false)
+  mainWindow.setAlwaysOnTop(true)
+
+  isMiniPlayerMode = true
+
+  // 通知渲染进程切换到迷你播放器界面
+  mainWindow.webContents.send('window:miniPlayerMode', true)
+}
+
+/**
+ * 切换回完整播放器模式
+ */
+export function switchToFullPlayer(): void {
+  if (!mainWindow || !isMiniPlayerMode) return
+
+  // 移除迷你播放器限制
+  mainWindow.setAlwaysOnTop(false)
+  mainWindow.setResizable(true)
+  mainWindow.setMinimumSize(900, 600)
+  mainWindow.setMaximumSize(0, 0) // 0,0 表示无限制
+
+  // 恢复窗口大小和位置
+  if (savedWindowBounds) {
+    mainWindow.setBounds(savedWindowBounds)
+    if (wasMaximized) {
+      mainWindow.maximize()
+    }
+  } else {
+    mainWindow.setSize(1100, 800)
+    mainWindow.center()
+  }
+
+  isMiniPlayerMode = false
+  savedWindowBounds = null
+  wasMaximized = false
+
+  // 通知渲染进程切换回完整播放器界面
+  mainWindow.webContents.send('window:miniPlayerMode', false)
+}
+
+/**
+ * 获取是否为迷你播放器模式
+ */
+export function getIsMiniPlayer(): boolean {
+  return isMiniPlayerMode
+}

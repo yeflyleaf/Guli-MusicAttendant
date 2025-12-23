@@ -38,6 +38,17 @@ export default {
     settings: 'Settings'
   },
 
+  // Header
+  header: {
+    switchToMiniPlayer: 'Switch to Mini Player'
+  },
+
+  // Mini Player
+  miniPlayer: {
+    switchToFull: 'Switch to Full Player',
+    noPlaying: 'No song playing'
+  },
+
   // Settings Page
   settings: {
     title: 'Settings',

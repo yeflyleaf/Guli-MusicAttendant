@@ -47,7 +47,11 @@
   <ChronosRiftSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'chronos'"
     :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
 
-  <div class="app-container" :style="{ opacity: isStartup ? 0 : 1 }">
+  <!-- 迷你播放器模式 -->
+  <MiniPlayer v-if="isMiniPlayerMode && !showSplash" />
+
+  <!-- 完整播放器模式 -->
+  <div v-else-if="!isMiniPlayerMode" class="app-container" :style="{ opacity: isStartup ? 0 : 1 }">
     <!-- 自定义标题栏 -->
     <Header />
 
@@ -93,6 +97,7 @@ import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.v
 import EtherealGeometrySplash from '@/components/Layout/EtherealGeometrySplash.vue'
 import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
 import Header from '@/components/Layout/Header.vue'
+import MiniPlayer from '@/components/Layout/MiniPlayer.vue'
 import MoltenForgeSplash from '@/components/Layout/MoltenForgeSplash.vue'
 import PlayQueue from '@/components/Layout/PlayQueue.vue'
 import SanctumOfTruthSplash from '@/components/Layout/SanctumOfTruthSplash.vue'
@@ -103,6 +108,7 @@ import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.v
 import GothicSanctuaryBackground from '@/components/Theme/GothicSanctuaryBackground.vue'
 import InterstellarCruiseBackground from '@/components/Theme/InterstellarCruiseBackground.vue'
 import PapercutTheatreBackground from '@/components/Theme/PapercutTheatreBackground.vue'
+import { useAudio } from '@/hooks/useAudio'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
@@ -121,9 +127,15 @@ const settingsStore = useSettingsStore()
 const libraryStore = useLibraryStore()
 const { t } = useI18n()
 
+// 全局初始化音频系统（确保无论完整模式还是迷你模式，音频控制都能正常工作）
+useAudio(true)
+
 // 启动屏幕控制
 const showSplash = ref(true)
 const isStartup = ref(true)
+
+// 迷你播放器模式
+const isMiniPlayerMode = ref(false)
 
 // 星际巡航动态背景显示控制
 const showInterstellarBackground = computed(() => {
@@ -257,12 +269,21 @@ const handleMusicPathValidationFailed = async (event: CustomEvent<{
   }
 }
 
+// 处理迷你播放器模式变化
+const handleMiniPlayerModeChange = (isMini: boolean) => {
+  isMiniPlayerMode.value = isMini
+  console.log('[App] Mini player mode:', isMini)
+}
+
 // 添加路径验证失败事件监听
 onMounted(() => {
   window.addEventListener(
     'music-path-validation-failed',
     handleMusicPathValidationFailed as unknown as EventListener
   )
+
+  // 监听迷你播放器模式变化
+  window.electron?.on('window:miniPlayerMode', handleMiniPlayerModeChange)
 })
 
 onUnmounted(() => {

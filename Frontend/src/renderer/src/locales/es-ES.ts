@@ -34,6 +34,18 @@ export default {
     playlists: 'Listas',
     settings: 'Configuración'
   },
+
+  // Header
+  header: {
+    switchToMiniPlayer: 'Cambiar al mini reproductor'
+  },
+
+  // Mini Player
+  miniPlayer: {
+    switchToFull: 'Cambiar al reproductor completo',
+    noPlaying: 'Sin reproducción'
+  },
+
   settings: {
     title: 'Configuración',
     appearance: {

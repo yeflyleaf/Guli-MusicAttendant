@@ -39,6 +39,17 @@ export default {
     settings: 'Paramètres'
   },
 
+  // Header
+  header: {
+    switchToMiniPlayer: 'Basculer vers le mini lecteur'
+  },
+
+  // Mini Player
+  miniPlayer: {
+    switchToFull: 'Basculer vers le lecteur complet',
+    noPlaying: 'Aucune lecture'
+  },
+
   // Settings Page
   settings: {
     title: 'Paramètres',

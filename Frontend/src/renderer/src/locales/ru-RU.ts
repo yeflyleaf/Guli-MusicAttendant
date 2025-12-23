@@ -34,6 +34,18 @@ export default {
     playlists: 'Плейлисты',
     settings: 'Настройки'
   },
+
+  // Header
+  header: {
+    switchToMiniPlayer: 'Переключить на мини-плеер'
+  },
+
+  // Mini Player
+  miniPlayer: {
+    switchToFull: 'Переключить на полный плеер',
+    noPlaying: 'Ничего не воспроизводится'
+  },
+
   settings: {
     title: 'Настройки',
     appearance: {

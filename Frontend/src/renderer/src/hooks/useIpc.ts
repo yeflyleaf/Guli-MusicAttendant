@@ -87,6 +87,9 @@ export function useIpc() {
   const maximizeWindow = () => window.electron.window.maximize()
   const closeWindow = () => window.electron.window.close()
   const isMaximized = () => window.electron.window.isMaximized()
+  const switchToMiniPlayer = () => window.electron.window.switchToMiniPlayer()
+  const switchToFullPlayer = () => window.electron.window.switchToFullPlayer()
+  const isMiniPlayer = () => window.electron.window.isMiniPlayer()
 
   // 添加音乐文件夹
   const addMusicFolder = async (folder: string) => {
@@ -108,7 +111,10 @@ export function useIpc() {
     minimizeWindow,
     maximizeWindow,
     closeWindow,
-    isMaximized
+    isMaximized,
+    switchToMiniPlayer,
+    switchToFullPlayer,
+    isMiniPlayer
   }
 }
 

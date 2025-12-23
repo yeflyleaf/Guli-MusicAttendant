@@ -39,6 +39,17 @@ export default {
     settings: 'الإعدادات'
   },
 
+  // Header
+  header: {
+    switchToMiniPlayer: 'التبديل إلى المشغل المصغر'
+  },
+
+  // Mini Player
+  miniPlayer: {
+    switchToFull: 'التبديل إلى المشغل الكامل',
+    noPlaying: 'لا يوجد تشغيل'
+  },
+
   // Settings Page
   settings: {
     title: 'الإعدادات',

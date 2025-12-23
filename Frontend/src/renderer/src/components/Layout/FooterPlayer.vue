@@ -142,8 +142,8 @@ const playerStore = usePlayerStore()
 const libraryStore = useLibraryStore()
 const settingsStore = useSettingsStore() // 需要引入 settingsStore
 
-// 初始化音频（标记为主播放器，设置全局 watchers）
-const { seek, setVolume, analyser } = useAudio(true)
+// 音频控制（不需要作为主播放器，因为全局音频已在 App.vue 中初始化）
+const { seek, setVolume, analyser } = useAudio(false)
 
 // ============ 进度条逻辑 ============
 const localProgress = ref(0)

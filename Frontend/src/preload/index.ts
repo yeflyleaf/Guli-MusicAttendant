@@ -194,7 +194,21 @@ const electronAPI = {
 
     setTitle: (title: string): void => {
       ipcRenderer.send('window:setTitle', title)
-    }
+    },
+
+    // 切换到迷你播放器
+    switchToMiniPlayer: (): void => {
+      ipcRenderer.send('window:switchToMiniPlayer')
+    },
+
+    // 切换回完整播放器
+    switchToFullPlayer: (): void => {
+      ipcRenderer.send('window:switchToFullPlayer')
+    },
+
+    // 检查是否为迷你播放器模式
+    isMiniPlayer: (): Promise<boolean> =>
+      ipcRenderer.invoke('window:isMiniPlayer')
   },
 
   // ==================== 设置相关 ====================
@@ -233,7 +247,8 @@ const electronAPI = {
       'shortcut:playPause',
       'shortcut:next',
       'shortcut:previous',
-      'shortcut:stop'
+      'shortcut:stop',
+      'window:miniPlayerMode'
     ]
 
     if (validChannels.includes(channel)) {

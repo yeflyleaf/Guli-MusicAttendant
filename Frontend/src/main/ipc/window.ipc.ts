@@ -38,5 +38,21 @@ export function setupWindowIpc(): void {
     windowService.setTitle(title)
   })
 
+  // 切换到迷你播放器
+  ipcMain.on('window:switchToMiniPlayer', () => {
+    windowService.switchToMiniPlayer()
+  })
+
+  // 切换回完整播放器
+  ipcMain.on('window:switchToFullPlayer', () => {
+    windowService.switchToFullPlayer()
+  })
+
+  // 检查是否为迷你播放器模式
+  ipcMain.handle('window:isMiniPlayer', () => {
+    return windowService.getIsMiniPlayer()
+  })
+
   console.log('[IPC] Window control handler registered')
 }
+

@@ -66,6 +66,15 @@
 
     <!-- 窗口控制按钮 -->
     <div class="header-right app-no-drag">
+      <!-- 切换播放器 -->
+      <el-tooltip :content="$t('header.switchToMiniPlayer')" placement="bottom" :show-after="300">
+        <span class="nav-icon-btn mini-player-btn" @click="handleSwitchToMiniPlayer">
+          <el-icon>
+            <Aim />
+          </el-icon>
+        </span>
+      </el-tooltip>
+
       <!-- 设置 -->
       <el-tooltip :content="$t('nav.settings')" placement="bottom" :show-after="300">
         <span class="nav-icon-btn settings-btn" :class="{ active: $route.path === '/settings' }"
@@ -107,6 +116,7 @@
 import { useIpc } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
 import {
+  Aim,
   Clock,
   Close,
   CopyDocument,
@@ -121,7 +131,7 @@ import {
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const { minimizeWindow, maximizeWindow, closeWindow, isMaximized: checkMaximized } = useIpc()
+const { minimizeWindow, maximizeWindow, closeWindow, isMaximized: checkMaximized, switchToMiniPlayer } = useIpc()
 const router = useRouter()
 const playerStore = usePlayerStore()
 
@@ -159,6 +169,11 @@ const handleMaximize = async () => {
 
 const handleClose = () => {
   closeWindow()
+}
+
+// 切换到迷你播放器
+const handleSwitchToMiniPlayer = () => {
+  switchToMiniPlayer()
 }
 
 onMounted(() => {
