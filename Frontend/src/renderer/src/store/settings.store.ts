@@ -101,9 +101,11 @@ export const useSettingsStore = defineStore('settings', {
      * 设置主题
      */
     async setTheme(theme: Theme) {
+      console.log('[SettingsStore] setTheme called with:', theme)
       this.theme = theme
       this.applyTheme()
       await window.electron.settings.set('theme', theme)
+      console.log('[SettingsStore] Theme saved, current theme:', this.theme)
     },
 
     /**

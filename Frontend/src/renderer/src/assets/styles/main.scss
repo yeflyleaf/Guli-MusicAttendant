@@ -265,6 +265,56 @@ html.papercut {
   --scrollbar-thumb-hover: rgba(253, 246, 227, 0.25);
 }
 
+// 日冕风暴主题 - 恒星物理风格
+html.solar {
+  // 主色调 - 熔炉橙与耀斑金
+  --primary-color: #ff4500; // 熔炉橙
+  --primary-color-rgb: 255, 69, 0;
+  --primary-light: #ffcc00; // 耀斑金
+  --primary-dark: #cc3700;
+  --accent-color: #ffcc00; // 耀斑金
+
+  // 背景色 - 透明以显示动态背景
+  --bg-primary: transparent;
+  --bg-primary-rgb: 10, 1, 1;
+  --bg-secondary: rgba(10, 1, 1, 0.75);
+  --bg-secondary-rgb: 10, 1, 1;
+  --bg-tertiary: rgba(20, 5, 5, 0.8);
+  --bg-card: rgba(15, 3, 3, 0.6);
+  --bg-hover: rgba(255, 69, 0, 0.08);
+
+  // 文字颜色 - 极热白与余烬红
+  --text-primary: #fff5f0; // 极热白
+  --text-secondary: #ffbba0; // 余烬红
+  --text-muted: #804030; // 冷却灰红
+
+  // 边框颜色 - 熔融边缘
+  --border-color: rgba(255, 69, 0, 0.15);
+  --border-color-light: rgba(255, 69, 0, 0.08);
+  --border-color-hover: rgba(255, 69, 0, 0.3);
+  --border-color-active: rgba(255, 204, 0, 0.4);
+
+  // 渐变 - 恒星风暴
+  --gradient-primary: linear-gradient(135deg, #ff4500 0%, #ff8c00 50%, #ffcc00 100%);
+  --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(10, 1, 1, 0.6) 100%);
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(255, 69, 0, 0.08) 0%,
+    rgba(255, 204, 0, 0.08) 100%
+  );
+
+  // 阴影 - 烈焰光晕
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 20px rgba(255, 69, 0, 0.25);
+  --shadow-glow-strong: 0 0 40px rgba(255, 69, 0, 0.4);
+
+  // 滚动条 - 熔岩风格
+  --scrollbar-thumb: rgba(255, 69, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 69, 0, 0.35);
+}
+
 // ==================== 重置样式 ====================
 *,
 *::before,

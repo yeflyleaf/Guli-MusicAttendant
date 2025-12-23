@@ -34,10 +34,10 @@ export function getAllSettings(): Settings {
   for (const row of rows) {
     switch (row.key) {
       case 'theme':
-        settings.theme = row.value as 'dark' | 'light'
+        settings.theme = row.value as Settings['theme']
         break
       case 'splashTheme':
-        settings.splashTheme = row.value as 'cosmic' | 'emerald'
+        settings.splashTheme = row.value as Settings['splashTheme']
         break
       case 'volume':
         settings.volume = parseFloat(row.value)

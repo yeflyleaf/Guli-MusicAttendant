@@ -168,6 +168,16 @@ const handleSplashFinish = () => {
   isStartup.value = false
 }
 
+// 调试：监听主题变化
+watch(
+  () => settingsStore.theme,
+  (newTheme) => {
+    console.log('[App] Theme changed to:', newTheme, 'showSplash:', showSplash.value, 'isLoaded:', settingsStore.isLoaded)
+    console.log('[App] showSolarBackground:', settingsStore.isLoaded && newTheme === 'solar' && !showSplash.value)
+  },
+  { immediate: true }
+)
+
 // 监听设置加载完成，然后通知主进程显示窗口
 // 这样窗口显示时就直接是用户选择的过场动画
 watch(
