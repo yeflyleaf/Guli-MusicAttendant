@@ -111,15 +111,15 @@
 
         <!-- 右侧：音量控制 -->
         <div class="controls-right">
-          <el-popover trigger="hover" placement="top" :width="36" popper-style="min-width: auto; padding: 12px 0;">
+          <el-popover trigger="hover" placement="top" :width="36" popper-class="mini-player-volume-popover"
+            :hide-after="300" :offset="5">
             <template #reference>
               <el-icon class="control-btn small" @click="playerStore.toggleMute">
                 <component :is="volumeIcon" />
               </el-icon>
             </template>
             <div class="volume-slider" @wheel.prevent="handleVolumeWheel">
-              <el-slider v-model="volumePercent" vertical height="80px" :show-tooltip="false"
-                @input="handleVolumeChange" />
+              <el-slider v-model="volumePercent" vertical height="80px" :show-tooltip="false" />
               <span class="volume-value">{{ volumePercent }}%</span>
             </div>
           </el-popover>
@@ -216,7 +216,9 @@ const onSliderChange = (val: number) => {
 // 音量百分比
 const volumePercent = computed({
   get: () => Math.round(playerStore.volume * 100),
-  set: () => { }
+  set: (val) => {
+    setVolume(val / 100)
+  }
 })
 
 // 音量图标
@@ -234,11 +236,6 @@ const handleVolumeWheel = (e: WheelEvent) => {
   const delta = e.deltaY < 0 ? step : -step
   const newVolume = Math.min(Math.max(playerStore.volume + delta, 0), 1)
   setVolume(newVolume)
-}
-
-// 处理音量变化
-const handleVolumeChange = (value: number) => {
-  setVolume(value / 100)
 }
 
 // 从队列播放歌曲
@@ -634,5 +631,13 @@ const handleClose = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+</style>
+
+<style lang="scss">
+.mini-player-volume-popover {
+  min-width: auto !important;
+  padding: 12px 0 !important;
+  -webkit-app-region: no-drag;
 }
 </style>

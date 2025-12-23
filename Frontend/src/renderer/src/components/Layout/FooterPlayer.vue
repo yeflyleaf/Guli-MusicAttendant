@@ -76,8 +76,7 @@
             </el-icon>
           </template>
           <div class="volume-slider" @wheel.prevent="handleVolumeWheel">
-            <el-slider v-model="volumePercent" vertical height="100px" :show-tooltip="false"
-              @input="handleVolumeChange" />
+            <el-slider v-model="volumePercent" vertical height="100px" :show-tooltip="false" />
             <span class="volume-value">{{ volumePercent }}%</span>
           </div>
         </el-popover>
@@ -193,7 +192,9 @@ const onSliderChange = (val: number) => {
 // 音量百分比
 const volumePercent = computed({
   get: () => Math.round(playerStore.volume * 100),
-  set: () => { }
+  set: (val) => {
+    setVolume(val / 100)
+  }
 })
 
 // 播放模式图标
@@ -233,11 +234,6 @@ const handleVolumeWheel = (e: WheelEvent) => {
   const delta = e.deltaY < 0 ? step : -step
   const newVolume = Math.min(Math.max(playerStore.volume + delta, 0), 1)
   setVolume(newVolume)
-}
-
-// 处理音量变化
-const handleVolumeChange = (value: number) => {
-  setVolume(value / 100)
 }
 
 // 切换收藏
