@@ -34,6 +34,29 @@
 
             <div class="setting-item">
               <div class="setting-label">
+                <span>{{ $t('settings.appearance.quickSwitchThemes') }}</span>
+                <span class="setting-desc">{{ $t('settings.appearance.quickSwitchThemesDesc') }}</span>
+              </div>
+              <div class="setting-control" style="display: flex; gap: 8px;">
+                <el-select v-model="quickSwitchThemes[0]" style="width: 120px" @change="handleQuickSwitchThemesChange">
+                  <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
+                  <el-option :label="$t('settings.appearance.themeLight')" value="light" />
+                  <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
+                  <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
+                  <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
+                </el-select>
+                <el-select v-model="quickSwitchThemes[1]" style="width: 120px" @change="handleQuickSwitchThemesChange">
+                  <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
+                  <el-option :label="$t('settings.appearance.themeLight')" value="light" />
+                  <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
+                  <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
+                  <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
+                </el-select>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
                 <span>{{ $t('settings.appearance.language') }}</span>
                 <span class="setting-desc">{{ $t('settings.appearance.languageDesc') }}</span>
               </div>
@@ -352,6 +375,7 @@ const isScanning = ref(false)
 
 // 外观设置
 const theme = ref<Theme>('dark')
+const quickSwitchThemes = ref<[Theme, Theme]>(['dark', 'light'])
 const language = ref('zh-CN')
 const fontSize = ref(14)
 const localMusicHeaders = ref<string[]>([])
@@ -374,6 +398,7 @@ const closeToTray = ref(false)
 // 初始化设置值
 onMounted(() => {
   theme.value = settingsStore.theme
+  quickSwitchThemes.value = [...settingsStore.quickSwitchThemes]
   language.value = settingsStore.language
   fontSize.value = settingsStore.fontSize
   localMusicHeaders.value = settingsStore.localMusicHeaders
@@ -397,6 +422,10 @@ onMounted(() => {
 
 const handleThemeChange = async (value: Theme) => {
   await settingsStore.setTheme(value)
+}
+
+const handleQuickSwitchThemesChange = async () => {
+  await settingsStore.setQuickSwitchThemes([...quickSwitchThemes.value])
 }
 
 const handleLanguageChange = async (value: string) => {

@@ -28,7 +28,8 @@ export function getAllSettings(): Settings {
     disableSplashScreen: false,
     showTrayIcon: true,
     minimizeToTray: false,
-    closeToTray: false
+    closeToTray: false,
+    quickSwitchThemes: ['dark', 'light']
   }
 
   for (const row of rows) {
@@ -94,6 +95,13 @@ export function getAllSettings(): Settings {
         break
       case 'closeToTray':
         settings.closeToTray = row.value === 'true'
+        break
+      case 'quickSwitchThemes':
+        try {
+          settings.quickSwitchThemes = JSON.parse(row.value)
+        } catch {
+          settings.quickSwitchThemes = ['dark', 'light']
+        }
         break
     }
   }
@@ -213,7 +221,8 @@ export function resetSettings(): boolean {
     ['disableSplashScreen', 'false'],
     ['showTrayIcon', 'true'],
     ['minimizeToTray', 'false'],
-    ['closeToTray', 'false']
+    ['closeToTray', 'false'],
+    ['quickSwitchThemes', '["dark","light"]']
   ]
 
   return transaction(() => {

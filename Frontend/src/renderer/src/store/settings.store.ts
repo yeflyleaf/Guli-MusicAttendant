@@ -29,6 +29,7 @@ export const useSettingsStore = defineStore('settings', {
     showTrayIcon: true,
     minimizeToTray: false,
     closeToTray: false,
+    quickSwitchThemes: ['dark', 'light'],
     isLoaded: false
   }),
 
@@ -57,7 +58,9 @@ export const useSettingsStore = defineStore('settings', {
         this.disableSplashScreen = settings.disableSplashScreen ?? false
         this.showTrayIcon = settings.showTrayIcon ?? true
         this.minimizeToTray = settings.minimizeToTray ?? false
+        this.minimizeToTray = settings.minimizeToTray ?? false
         this.closeToTray = settings.closeToTray ?? false
+        this.quickSwitchThemes = settings.quickSwitchThemes ?? ['dark', 'light']
         this.isLoaded = true
 
         // 应用主题和外观
@@ -106,6 +109,26 @@ export const useSettingsStore = defineStore('settings', {
       this.applyTheme()
       await window.electron.settings.set('theme', theme)
       console.log('[SettingsStore] Theme saved, current theme:', this.theme)
+    },
+
+    /**
+     * 设置快捷切换主题
+     */
+    async setQuickSwitchThemes(themes: [Theme, Theme]) {
+      this.quickSwitchThemes = themes
+      await window.electron.settings.setMultiple({ quickSwitchThemes: themes })
+    },
+
+    /**
+     * 切换快捷主题
+     */
+    async toggleQuickSwitchTheme() {
+      const [theme1, theme2] = this.quickSwitchThemes
+      // 如果当前主题是 theme1，切换到 theme2
+      // 如果当前主题是 theme2，切换到 theme1
+      // 如果当前主题既不是 theme1 也不是 theme2，切换到 theme1
+      const nextTheme = this.theme === theme1 ? theme2 : theme1
+      await this.setTheme(nextTheme)
     },
 
     /**

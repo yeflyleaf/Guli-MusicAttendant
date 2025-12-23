@@ -75,6 +75,15 @@
         </span>
       </el-tooltip>
 
+      <!-- 快捷切换主题 -->
+      <el-tooltip :content="$t('settings.appearance.quickSwitchThemes')" placement="bottom" :show-after="300">
+        <span class="nav-icon-btn theme-switch-btn" @click="handleQuickSwitchTheme">
+          <el-icon>
+            <MagicStick />
+          </el-icon>
+        </span>
+      </el-tooltip>
+
       <!-- 设置 -->
       <el-tooltip :content="$t('nav.settings')" placement="bottom" :show-after="300">
         <span class="nav-icon-btn settings-btn" :class="{ active: $route.path === '/settings' }"
@@ -115,6 +124,7 @@
 <script setup lang="ts">
 import { useIpc } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
+import { useSettingsStore } from '@/store/settings.store'
 import {
   Aim,
   Clock,
@@ -123,6 +133,7 @@ import {
   FullScreen,
   Headset,
   HomeFilled,
+  MagicStick,
   Minus,
   Setting,
   Star,
@@ -134,6 +145,7 @@ import { useRouter } from 'vue-router'
 const { minimizeWindow, maximizeWindow, closeWindow, isMaximized: checkMaximized, switchToMiniPlayer } = useIpc()
 const router = useRouter()
 const playerStore = usePlayerStore()
+const settingsStore = useSettingsStore()
 
 const isMaximized = ref(false)
 
@@ -174,6 +186,11 @@ const handleClose = () => {
 // 切换到迷你播放器
 const handleSwitchToMiniPlayer = () => {
   switchToMiniPlayer()
+}
+
+// 快捷切换主题
+const handleQuickSwitchTheme = async () => {
+  await settingsStore.toggleQuickSwitchTheme()
 }
 
 onMounted(() => {
