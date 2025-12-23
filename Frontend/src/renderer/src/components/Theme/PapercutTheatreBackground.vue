@@ -98,39 +98,85 @@
 
       <!-- 大型拱桥 - 跨越整个屏幕 -->
       <svg class="grand-arch-bridge" viewBox="0 0 1200 200" preserveAspectRatio="none">
-        <!-- 主桥身 -->
-        <path d="M-50 180 Q300 40 600 30 Q900 40 1250 180" stroke="rgba(20, 15, 25, 0.7)" stroke-width="6"
+        <!-- 主桥身 - 增强线条 -->
+        <path d="M-50 175 Q300 35 600 25 Q900 35 1250 175" stroke="rgba(20, 15, 25, 0.85)" stroke-width="8"
           fill="none" />
-        <path d="M-50 195 Q300 60 600 50 Q900 60 1250 195" stroke="rgba(20, 15, 25, 0.55)" stroke-width="4"
+        <path d="M-50 185 Q300 50 600 40 Q900 50 1250 185" stroke="rgba(20, 15, 25, 0.75)" stroke-width="6"
           fill="none" />
-        <!-- 桥拱装饰线 -->
-        <path d="M-50 170 Q300 30 600 20 Q900 30 1250 170" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2"
+        <path d="M-50 195 Q300 65 600 55 Q900 65 1250 195" stroke="rgba(20, 15, 25, 0.6)" stroke-width="4"
           fill="none" />
+
+        <!-- 桥拱装饰线 - 更多层次 -->
+        <path d="M-50 165 Q300 25 600 15 Q900 25 1250 165" stroke="rgba(20, 15, 25, 0.5)" stroke-width="3"
+          fill="none" />
+        <path d="M-50 158 Q300 18 600 8 Q900 18 1250 158" stroke="rgba(20, 15, 25, 0.35)" stroke-width="2"
+          fill="none" />
+
+        <!-- 桥底拱形结构线 -->
+        <path d="M0 200 Q300 100 600 90 Q900 100 1200 200" stroke="rgba(20, 15, 25, 0.4)" stroke-width="3"
+          fill="none" />
+
         <!-- 桥栏杆 - 更多密集的支柱 -->
         <g class="bridge-railings">
-          <line x1="50" y1="140" x2="50" y2="165" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="150" y1="95" x2="150" y2="120" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="250" y1="60" x2="250" y2="85" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="350" y1="42" x2="350" y2="67" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="450" y1="32" x2="450" y2="57" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="550" y1="28" x2="550" y2="53" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="650" y1="28" x2="650" y2="53" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="750" y1="32" x2="750" y2="57" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="850" y1="42" x2="850" y2="67" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="950" y1="60" x2="950" y2="85" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="1050" y1="95" x2="1050" y2="120" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
-          <line x1="1150" y1="140" x2="1150" y2="165" stroke="rgba(20, 15, 25, 0.55)" stroke-width="3" />
+          <line x1="50" y1="138" x2="50" y2="170" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="100" y1="112" x2="100" y2="145" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="150" y1="90" x2="150" y2="122" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="200" y1="72" x2="200" y2="104" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="250" y1="58" x2="250" y2="90" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="300" y1="47" x2="300" y2="79" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="350" y1="38" x2="350" y2="70" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="400" y1="32" x2="400" y2="64" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="450" y1="28" x2="450" y2="60" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="500" y1="25" x2="500" y2="57" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="550" y1="23" x2="550" y2="55" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="600" y1="22" x2="600" y2="54" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="650" y1="23" x2="650" y2="55" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="700" y1="25" x2="700" y2="57" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="750" y1="28" x2="750" y2="60" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="800" y1="32" x2="800" y2="64" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="850" y1="38" x2="850" y2="70" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="900" y1="47" x2="900" y2="79" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="950" y1="58" x2="950" y2="90" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="1000" y1="72" x2="1000" y2="104" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="1050" y1="90" x2="1050" y2="122" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="1100" y1="112" x2="1100" y2="145" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
+          <line x1="1150" y1="138" x2="1150" y2="170" stroke="rgba(20, 15, 25, 0.7)" stroke-width="4" />
         </g>
-        <!-- 桥顶栏杆横梁 -->
-        <path d="M50 140 Q300 25 600 15 Q900 25 1150 140" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2"
+
+        <!-- 桥顶栏杆横梁 - 双层 -->
+        <path d="M50 138 Q300 20 600 10 Q900 20 1150 138" stroke="rgba(20, 15, 25, 0.65)" stroke-width="4"
           fill="none" />
-        <!-- 桥墩装饰 -->
-        <ellipse cx="100" cy="185" rx="40" ry="15" fill="rgba(20, 15, 25, 0.4)" />
-        <ellipse cx="1100" cy="185" rx="40" ry="15" fill="rgba(20, 15, 25, 0.4)" />
-        <!-- 桥面装饰花纹 -->
-        <circle cx="600" cy="35" r="8" fill="none" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2" />
-        <circle cx="400" cy="48" r="6" fill="none" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" />
-        <circle cx="800" cy="48" r="6" fill="none" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" />
+        <path d="M50 145 Q300 28 600 18 Q900 28 1150 145" stroke="rgba(20, 15, 25, 0.5)" stroke-width="2" fill="none" />
+
+        <!-- 斜撑结构 -->
+        <g class="bridge-braces">
+          <line x1="100" y1="145" x2="150" y2="122" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="200" y1="104" x2="250" y2="90" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="300" y1="79" x2="350" y2="70" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="400" y1="64" x2="450" y2="60" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="500" y1="57" x2="550" y2="55" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="650" y1="55" x2="700" y2="57" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="750" y1="60" x2="800" y2="64" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="850" y1="70" x2="900" y2="79" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="950" y1="90" x2="1000" y2="104" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+          <line x1="1050" y1="122" x2="1100" y2="145" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+        </g>
+
+        <!-- 桥墩装饰 - 增强 -->
+        <ellipse cx="80" cy="190" rx="50" ry="18" fill="rgba(20, 15, 25, 0.55)" />
+        <ellipse cx="80" cy="185" rx="45" ry="15" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2" fill="none" />
+        <ellipse cx="1120" cy="190" rx="50" ry="18" fill="rgba(20, 15, 25, 0.55)" />
+        <ellipse cx="1120" cy="185" rx="45" ry="15" stroke="rgba(20, 15, 25, 0.4)" stroke-width="2" fill="none" />
+
+        <!-- 桥面装饰花纹 - 更多 -->
+        <circle cx="600" cy="30" r="10" fill="none" stroke="rgba(20, 15, 25, 0.5)" stroke-width="3" />
+        <circle cx="600" cy="30" r="5" fill="rgba(20, 15, 25, 0.3)" />
+        <circle cx="400" cy="48" r="7" fill="none" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+        <circle cx="800" cy="48" r="7" fill="none" stroke="rgba(20, 15, 25, 0.45)" stroke-width="2" />
+        <circle cx="300" cy="65" r="5" fill="none" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.5" />
+        <circle cx="900" cy="65" r="5" fill="none" stroke="rgba(20, 15, 25, 0.4)" stroke-width="1.5" />
+        <circle cx="200" cy="88" r="4" fill="none" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" />
+        <circle cx="1000" cy="88" r="4" fill="none" stroke="rgba(20, 15, 25, 0.35)" stroke-width="1.5" />
       </svg>
 
       <!-- 中心区域装饰：圆形月门 -->
@@ -628,6 +674,34 @@
           <div class="lantern-tassel"></div>
         </div>
         <div class="lantern lantern-16">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+      </div>
+
+      <!-- 中偏左灯笼组 -->
+      <div class="lantern-group lantern-group-center-left">
+        <div class="lantern lantern-17">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-18">
+          <div class="lantern-top"></div>
+          <div class="lantern-body">
+            <div class="lantern-glow"></div>
+          </div>
+          <div class="lantern-bottom"></div>
+          <div class="lantern-tassel"></div>
+        </div>
+        <div class="lantern lantern-19">
           <div class="lantern-top"></div>
           <div class="lantern-body">
             <div class="lantern-glow"></div>
@@ -1746,6 +1820,12 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
   gap: 35px;
 }
 
+.lantern-group-center-left {
+  top: 40%;
+  left: 28%;
+  gap: 28px;
+}
+
 .lantern {
   display: flex;
   flex-direction: column;
@@ -1902,6 +1982,24 @@ $paper-shadow: rgba(0, 0, 0, 0.5);
   animation: lanternSwing 4s ease-in-out infinite;
   animation-delay: -2s;
   transform: scale(0.8);
+}
+
+.lantern-17 {
+  animation: lanternSwing 4.4s ease-in-out infinite;
+  animation-delay: -0.7s;
+  transform: scale(0.85);
+}
+
+.lantern-18 {
+  animation: lanternSwing 4.8s ease-in-out infinite;
+  animation-delay: -1.6s;
+  transform: scale(0.75);
+}
+
+.lantern-19 {
+  animation: lanternSwing 5.2s ease-in-out infinite;
+  animation-delay: -2.4s;
+  transform: scale(0.7);
 }
 
 @keyframes lanternSwing {
