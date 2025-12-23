@@ -57,6 +57,19 @@
                 <el-slider v-model="fontSize" :min="12" :max="20" :step="1" show-input @change="handleFontSizeChange" />
               </div>
             </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.appearance.visualizerFrameRate') }}</span>
+                <span class="setting-desc">{{ $t('settings.appearance.visualizerFrameRateDesc') }} ({{
+                  visualizationFrameRate }}
+                  FPS)</span>
+              </div>
+              <div class="setting-control" style="width: 200px">
+                <el-slider v-model="visualizationFrameRate" :min="30" :max="144" :step="10"
+                  :marks="{ 30: '30', 60: '60', 144: '144' }" @change="handleVisualizerFrameRateChange" />
+              </div>
+            </div>
           </div>
 
           <h3 class="subsection-title">{{ $t('settings.appearance.page') }}</h3>
@@ -100,19 +113,6 @@
                 <el-option :label="$t('settings.appearance.styleMirror')" value="mirror" />
                 <el-option :label="$t('settings.appearance.styleMountain')" value="mountain" />
               </el-select>
-            </div>
-
-            <div class="setting-item" v-if="visualizerEnabled">
-              <div class="setting-label">
-                <span>{{ $t('settings.appearance.visualizerFrameRate') }}</span>
-                <span class="setting-desc">{{ $t('settings.appearance.visualizerFrameRateDesc') }} ({{
-                  visualizationFrameRate }}
-                  FPS)</span>
-              </div>
-              <div class="setting-control" style="width: 200px">
-                <el-slider v-model="visualizationFrameRate" :min="30" :max="144" :step="10"
-                  :marks="{ 30: '30', 60: '60', 144: '144' }" @change="handleVisualizerFrameRateChange" />
-              </div>
             </div>
           </div>
         </div>
