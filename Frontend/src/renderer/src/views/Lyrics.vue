@@ -2,7 +2,8 @@
   <div class="lyrics-view">
     <div class="lyrics-container" v-if="playerStore.currentSong">
       <!-- 背景 -->
-      <div class="lyrics-bg" :style="coverBgStyle"></div>
+      <!-- 背景 -->
+      <div v-if="showBlurBackground" class="lyrics-bg" :style="coverBgStyle"></div>
 
       <!-- 歌曲信息 -->
       <div class="song-info">
@@ -51,12 +52,20 @@
 <script setup lang="ts">
 import { useAudio } from '@/hooks/useAudio'
 import { usePlayerStore } from '@/store/player.store'
+import { useSettingsStore } from '@/store/settings.store'
 import { parseLrc, type LyricLine } from '@/utils/lrc-parser'
 import { Document, Headset } from '@element-plus/icons-vue'
 import { computed, ref, watch } from 'vue'
 
 const playerStore = usePlayerStore()
+const settingsStore = useSettingsStore()
 const { seekPercent } = useAudio()
+
+// 是否显示模糊背景：只有在使用默认主题（dark/light）时才显示
+// 使用动态主题时隐藏模糊背景，以避免性能问题并展示动态背景
+const showBlurBackground = computed(() => {
+  return ['dark', 'light'].includes(settingsStore.theme)
+})
 
 const lyricsContainerRef = ref<HTMLElement | null>(null)
 const lyrics = ref<LyricLine[]>([])

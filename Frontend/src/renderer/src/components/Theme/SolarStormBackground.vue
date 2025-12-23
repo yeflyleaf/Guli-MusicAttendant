@@ -89,7 +89,7 @@ import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 // Props
-defineProps<{
+const props = defineProps<{
   embedded?: boolean
 }>()
 
@@ -360,8 +360,21 @@ const initSolarWind = () => {
   }
 
   // 初始化粒子
-  const particleCount = 120
-  solarWindParticles = Array.from({ length: particleCount }, createParticle)
+  let particleCount = props.embedded ? 60 : 120 // 歌词页面减少粒子数量
+
+  const initParticles = () => {
+    solarWindParticles = Array.from({ length: particleCount }, () => createParticle())
+  }
+
+  const resizeSolarWind = () => {
+    if (!canvas) return
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    initParticles()
+  }
+
+  resizeSolarWind()
+  window.addEventListener('resize', resizeSolarWind)
 
   // 帧率限制 - 使用全局设置
   let lastFrameTime = 0
