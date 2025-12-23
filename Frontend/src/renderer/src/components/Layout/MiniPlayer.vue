@@ -41,67 +41,73 @@
           @change="onSliderChange" />
       </div>
 
-      <!-- 控制按钮 -->
+      <!-- 控制按钮 - 三栏布局：左侧队列、中间播放控制、右侧音量 -->
       <div class="controls">
-        <!-- 上一首 -->
-        <el-icon class="control-btn" :class="{ disabled: !playerStore.hasPrevious }" @click="playerStore.previous">
-          <CaretLeft />
-        </el-icon>
+        <!-- 左侧：播放队列 -->
+        <div class="controls-left">
+          <el-popover trigger="click" placement="top" :width="280" popper-style="padding: 0;">
+            <template #reference>
+              <div class="queue-btn-wrapper">
+                <el-icon class="control-btn small">
+                  <List />
+                </el-icon>
+                <span v-if="playerStore.queueLength > 0" class="queue-badge">{{ playerStore.queueLength }}</span>
+              </div>
+            </template>
+            <div class="mini-queue">
+              <div class="mini-queue-header">
+                <span>{{ $t('player.playQueue') }} ({{ playerStore.queueLength }})</span>
+              </div>
+              <div class="mini-queue-list">
+                <div v-for="(song, index) in playerStore.queue" :key="song.id" class="mini-queue-item"
+                  :class="{ active: index === playerStore.currentIndex }" @click="handlePlayFromQueue(song)">
+                  <span class="queue-song-title truncate">{{ song.title }}</span>
+                  <span class="queue-song-artist truncate">{{ song.artist }}</span>
+                </div>
+                <div v-if="playerStore.queue.length === 0" class="mini-queue-empty">
+                  {{ $t('player.emptyQueue') }}
+                </div>
+              </div>
+            </div>
+          </el-popover>
+        </div>
 
-        <!-- 播放/暂停 -->
-        <div class="play-btn" :class="{ playing: playerStore.isPlaying }" @click="playerStore.togglePlay">
-          <el-icon>
-            <VideoPause v-if="playerStore.isPlaying" />
-            <VideoPlay v-else />
+        <!-- 中间：播放控制按钮 -->
+        <div class="controls-center">
+          <!-- 上一首 -->
+          <el-icon class="control-btn" :class="{ disabled: !playerStore.hasPrevious }" @click="playerStore.previous">
+            <CaretLeft />
+          </el-icon>
+
+          <!-- 播放/暂停 -->
+          <div class="play-btn" :class="{ playing: playerStore.isPlaying }" @click="playerStore.togglePlay">
+            <el-icon>
+              <VideoPause v-if="playerStore.isPlaying" />
+              <VideoPlay v-else />
+            </el-icon>
+          </div>
+
+          <!-- 下一首 -->
+          <el-icon class="control-btn" :class="{ disabled: !playerStore.hasNext }" @click="playerStore.next">
+            <CaretRight />
           </el-icon>
         </div>
 
-        <!-- 下一首 -->
-        <el-icon class="control-btn" :class="{ disabled: !playerStore.hasNext }" @click="playerStore.next">
-          <CaretRight />
-        </el-icon>
-
-        <!-- 音量控制 -->
-        <el-popover trigger="hover" placement="top" :width="36" popper-style="min-width: auto; padding: 12px 0;">
-          <template #reference>
-            <el-icon class="control-btn small" @click="playerStore.toggleMute">
-              <component :is="volumeIcon" />
-            </el-icon>
-          </template>
-          <div class="volume-slider" @wheel.prevent="handleVolumeWheel">
-            <el-slider v-model="volumePercent" vertical height="80px" :show-tooltip="false"
-              @input="handleVolumeChange" />
-            <span class="volume-value">{{ volumePercent }}%</span>
-          </div>
-        </el-popover>
-
-        <!-- 播放队列 -->
-        <el-popover trigger="click" placement="top" :width="280" popper-style="padding: 0;">
-          <template #reference>
-            <div class="queue-btn-wrapper">
-              <el-icon class="control-btn small">
-                <List />
+        <!-- 右侧：音量控制 -->
+        <div class="controls-right">
+          <el-popover trigger="hover" placement="top" :width="36" popper-style="min-width: auto; padding: 12px 0;">
+            <template #reference>
+              <el-icon class="control-btn small" @click="playerStore.toggleMute">
+                <component :is="volumeIcon" />
               </el-icon>
-              <span v-if="playerStore.queueLength > 0" class="queue-badge">{{ playerStore.queueLength
-              }}</span>
+            </template>
+            <div class="volume-slider" @wheel.prevent="handleVolumeWheel">
+              <el-slider v-model="volumePercent" vertical height="80px" :show-tooltip="false"
+                @input="handleVolumeChange" />
+              <span class="volume-value">{{ volumePercent }}%</span>
             </div>
-          </template>
-          <div class="mini-queue">
-            <div class="mini-queue-header">
-              <span>{{ $t('player.playQueue') }} ({{ playerStore.queueLength }})</span>
-            </div>
-            <div class="mini-queue-list">
-              <div v-for="(song, index) in playerStore.queue" :key="song.id" class="mini-queue-item"
-                :class="{ active: index === playerStore.currentIndex }" @click="handlePlayFromQueue(song)">
-                <span class="queue-song-title truncate">{{ song.title }}</span>
-                <span class="queue-song-artist truncate">{{ song.artist }}</span>
-              </div>
-              <div v-if="playerStore.queue.length === 0" class="mini-queue-empty">
-                {{ $t('player.emptyQueue') }}
-              </div>
-            </div>
-          </div>
-        </el-popover>
+          </el-popover>
+        </div>
       </div>
     </div>
   </div>
@@ -363,13 +369,37 @@ const handleDragStart = (e: MouseEvent) => {
   }
 }
 
-// 控制按钮
+// 控制按钮 - 三栏布局
 .controls {
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+// 左侧区域（播放队列）
+.controls-left {
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+// 中间区域（播放控制）
+.controls-center {
+  display: flex;
+  align-items: center;
   justify-content: center;
   gap: 16px;
+}
+
+// 右侧区域（音量控制）
+.controls-right {
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .control-btn {
