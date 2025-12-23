@@ -8,9 +8,6 @@
   <!-- 剪纸戏梦动态背景 -->
   <PapercutTheatreBackground v-if="showPapercutBackground" />
 
-  <!-- 日冕风暴动态背景 -->
-  <SolarStormBackground v-if="showSolarBackground" />
-
   <!-- 启动屏幕 - 等待设置加载完成后再渲染，避免使用默认主题值导致闪烁 -->
   <!-- 窗口在设置加载完成后才显示，确保用户看到的第一帧就是正确的过场动画 -->
   <!-- 星际穿梭主题 -->
@@ -85,12 +82,283 @@
         <GothicSanctuaryBackground v-if="settingsStore.theme === 'gothic'" :embedded="true" />
         <!-- 歌词页面的剪纸戏梦背景 -->
         <PapercutTheatreBackground v-if="settingsStore.theme === 'papercut'" :embedded="true" />
-        <!-- 歌词页面的日冕风暴背景 -->
-        <SolarStormBackground v-if="settingsStore.theme === 'solar'" :embedded="true" />
+
         <Lyrics />
       </div>
     </transition>
   </div>
+</template>
+
+<script setup lang="ts">
+import BioluminescentAbyssSplash from '@/components/Layout/BioluminescentAbyssSplash.vue'
+import BrassEraSplash from '@/components/Layout/BrassEraSplash.vue'
+import ChronosRiftSplash from '@/components/Layout/ChronosRiftSplash.vue'
+import CyberCityscapeSplash from '@/components/Layout/CyberCityscapeSplash.vue'
+import EmeraldSanctuarySplash from '@/components/Layout/EmeraldSanctuarySplash.vue'
+import EtherealGeometrySplash from '@/components/Layout/EtherealGeometrySplash.vue'
+import FooterPlayer from '@/components/Layout/FooterPlayer.vue'
+import Header from '@/components/Layout/Header.vue'
+import MiniPlayer from '@/components/Layout/MiniPlayer.vue'
+import MoltenForgeSplash from '@/components/Layout/MoltenForgeSplash.vue'
+import PlayQueue from '@/components/Layout/PlayQueue.vue'
+import SanctumOfTruthSplash from '@/components/Layout/SanctumOfTruthSplash.vue'
+import SiliconOrderSplash from '@/components/Layout/SiliconOrderSplash.vue'
+import SplashScreen from '@/components/Layout/SplashScreen.vue'
+import SubzeroPrismSplash from '@/components/Layout/SubzeroPrismSplash.vue'
+import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.vue'
+import GothicSanctuaryBackground from '@/components/Theme/GothicSanctuaryBackground.vue'
+import InterstellarCruiseBackground from '@/components/Theme/InterstellarCruiseBackground.vue'
+import PapercutTheatreBackground from '@/components/Theme/PapercutTheatreBackground.vue'
+import { usePlayerStore } from '@/store/player.store'
+import { useSettingsStore } from '@/store/settings.store'
+import Lyrics from '@/views/Lyrics.vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const playerStore = usePlayerStore()
+const settingsStore = useSettingsStore()
+
+// 启动状态控制
+const showSplash = ref(true)
+const isStartup = ref(true)
+
+// 迷你播放器模式
+const isMiniPlayerMode = computed(() => settingsStore.miniPlayerMode)
+
+// 星际巡航动态背景显示控制
+const showInterstellarBackground = computed(() => {
+  return settingsStore.isLoaded && settingsStore.theme === 'interstellar' && !showSplash.value
+})
+
+// 暗夜哥特动态背景显示控制
+const showGothicBackground = computed(() => {
+  return settingsStore.isLoaded && settingsStore.theme === 'gothic' && !showSplash.value
+})
+
+// 剪纸戏梦动态背景显示控制
+const showPapercutBackground = computed(() => {
+  return settingsStore.isLoaded && settingsStore.theme === 'papercut' && !showSplash.value
+})
+
+const handleSplashFinish = () => {
+  showSplash.value = false
+  isStartup.value = false
+}
+
+// 监听设置加载完成，然后通知主进程显示窗口
+// 这样窗口显示时就直接是用户选择的过场动画
+watch(
+  () => settingsStore.isLoaded,
+  async (isLoaded) => {
+    if (isLoaded) {
+      console.log('[App] Settings loaded, theme:', settingsStore.theme, 'splashTheme:', settingsStore.splashTheme, 'disableSplash:', settingsStore.disableSplashScreen)
+
+      // 等待 DOM 更新，确保过场动画组件已经挂载
+      await nextTick()
+
+      // 如果禁用了过场动画，直接完成
+      if (settingsStore.disableSplashScreen) {
+        console.log('[App] Splash disabled, showing main content immediately')
+        handleSplashFinish()
+        return
+      }
+
+      // 安全超时：如果 6 秒后过场动画仍未完成，强制显示主界面
+      // 正常过场动画约 5 秒完成，这是异常情况的后备机制
+      setTimeout(() => {
+        if (isStartup.value) {
+          console.warn('[App] Splash screen timeout, forcing main content display')
+          handleSplashFinish()
+        }
+      }, 6000)
+
+      // 通知主进程显示窗口
+      window.electron.ipcRenderer.send('window:show')
+    }
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  // 确保设置已加载
+  if (!settingsStore.isLoaded) {
+    settingsStore.loadSettings()
+  }
+})
+</script>
+
+<style lang="scss">
+// 全局样式
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  transition: opacity 0.5s ease;
+}
+
+.app-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: $spacing-lg;
+  background: linear-gradient(180deg, $bg-secondary 0%, $bg-primary 100%);
+  transition: margin-right 0.3s ease;
+
+  &.queue-visible {
+    margin-right: 320px;
+  }
+}
+
+.lyrics-overlay {
+  position: absolute;
+  top: $header-height;
+  left: 0;
+  width: 100%;
+  height: calc(100% - $header-height);
+  z-index: 1010;
+  /* Below FooterPlayer (1020) but above everything else */
+  background: $bg-primary;
+  overflow: hidden;
+
+  // 歌词页面内的星际巡航背景
+  .lyrics-interstellar-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  // 确保歌词组件在背景之上
+  :deep(.lyrics-container) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// 星际巡航主题下歌词页面使用深空背景色（背景组件会覆盖）
+:global(html.interstellar) .lyrics-overlay {
+  background: #090a0f;
+}
+
+// 暗夜哥特主题下歌词页面使用黑曜石背景色（背景组件会覆盖）
+:global(html.gothic) .lyrics-overlay {
+  background: #050505;
+}
+
+// 剪纸戏梦主题下歌词页面使用暮山紫背景色（背景组件会覆盖）
+:global(html.papercut) .lyrics-overlay {
+  background: #1a1c29;
+}
+
+/* 动画效果 */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
+}
+</style>
+<!-- 窗口在设置加载完成后才显示，确保用户看到的第一帧就是正确的过场动画 -->
+<!-- 星际穿梭主题 -->
+<SplashScreen v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'cosmic'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 翡翠圣域主题 -->
+<EmeraldSanctuarySplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'emerald'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 炼狱熔炉主题 -->
+<MoltenForgeSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'molten'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 深蓝幽光主题 -->
+<BioluminescentAbyssSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'abyss'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 黄铜纪元主题 -->
+<BrassEraSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'brass'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 零度棱镜主题 -->
+<SubzeroPrismSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'prism'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 真理殿堂主题 -->
+<SanctumOfTruthSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'sanctum'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 硅基秩序主题 -->
+<SiliconOrderSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'silicon'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 幻象几何主题 -->
+<EtherealGeometrySplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'ethereal'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 未来都市主题 -->
+<CyberCityscapeSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'cyber'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 和风落樱主题 -->
+<ZenCherryBlossomSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'sakura'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+<!-- 时空裂隙主题 -->
+<ChronosRiftSplash v-if="showSplash && settingsStore.isLoaded && settingsStore.splashTheme === 'chronos'"
+  :disabled="isStartup && settingsStore.disableSplashScreen" @finished="handleSplashFinish" />
+
+<!-- 迷你播放器模式 -->
+<MiniPlayer v-if="isMiniPlayerMode && !showSplash" />
+
+<!-- 完整播放器模式 -->
+<div v-else-if="!isMiniPlayerMode" class="app-container" :style="{ opacity: isStartup ? 0 : 1 }">
+    <!-- 自定义标题栏 -->
+    <Header />
+
+    <!-- 主内容区域 -->
+    <div class="app-main">
+      <!-- 页面内容 -->
+      <main class="app-content" :class="{ 'queue-visible': playerStore.showQueue }">
+        <router-view v-slot="{ Component }">
+          <keep-alive :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']" :max="10">
+            <component :is="Component" :key="route.fullPath" />
+          </keep-alive>
+        </router-view>
+      </main>
+
+      <!-- 播放队列侧边栏 -->
+      <PlayQueue />
+    </div>
+
+<!-- 底部播放控制栏 -->
+<FooterPlayer />
+
+<!-- 歌词全屏覆盖层 -->
+<transition name="slide-up">
+      <div v-if="playerStore.showLyrics" class="lyrics-overlay">
+        <!-- 歌词页面的星际巡航背景 -->
+        <InterstellarCruiseBackground v-if="settingsStore.theme === 'interstellar'" :embedded="true" />
+        <!-- 歌词页面的暗夜哥特背景 -->
+        <GothicSanctuaryBackground v-if="settingsStore.theme === 'gothic'" :embedded="true" />
+        <!-- 歌词页面的剪纸戏梦背景 -->
+        <PapercutTheatreBackground v-if="settingsStore.theme === 'papercut'" :embedded="true" />
+        <!-- 歌词页面的日冕风暴背景 - 与主页完全一致的代码调用（无 embedded） -->
+        <SolarStormBackground v-if="settingsStore.theme === 'solar'" class="lyrics-solar-bg" />
+
+        <Lyrics />
+      </div>
+    </transition>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -475,11 +743,6 @@ window.addEventListener('beforeunload', () => {
 // 剪纸戏梦主题下歌词页面使用暮山紫背景色（背景组件会覆盖）
 :global(html.papercut) .lyrics-overlay {
   background: #1a1c29;
-}
-
-// 日冕风暴主题下歌词页面使用深岩浆红背景色（背景组件会覆盖）
-:global(html.solar) .lyrics-overlay {
-  background: #0a0101;
 }
 
 /* 动画效果 */
