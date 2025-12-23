@@ -25,7 +25,10 @@ export function getAllSettings(): Settings {
     musicFolders: [],
     autoScan: true,
     visualizerEnabled: true,
-    disableSplashScreen: false
+    disableSplashScreen: false,
+    showTrayIcon: true,
+    minimizeToTray: false,
+    closeToTray: false
   }
 
   for (const row of rows) {
@@ -82,6 +85,15 @@ export function getAllSettings(): Settings {
         break
       case 'disableSplashScreen':
         settings.disableSplashScreen = row.value === 'true'
+        break
+      case 'showTrayIcon':
+        settings.showTrayIcon = row.value === 'true'
+        break
+      case 'minimizeToTray':
+        settings.minimizeToTray = row.value === 'true'
+        break
+      case 'closeToTray':
+        settings.closeToTray = row.value === 'true'
         break
     }
   }
@@ -198,7 +210,10 @@ export function resetSettings(): boolean {
     ['musicFolders', '[]'],
     ['autoScan', 'true'],
     ['visualizerEnabled', 'true'],
-    ['disableSplashScreen', 'false']
+    ['disableSplashScreen', 'false'],
+    ['showTrayIcon', 'true'],
+    ['minimizeToTray', 'false'],
+    ['closeToTray', 'false']
   ]
 
   return transaction(() => {

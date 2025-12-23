@@ -107,7 +107,15 @@ export default {
       splashThemeEthereal: 'الهندسة البسيطة',
       splashThemeCyber: 'مدينة المستقبل',
       splashThemeSakura: 'أزهار الكرز اليابانية',
-      splashThemeChronos: 'شق الزمن'
+      splashThemeChronos: 'شق الزمن',
+      // System Tray
+      systemTray: 'علبة النظام',
+      showTrayIcon: 'إظهار أيقونة التطبيق في علبة النظام',
+      showTrayIconDesc: 'عرض أيقونة التطبيق في منطقة علبة النظام',
+      minimizeToTray: 'تصغير إلى علبة النظام',
+      minimizeToTrayDesc: 'إخفاء التطبيق إلى علبة النظام عند النقر على زر التصغير',
+      closeToTray: 'إغلاق إلى علبة النظام',
+      closeToTrayDesc: 'إخفاء التطبيق إلى علبة النظام بدلاً من الخروج عند النقر على زر الإغلاق'
     },
     // Library
     library: {

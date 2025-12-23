@@ -98,7 +98,15 @@ export default {
       splashThemeEthereal: 'Geometría Minimalista',
       splashThemeCyber: 'Ciudad Cibernética',
       splashThemeSakura: 'Flores de Cerezo Zen',
-      splashThemeChronos: 'Fisura del Tiempo'
+      splashThemeChronos: 'Fisura del Tiempo',
+      // System Tray
+      systemTray: 'Bandeja del sistema',
+      showTrayIcon: 'Mostrar icono en la bandeja del sistema',
+      showTrayIconDesc: 'Mostrar el icono de la aplicación en el área de la bandeja del sistema',
+      minimizeToTray: 'Minimizar a la bandeja del sistema',
+      minimizeToTrayDesc: 'Ocultar la aplicación en la bandeja del sistema al hacer clic en el botón minimizar',
+      closeToTray: 'Cerrar a la bandeja del sistema',
+      closeToTrayDesc: 'Ocultar la aplicación en la bandeja del sistema en lugar de salir al hacer clic en el botón cerrar'
     },
     library: {
       title: 'Biblioteca',

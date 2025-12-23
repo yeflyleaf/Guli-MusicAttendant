@@ -26,6 +26,9 @@ export const useSettingsStore = defineStore('settings', {
     autoScan: true,
     visualizerEnabled: true,
     disableSplashScreen: false,
+    showTrayIcon: true,
+    minimizeToTray: false,
+    closeToTray: false,
     isLoaded: false
   }),
 
@@ -52,6 +55,9 @@ export const useSettingsStore = defineStore('settings', {
         this.autoScan = settings.autoScan
         this.visualizerEnabled = settings.visualizerEnabled
         this.disableSplashScreen = settings.disableSplashScreen ?? false
+        this.showTrayIcon = settings.showTrayIcon ?? true
+        this.minimizeToTray = settings.minimizeToTray ?? false
+        this.closeToTray = settings.closeToTray ?? false
         this.isLoaded = true
 
         // 应用主题和外观

@@ -106,7 +106,15 @@ export default {
       splashThemeEthereal: '极简几何',
       splashThemeCyber: '未来都市',
       splashThemeSakura: '和风落樱',
-      splashThemeChronos: '时空裂隙'
+      splashThemeChronos: '时空裂隙',
+      // 系统托盘
+      systemTray: '系统托盘',
+      showTrayIcon: '在系统托盘显示应用图标',
+      showTrayIconDesc: '在系统托盘区域显示应用程序图标',
+      minimizeToTray: '最小化到系统托盘',
+      minimizeToTrayDesc: '点击最小化按钮时，将应用隐藏到系统托盘',
+      closeToTray: '关闭到系统托盘',
+      closeToTrayDesc: '点击关闭按钮时，将应用隐藏到系统托盘而不是退出'
     },
     // 音乐库设置
     library: {

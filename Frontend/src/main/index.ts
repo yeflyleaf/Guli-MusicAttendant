@@ -9,6 +9,7 @@ import { getAllSettings } from './db/repositories/setting.repo'
 import { setupAllIpc } from './ipc'
 import { registerLocalAudioProtocol, setupProtocolHandlers } from './services/protocol.service'
 import { scanAllFolders } from './services/scanner.service'
+import { createTray, destroyTray } from './services/tray.service'
 import { createMainWindow, getMainWindow } from './services/window.service'
 
 // 禁用 Windows 7 的 GPU 加速（解决兼容性问题）
@@ -75,6 +76,10 @@ if (!gotTheLock) {
       console.log('[Main] Creating main window...')
       createMainWindow()
 
+      // 创建系统托盘
+      console.log('[Main] Creating system tray...')
+      createTray()
+
       // 注册全局快捷键
       registerGlobalShortcuts()
 
@@ -121,6 +126,9 @@ if (!gotTheLock) {
 
     // 注销全局快捷键
     globalShortcut.unregisterAll()
+
+    // 销毁系统托盘
+    destroyTray()
 
     // 关闭数据库连接
     closeDatabase()

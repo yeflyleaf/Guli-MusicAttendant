@@ -106,7 +106,15 @@ export default {
       splashThemeEthereal: 'Minimalist Geometry',
       splashThemeCyber: 'Cyber Cityscape',
       splashThemeSakura: 'Zen Cherry Blossom',
-      splashThemeChronos: 'Chronos Rift'
+      splashThemeChronos: 'Chronos Rift',
+      // System Tray
+      systemTray: 'System Tray',
+      showTrayIcon: 'Show App Icon in System Tray',
+      showTrayIconDesc: 'Display the application icon in the system tray area',
+      minimizeToTray: 'Minimize to System Tray',
+      minimizeToTrayDesc: 'Hide the app to system tray when clicking the minimize button',
+      closeToTray: 'Close to System Tray',
+      closeToTrayDesc: 'Hide the app to system tray instead of exiting when clicking the close button'
     },
     // Library
     library: {

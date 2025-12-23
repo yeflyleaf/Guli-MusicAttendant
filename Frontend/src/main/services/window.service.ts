@@ -4,6 +4,8 @@
  */
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
+import { getAllSettings } from '../db/repositories/setting.repo'
+import { isForceQuit } from './tray.service'
 
 // 主窗口实例
 let mainWindow: BrowserWindow | null = null
@@ -60,6 +62,19 @@ export function createMainWindow(): BrowserWindow {
     mainWindow.webContents.openDevTools({ mode: 'right' })
   }
 
+  // 拦截窗口关闭事件，实现"关闭到托盘"
+  mainWindow.on('close', (event) => {
+    // 如果不是强制退出，检查是否需要关闭到托盘
+    if (!isForceQuit()) {
+      const settings = getAllSettings()
+      if (settings.showTrayIcon && settings.closeToTray) {
+        event.preventDefault()
+        mainWindow?.hide()
+        return
+      }
+    }
+  })
+
   // 窗口关闭时清理引用
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -79,7 +94,13 @@ export function getMainWindow(): BrowserWindow | null {
  * 窗口控制方法
  */
 export function minimizeWindow(): void {
-  mainWindow?.minimize()
+  const settings = getAllSettings()
+  // 如果设置了最小化到托盘，则隐藏窗口而非最小化
+  if (settings.showTrayIcon && settings.minimizeToTray) {
+    mainWindow?.hide()
+  } else {
+    mainWindow?.minimize()
+  }
 }
 
 export function maximizeWindow(): void {

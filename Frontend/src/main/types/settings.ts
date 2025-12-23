@@ -28,6 +28,9 @@ export type SettingKey =
   | 'autoScan'
   | 'visualizerEnabled'
   | 'disableSplashScreen'
+  | 'showTrayIcon'
+  | 'minimizeToTray'
+  | 'closeToTray'
 
 // 完整设置对象
 export interface Settings {
@@ -46,4 +49,7 @@ export interface Settings {
   autoScan: boolean          // 启动时自动扫描
   visualizerEnabled: boolean // 启用可视化
   disableSplashScreen: boolean // 下次启动时关闭过场动画
+  showTrayIcon: boolean      // 在系统托盘显示应用图标
+  minimizeToTray: boolean    // 最小化到系统托盘
+  closeToTray: boolean       // 关闭到系统托盘
 }

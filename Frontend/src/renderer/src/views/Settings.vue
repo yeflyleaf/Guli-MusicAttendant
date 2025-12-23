@@ -193,6 +193,33 @@
               </el-select>
             </div>
           </div>
+
+          <h3 class="subsection-title">{{ $t('settings.behavior.systemTray') }}</h3>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.behavior.showTrayIcon') }}</span>
+                <span class="setting-desc">{{ $t('settings.behavior.showTrayIconDesc') }}</span>
+              </div>
+              <el-switch v-model="showTrayIcon" @change="handleShowTrayIconChange" />
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.behavior.minimizeToTray') }}</span>
+                <span class="setting-desc">{{ $t('settings.behavior.minimizeToTrayDesc') }}</span>
+              </div>
+              <el-switch v-model="minimizeToTray" :disabled="!showTrayIcon" @change="handleMinimizeToTrayChange" />
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.behavior.closeToTray') }}</span>
+                <span class="setting-desc">{{ $t('settings.behavior.closeToTrayDesc') }}</span>
+              </div>
+              <el-switch v-model="closeToTray" :disabled="!showTrayIcon" @change="handleCloseToTrayChange" />
+            </div>
+          </div>
         </div>
       </el-tab-pane>
 
@@ -262,7 +289,7 @@
           <div class="about-info">
             <div class="app-info">
               <span class="app-name gradient-text">{{ $t('settings.about.appName') }}</span>
-              <span class="app-version">{{ $t('settings.about.version') }} 1.5.7</span>
+              <span class="app-version">{{ $t('settings.about.version') }} 1.6.0</span>
             </div>
             <p class="app-desc">
               {{ $t('settings.about.description') }}
@@ -338,6 +365,11 @@ const autoScan = ref(true)
 const disableSplashScreen = ref(false)
 const splashTheme = ref<SplashTheme>('cosmic')
 
+// 系统托盘设置
+const showTrayIcon = ref(true)
+const minimizeToTray = ref(false)
+const closeToTray = ref(false)
+
 // 初始化设置值
 onMounted(() => {
   theme.value = settingsStore.theme
@@ -353,6 +385,11 @@ onMounted(() => {
   autoScan.value = settingsStore.autoScan
   disableSplashScreen.value = settingsStore.disableSplashScreen
   splashTheme.value = settingsStore.splashTheme
+
+  // 系统托盘设置
+  showTrayIcon.value = settingsStore.showTrayIcon
+  minimizeToTray.value = settingsStore.minimizeToTray
+  closeToTray.value = settingsStore.closeToTray
 })
 
 // --- 外观设置处理 ---
@@ -409,6 +446,26 @@ const handleShowSplashScreen = () => {
 
 const handleSplashThemeChange = async (value: SplashTheme) => {
   await settingsStore.saveSettings({ splashTheme: value })
+}
+
+// --- 系统托盘设置处理 ---
+
+const handleShowTrayIconChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ showTrayIcon: value })
+  // 如果关闭托盘图标，同时关闭最小化到托盘和关闭到托盘
+  if (!value) {
+    minimizeToTray.value = false
+    closeToTray.value = false
+    await settingsStore.saveSettings({ minimizeToTray: false, closeToTray: false })
+  }
+}
+
+const handleMinimizeToTrayChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ minimizeToTray: value })
+}
+
+const handleCloseToTrayChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ closeToTray: value })
 }
 
 // --- 音乐库设置处理 ---

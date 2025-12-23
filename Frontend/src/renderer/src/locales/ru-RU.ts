@@ -98,7 +98,15 @@ export default {
       splashThemeEthereal: 'Минималистичная Геометрия',
       splashThemeCyber: 'Кибергород',
       splashThemeSakura: 'Цветение Сакуры',
-      splashThemeChronos: 'Разлом Хроноса'
+      splashThemeChronos: 'Разлом Хроноса',
+      // System Tray
+      systemTray: 'Системный трей',
+      showTrayIcon: 'Показывать значок в системном трее',
+      showTrayIconDesc: 'Отображать значок приложения в области системного трея',
+      minimizeToTray: 'Сворачивать в системный трей',
+      minimizeToTrayDesc: 'Скрывать приложение в системный трей при нажатии кнопки сворачивания',
+      closeToTray: 'Закрывать в системный трей',
+      closeToTrayDesc: 'Скрывать приложение в системный трей вместо выхода при нажатии кнопки закрытия'
     },
     library: {
       title: 'Библиотека',

@@ -107,7 +107,15 @@ export default {
       splashThemeEthereal: 'Géométrie Minimaliste',
       splashThemeCyber: 'Ville Cybernétique',
       splashThemeSakura: 'Fleurs de Cerisier Zen',
-      splashThemeChronos: 'Fissure Temporelle'
+      splashThemeChronos: 'Fissure Temporelle',
+      // System Tray
+      systemTray: 'Barre d\'état système',
+      showTrayIcon: 'Afficher l\'icône dans la barre d\'état système',
+      showTrayIconDesc: 'Afficher l\'icône de l\'application dans la zone de notification',
+      minimizeToTray: 'Réduire dans la barre d\'état système',
+      minimizeToTrayDesc: 'Masquer l\'application dans la barre d\'état système en cliquant sur le bouton de réduction',
+      closeToTray: 'Fermer dans la barre d\'état système',
+      closeToTrayDesc: 'Masquer l\'application dans la barre d\'état système au lieu de quitter en cliquant sur le bouton de fermeture'
     },
     // Library
     library: {

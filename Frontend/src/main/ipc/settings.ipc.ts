@@ -27,7 +27,16 @@ export function setupSettingsIpc(): void {
 
   // 批量设置
   ipcMain.handle('settings:setMultiple', (_event, settings: Partial<Settings>) => {
-    return settingRepo.setSettings(settings)
+    const result = settingRepo.setSettings(settings)
+
+    // 如果托盘相关设置发生变化，更新托盘状态
+    if ('showTrayIcon' in settings || 'minimizeToTray' in settings || 'closeToTray' in settings) {
+      import('../services/tray.service').then(({ updateTrayFromSettings }) => {
+        updateTrayFromSettings()
+      })
+    }
+
+    return result
   })
 
   // 获取音乐文件夹列表
