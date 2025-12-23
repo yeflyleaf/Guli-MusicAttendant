@@ -1,5 +1,5 @@
 <template>
-  <div class="mini-player" @mousedown="handleDragStart">
+  <div class="mini-player">
     <!-- 顶部封面区域 300x300 -->
     <div class="cover-section">
       <!-- 封面图 -->
@@ -14,12 +14,27 @@
         </div>
         <!-- 封面上的信息 -->
         <div class="cover-overlay">
-          <!-- 关闭迷你播放器按钮 -->
-          <button class="close-mini-btn" @click="handleSwitchToFull" :title="$t('miniPlayer.switchToFull')">
-            <el-icon>
-              <FullScreen />
-            </el-icon>
-          </button>
+          <!-- 窗口控制按钮组 - 悬停时显示 -->
+          <div class="window-controls">
+            <!-- 切换到完整播放器 -->
+            <button class="window-btn expand-btn" @click="handleSwitchToFull" :title="$t('miniPlayer.switchToFull')">
+              <el-icon>
+                <FullScreen />
+              </el-icon>
+            </button>
+            <!-- 最小化 -->
+            <button class="window-btn minimize-btn" @click="handleMinimize" title="最小化">
+              <el-icon>
+                <Minus />
+              </el-icon>
+            </button>
+            <!-- 关闭 -->
+            <button class="window-btn close-btn" @click="handleClose" title="关闭">
+              <el-icon>
+                <Close />
+              </el-icon>
+            </button>
+          </div>
           <!-- 歌曲信息 -->
           <div class="song-info">
             <div class="song-title truncate" :title="playerStore.currentSong?.title || $t('miniPlayer.noPlaying')">
@@ -45,7 +60,8 @@
       <div class="controls">
         <!-- 左侧：播放队列 -->
         <div class="controls-left">
-          <el-popover trigger="click" placement="top" :width="280" popper-style="padding: 0;">
+          <el-popover v-model:visible="queuePopoverVisible" trigger="click" placement="top" :width="280"
+            popper-style="padding: 0;">
             <template #reference>
               <div class="queue-btn-wrapper">
                 <el-icon class="control-btn small">
@@ -54,7 +70,7 @@
                 <span v-if="playerStore.queueLength > 0" class="queue-badge">{{ playerStore.queueLength }}</span>
               </div>
             </template>
-            <div class="mini-queue">
+            <div class="mini-queue" @mouseenter="handleQueueMouseEnter" @mouseleave="handleQueueMouseLeave">
               <div class="mini-queue-header">
                 <span>{{ $t('player.playQueue') }} ({{ playerStore.queueLength }})</span>
               </div>
@@ -121,18 +137,47 @@ import type { Music } from '@/types/music'
 import {
   CaretLeft,
   CaretRight,
+  Close,
   FullScreen,
   Headset,
   List,
+  Minus,
   VideoPause,
   VideoPlay
 } from '@element-plus/icons-vue'
-import { computed, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 
 const playerStore = usePlayerStore()
 
 // 音频控制（不需要作为主播放器，因为全局音频已在 App.vue 中初始化）
 const { seek, setVolume } = useAudio(false)
+
+// 播放队列弹窗控制
+const queuePopoverVisible = ref(false)
+let queueCloseTimer: ReturnType<typeof setTimeout> | null = null
+
+// 鼠标进入播放队列，取消关闭定时器
+const handleQueueMouseEnter = () => {
+  if (queueCloseTimer) {
+    clearTimeout(queueCloseTimer)
+    queueCloseTimer = null
+  }
+}
+
+// 鼠标离开播放队列，1秒后自动关闭
+const handleQueueMouseLeave = () => {
+  queueCloseTimer = setTimeout(() => {
+    queuePopoverVisible.value = false
+    queueCloseTimer = null
+  }, 1000)
+}
+
+// 组件卸载时清理定时器
+onUnmounted(() => {
+  if (queueCloseTimer) {
+    clearTimeout(queueCloseTimer)
+  }
+})
 
 // 进度条逻辑
 const localProgress = ref(0)
@@ -206,15 +251,14 @@ const handleSwitchToFull = () => {
   window.electron?.window?.switchToFullPlayer?.()
 }
 
-// 拖动窗口（用于无边框窗口）
-const handleDragStart = (e: MouseEvent) => {
-  // 只有点击封面区域才能拖动
-  const target = e.target as HTMLElement
-  if (target.closest('.control-section') || target.closest('.close-mini-btn')) {
-    return
-  }
-  // 触发原生窗口拖动
-  // 由于是无边框窗口，需要通过 IPC 实现拖动
+// 最小化窗口
+const handleMinimize = () => {
+  window.electron?.window?.minimize?.()
+}
+
+// 关闭窗口
+const handleClose = () => {
+  window.electron?.window?.close?.()
 }
 </script>
 
@@ -229,12 +273,13 @@ const handleDragStart = (e: MouseEvent) => {
   user-select: none;
 }
 
-// 封面区域 300x300
+// 封面区域 300x300 - 可拖动区域
 .cover-section {
   width: 300px;
   height: 300px;
   position: relative;
   flex-shrink: 0;
+  -webkit-app-region: drag; // 允许拖动窗口
 }
 
 .cover-wrapper {
@@ -270,35 +315,54 @@ const handleDragStart = (e: MouseEvent) => {
   padding: 16px;
 }
 
-// 关闭迷你播放器按钮
-.close-mini-btn {
+// 窗口控制按钮组
+.window-controls {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 32px;
-  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  -webkit-app-region: no-drag; // 禁止拖动，确保按钮可以点击
+
+  .mini-player:hover & {
+    opacity: 1;
+  }
+}
+
+.window-btn {
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.5);
   border: none;
-  border-radius: 50%;
+  border-radius: 6px;
   color: white;
   cursor: pointer;
   transition: all 0.2s ease;
-  opacity: 0;
 
-  .mini-player:hover & {
-    opacity: 1;
+  .el-icon {
+    font-size: 14px;
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 
-  .el-icon {
-    font-size: 18px;
+  &.expand-btn:hover {
+    background: rgba(139, 92, 246, 0.8);
+  }
+
+  &.minimize-btn:hover {
+    background: rgba(255, 193, 7, 0.8);
+  }
+
+  &.close-btn:hover {
+    background: rgba(239, 68, 68, 0.8);
   }
 }
 
@@ -319,7 +383,7 @@ const handleDragStart = (e: MouseEvent) => {
   }
 }
 
-// 控制区域 300x60
+// 控制区域 300x60 - 不可拖动
 .control-section {
   width: 300px;
   height: 60px;
@@ -329,6 +393,7 @@ const handleDragStart = (e: MouseEvent) => {
   padding: 8px 12px;
   background: rgba($bg-secondary-rgb, 0.95);
   border-top: 1px solid $border-color;
+  -webkit-app-region: no-drag; // 禁止拖动，确保控件可以操作
 }
 
 // 进度条
@@ -502,11 +567,12 @@ const handleDragStart = (e: MouseEvent) => {
   padding: 0 4px;
 }
 
-// 迷你队列
+// 迷你队列 - 禁止拖动，确保可以正常选择和点击
 .mini-queue {
   max-height: 300px;
   display: flex;
   flex-direction: column;
+  -webkit-app-region: no-drag;
 }
 
 .mini-queue-header {

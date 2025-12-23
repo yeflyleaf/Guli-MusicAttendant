@@ -159,17 +159,14 @@ export function switchToMiniPlayer(): void {
   }
   savedWindowBounds = mainWindow.getBounds()
 
-  // 获取当前窗口位置，计算迷你播放器位置（右下角）
-  const { screen } = require('electron')
-  const currentDisplay = screen.getDisplayNearestPoint({
-    x: savedWindowBounds.x,
-    y: savedWindowBounds.y
-  })
-  const { workArea } = currentDisplay
+  // 获取当前窗口中心位置
+  const currentBounds = mainWindow.getBounds()
+  const centerX = currentBounds.x + currentBounds.width / 2
+  const centerY = currentBounds.y + currentBounds.height / 2
 
-  // 将迷你播放器放在屏幕右下角，留出 20px 边距
-  const miniX = workArea.x + workArea.width - MINI_PLAYER_WIDTH - 20
-  const miniY = workArea.y + workArea.height - MINI_PLAYER_HEIGHT - 20
+  // 计算迷你播放器的位置（以当前窗口中心为基准）
+  const miniX = Math.round(centerX - MINI_PLAYER_WIDTH / 2)
+  const miniY = Math.round(centerY - MINI_PLAYER_HEIGHT / 2)
 
   // 设置迷你播放器属性
   mainWindow.setMinimumSize(MINI_PLAYER_WIDTH, MINI_PLAYER_HEIGHT)
