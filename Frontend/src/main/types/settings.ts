@@ -31,6 +31,7 @@ export type SettingKey =
   | 'showTrayIcon'
   | 'minimizeToTray'
   | 'closeToTray'
+  | 'quickSwitchThemes'
 
 // 完整设置对象
 export interface Settings {
@@ -52,4 +53,5 @@ export interface Settings {
   showTrayIcon: boolean      // 在系统托盘显示应用图标
   minimizeToTray: boolean    // 最小化到系统托盘
   closeToTray: boolean       // 关闭到系统托盘
+  quickSwitchThemes: [Theme, Theme] // 快捷切换的主题
 }
