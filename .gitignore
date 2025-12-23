@@ -1,5 +1,13 @@
+# ========================
 # Logs
-logs
+# ========================
+*.txt
+*.doc
+*.docx
+*.pdf
+*.xls
+*.xlsx
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,45 +15,148 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# ========================
 # Dependencies
-node_modules
+# ========================
+node_modules/
 .npm
+.pnpm-store/
+.yarn/
 .node_repl_history
 
+# ========================
 # Build Output
-dist
-dist-electron
-release
-out
-dist_electron
-data
+# ========================
+dist/
+dist-electron/
+dist_electron/
+release/
+out/
 
+# ========================
+# Runtime Data
+# ========================
+data/
+*.sqlite
+*.sqlite3
+*.db
 
+# ========================
 # OS Files
+# ========================
+# macOS
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
-Thumbs.db
+.AppleDouble
+.LSOverride
 
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ========================
 # Environment Variables
+# ========================
 .env
 .env.*
 !.env.example
+!.env.development.example
+!.env.production.example
 
-# IDEs
-.idea
-.vscode
+# ========================
+# IDEs & Editors
+# ========================
+# JetBrains (WebStorm, IntelliJ)
+.idea/
+
+# VS Code (uncomment if you don't want to share settings)
+# .vscode/
+# *.code-workspace
+
+# Visual Studio
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
+*.user
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Neovim
 *.sw?
+*.swp
+*.swo
+Session.vim
+.netrwhist
 
+# Emacs
+*~
+\#*\#
+.projectile
+
+# ========================
 # TypeScript
+# ========================
 *.tsbuildinfo
+tsconfig.tsbuildinfo
 
+# ========================
 # Vite
+# ========================
 *.local
+.vite/
+
+# ========================
+# Electron Builder
+# ========================
+*.blockmap
+*.dmg
+*.exe
+*.AppImage
+*.deb
+*.rpm
+*.snap
+*.pacman
+*.nupkg
+
+# ========================
+# Testing
+# ========================
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ========================
+# Misc
+# ========================
+*.bak
+*.tmp
+*.temp
+*.cache
+.cache/
+.turbo/
+.eslintcache
+.stylelintcache
+*.pid
+*.seed
+*.pid.lock
+
+# Lock files (uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
