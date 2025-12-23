@@ -6,7 +6,7 @@
 export type PlayMode = 'sequence' | 'loop' | 'single' | 'random'
 
 // 主题
-export type Theme = 'dark' | 'light' | 'interstellar' | 'gothic' | 'papercut'
+export type Theme = 'dark' | 'light' | 'interstellar' | 'gothic' | 'papercut' | 'solar'
 
 // 开屏动画主题
 export type SplashTheme = 'cosmic' | 'emerald' | 'molten' | 'abyss' | 'brass' | 'prism' | 'sanctum' | 'silicon' | 'ethereal' | 'cyber' | 'sakura' | 'chronos'

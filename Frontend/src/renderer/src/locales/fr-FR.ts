@@ -64,6 +64,7 @@ export default {
       themeInterstellar: 'Croisière Interstellaire',
       themeGothic: 'Ombres de Chandelle',
       themePapercut: 'Théâtre de Papier Découpé',
+      themeSolar: 'Tempête Solaire',
       language: 'Langue',
       languageDesc: 'Choisir la langue de l\'application',
       fontSize: 'Taille de police',

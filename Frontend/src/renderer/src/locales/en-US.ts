@@ -63,6 +63,7 @@ export default {
       themeInterstellar: 'Interstellar Cruise',
       themeGothic: 'Candlelight Shadows',
       themePapercut: 'Papercut Theatre',
+      themeSolar: 'Solar Storm',
       language: 'Language',
       languageDesc: 'Choose the application language',
       fontSize: 'Font Size',

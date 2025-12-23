@@ -29,6 +29,7 @@
                 <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
                 <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                 <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
+                <el-option :label="$t('settings.appearance.themeSolar')" value="solar" />
               </el-select>
             </div>
 
