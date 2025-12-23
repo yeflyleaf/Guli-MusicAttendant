@@ -747,6 +747,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 // Props
@@ -756,6 +757,9 @@ defineProps<{
 
 const containerRef = ref<HTMLElement | null>(null)
 const particleCanvas = ref<HTMLCanvasElement | null>(null)
+
+// 获取全局帧率设置
+const settingsStore = useSettingsStore()
 
 // 鼠标位置用于视差效果
 const mouseX = ref(0.5)
@@ -844,34 +848,40 @@ const initParticleSystem = () => {
     particles.push(p)
   }
 
-  // 动画循环 - 限制到 30fps 以优化性能
+  // 动画循环 - 使用全局帧率设置
   let lastFrameTime = 0
-  const targetFPS = 30
-  const frameInterval = 1000 / targetFPS
+  const getFrameInterval = () => {
+    const globalFPS = settingsStore.visualizationFrameRate || 60
+    return 1000 / globalFPS
+  }
 
   const animate = (currentTime: number) => {
     animationId = requestAnimationFrame(animate)
 
     // 帧率限制：跳过不需要渲染的帧
+    const frameInterval = getFrameInterval()
     const deltaTime = currentTime - lastFrameTime
     if (deltaTime < frameInterval) return
     lastFrameTime = currentTime - (deltaTime % frameInterval)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // 光影呼吸效果 (8-10秒周期)
-    lightBreathPhase += 0.016 // 调整为30fps的步进值
+    // 光影呼吸效果 (8-10秒周期) - 根据帧率动态调整步进值
+    const fps = settingsStore.visualizationFrameRate || 60
+    lightBreathPhase += 0.5 / fps
     const breathFactor = 0.9 + Math.sin(lightBreathPhase) * 0.1
 
     // 更新月光强度 (通过 CSS 变量)
     document.documentElement.style.setProperty('--moon-breath', breathFactor.toString())
 
     particles.forEach((particle, index) => {
-      // 摇摆效果 - 调整为30fps的步进值
-      particle.swayPhase += particle.swaySpeed * 2
+      // 摇摆效果 - 根据帧率动态调整
+      const fps = settingsStore.visualizationFrameRate || 60
+      const speedMultiplier = 60 / fps
+      particle.swayPhase += particle.swaySpeed * speedMultiplier
       particle.x += particle.vx + Math.sin(particle.swayPhase) * 0.5
-      particle.y += particle.vy * 2 // 加倍移动速度以补偿帧率降低
-      particle.rotation += particle.rotationSpeed * 2
+      particle.y += particle.vy * speedMultiplier
+      particle.rotation += particle.rotationSpeed * speedMultiplier
 
       // 边界检查
       if (particle.y > canvas.height + 20 || particle.x < -50 || particle.x > canvas.width + 50) {

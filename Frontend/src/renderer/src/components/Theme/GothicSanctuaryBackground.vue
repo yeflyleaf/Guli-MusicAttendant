@@ -269,6 +269,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 // Props
@@ -279,6 +280,9 @@ defineProps<{
 const containerRef = ref<HTMLElement | null>(null)
 const dustCanvas = ref<HTMLCanvasElement | null>(null)
 const fireflyCanvas = ref<HTMLCanvasElement | null>(null)
+
+// 获取全局帧率设置
+const settingsStore = useSettingsStore()
 
 // 鼠标位置用于视差效果
 const mouseX = ref(0.5)
@@ -418,8 +422,22 @@ const initDustSystem = () => {
     return false
   }
 
+  // 帧率限制 - 使用全局设置
+  let lastFrameTime = 0
+  const getFrameInterval = () => {
+    const globalFPS = settingsStore.visualizationFrameRate || 60
+    return 1000 / globalFPS
+  }
+
   // 动画循环
-  const animate = () => {
+  const animate = (currentTime: number) => {
+    const frameInterval = getFrameInterval()
+    if (currentTime - lastFrameTime < frameInterval) {
+      dustAnimationId = requestAnimationFrame(animate)
+      return
+    }
+    lastFrameTime = currentTime
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     dustParticles.forEach((particle, index) => {
@@ -534,8 +552,6 @@ const initDustSystem = () => {
 
     dustAnimationId = requestAnimationFrame(animate)
   }
-
-  animate()
 }
 
 // 流萤粒子系统
@@ -608,8 +624,22 @@ const initFireflySystem = () => {
     fireflies.push(ff)
   }
 
+  // 帧率限制 - 使用全局设置
+  let lastFrameTime = 0
+  const getFrameInterval = () => {
+    const globalFPS = settingsStore.visualizationFrameRate || 60
+    return 1000 / globalFPS
+  }
+
   // 动画循环
-  const animate = () => {
+  const animate = (currentTime: number) => {
+    const frameInterval = getFrameInterval()
+    if (currentTime - lastFrameTime < frameInterval) {
+      fireflyAnimationId = requestAnimationFrame(animate)
+      return
+    }
+    lastFrameTime = currentTime
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     fireflies.forEach((ff, index) => {
@@ -715,7 +745,7 @@ const initFireflySystem = () => {
     fireflyAnimationId = requestAnimationFrame(animate)
   }
 
-  animate()
+  fireflyAnimationId = requestAnimationFrame(animate)
 }
 
 onMounted(() => {

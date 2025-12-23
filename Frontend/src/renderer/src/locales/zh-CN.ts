@@ -88,7 +88,7 @@ export default {
       styleMirror: '对称柱状',
       styleMountain: '山脉曲线',
       visualizerFrameRate: '帧率',
-      visualizerFrameRateDesc: '调整可视化动画帧率'
+      visualizerFrameRateDesc: '调整动态背景帧率，较低的帧率可以减少 CPU/GPU 负载'
     },
     // 行为设置
     behavior: {

@@ -125,6 +125,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 // Props
@@ -135,6 +136,9 @@ const props = defineProps<{
 const containerRef = ref<HTMLElement | null>(null)
 const stardustCanvas = ref<HTMLCanvasElement | null>(null)
 const dataRainCanvas = ref<HTMLCanvasElement | null>(null)
+
+// 获取全局帧率设置
+const settingsStore = useSettingsStore()
 
 // 鼠标位置用于视差效果
 const mouseX = ref(0.5)
@@ -217,7 +221,21 @@ const initStardust = () => {
     color: starColors[Math.floor(Math.random() * starColors.length)]
   }))
 
-  const animate = () => {
+  // 帧率限制 - 使用全局设置
+  let lastFrameTime = 0
+  const getFrameInterval = () => {
+    const globalFPS = settingsStore.visualizationFrameRate || 60
+    return 1000 / globalFPS
+  }
+
+  const animate = (currentTime: number) => {
+    const frameInterval = getFrameInterval()
+    if (currentTime - lastFrameTime < frameInterval) {
+      stardustAnimationId = requestAnimationFrame(animate)
+      return
+    }
+    lastFrameTime = currentTime
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     stardustParticles.forEach(particle => {
@@ -284,8 +302,6 @@ const initStardust = () => {
 
     stardustAnimationId = requestAnimationFrame(animate)
   }
-
-  animate()
 }
 
 // 数据雨粒子系统
@@ -331,7 +347,21 @@ const initDataRain = () => {
     width: 1 + Math.random() * 1.5
   }))
 
-  const animate = () => {
+  // 帧率限制 - 使用全局设置
+  let lastFrameTime = 0
+  const getFrameInterval = () => {
+    const globalFPS = settingsStore.visualizationFrameRate || 60
+    return 1000 / globalFPS
+  }
+
+  const animate = (currentTime: number) => {
+    const frameInterval = getFrameInterval()
+    if (currentTime - lastFrameTime < frameInterval) {
+      dataRainAnimationId = requestAnimationFrame(animate)
+      return
+    }
+    lastFrameTime = currentTime
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     dataRainDrops.forEach(drop => {
@@ -382,7 +412,7 @@ const initDataRain = () => {
     dataRainAnimationId = requestAnimationFrame(animate)
   }
 
-  animate()
+  dataRainAnimationId = requestAnimationFrame(animate)
 }
 
 onMounted(() => {

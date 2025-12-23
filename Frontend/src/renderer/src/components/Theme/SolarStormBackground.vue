@@ -86,6 +86,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 // Props
@@ -96,6 +97,9 @@ defineProps<{
 const containerRef = ref<HTMLElement | null>(null)
 const granulationCanvas = ref<HTMLCanvasElement | null>(null)
 const solarWindCanvas = ref<HTMLCanvasElement | null>(null)
+
+// 获取全局帧率设置
+const settingsStore = useSettingsStore()
 
 // 鼠标位置用于视差效果
 const mouseX = ref(0.5)
@@ -225,12 +229,17 @@ const initGranulation = () => {
     resize()
     window.addEventListener('resize', resize)
 
-    // 帧率限制
+    // 帧率限制 - 使用全局设置，但为米粒组织限制更低以节省性能
     let lastFrameTime = 0
-    const targetFPS = 20
-    const frameInterval = 1000 / targetFPS
+    const getFrameInterval = () => {
+        const globalFPS = settingsStore.visualizationFrameRate || 60
+        // 米粒组织使用全局帧率的 1/3，最低 15fps，最高 30fps
+        const effectiveFPS = Math.max(15, Math.min(30, Math.floor(globalFPS / 2)))
+        return 1000 / effectiveFPS
+    }
 
     const animate = (currentTime: number) => {
+        const frameInterval = getFrameInterval()
         if (currentTime - lastFrameTime < frameInterval) {
             granulationAnimationId = requestAnimationFrame(animate)
             return
@@ -355,12 +364,15 @@ const initSolarWind = () => {
     const particleCount = 120
     solarWindParticles = Array.from({ length: particleCount }, createParticle)
 
-    // 帧率限制
+    // 帧率限制 - 使用全局设置
     let lastFrameTime = 0
-    const targetFPS = 30
-    const frameInterval = 1000 / targetFPS
+    const getFrameInterval = () => {
+        const globalFPS = settingsStore.visualizationFrameRate || 60
+        return 1000 / globalFPS
+    }
 
     const animate = (currentTime: number) => {
+        const frameInterval = getFrameInterval()
         if (currentTime - lastFrameTime < frameInterval) {
             solarWindAnimationId = requestAnimationFrame(animate)
             return

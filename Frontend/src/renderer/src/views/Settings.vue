@@ -65,9 +65,10 @@
                   visualizationFrameRate }}
                   FPS)</span>
               </div>
-              <div class="setting-control" style="width: 200px">
-                <el-slider v-model="visualizationFrameRate" :min="30" :max="144" :step="10"
-                  :marks="{ 30: '30', 60: '60', 144: '144' }" @change="handleVisualizerFrameRateChange" />
+              <div class="setting-control" style="width: 280px">
+                <el-slider v-model="visualizationFrameRate" :min="30" :max="240" :step="1"
+                  :marks="{ 30: '30', 60: '60', 120: '120', 165: '165', 240: '240' }"
+                  @change="handleVisualizerFrameRateChange" />
               </div>
             </div>
           </div>

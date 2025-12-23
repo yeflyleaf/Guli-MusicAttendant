@@ -88,7 +88,7 @@ export default {
       styleMirror: 'Mirror Bars',
       styleMountain: 'Mountain Curve',
       visualizerFrameRate: 'Frame Rate',
-      visualizerFrameRateDesc: 'Adjust visualization animation frame rate'
+      visualizerFrameRateDesc: 'Adjust dynamic background frame rate. Lower values reduce CPU/GPU load'
     },
     // Behavior
     behavior: {
