@@ -313,7 +313,7 @@
           <div class="about-info">
             <div class="app-info">
               <span class="app-name gradient-text">{{ $t('settings.about.appName') }}</span>
-              <span class="app-version">{{ $t('settings.about.version') }} 1.6.1</span>
+              <span class="app-version">{{ $t('settings.about.version') }} 1.6.3</span>
             </div>
             <p class="app-desc">
               {{ $t('settings.about.description') }}

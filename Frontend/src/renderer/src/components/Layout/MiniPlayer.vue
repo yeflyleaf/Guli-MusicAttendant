@@ -56,9 +56,9 @@
           @change="onSliderChange" />
       </div>
 
-      <!-- 控制按钮 - 三栏布局：左侧队列、中间播放控制、右侧音量 -->
+      <!-- 控制按钮 - 三栏布局：左侧队列+模式、中间播放控制、右侧音量 -->
       <div class="controls">
-        <!-- 左侧：播放队列 -->
+        <!-- 左侧：播放队列 + 播放模式 -->
         <div class="controls-left">
           <el-popover v-model:visible="queuePopoverVisible" trigger="click" placement="top" :width="280"
             popper-style="padding: 0;">
@@ -86,6 +86,13 @@
               </div>
             </div>
           </el-popover>
+
+          <!-- 播放模式 -->
+          <el-tooltip :content="playModeText" placement="top">
+            <el-icon class="control-btn small" @click="playerStore.togglePlayMode">
+              <component :is="playModeIcon" />
+            </el-icon>
+          </el-tooltip>
         </div>
 
         <!-- 中间：播放控制按钮 -->
@@ -142,6 +149,10 @@ import {
   Headset,
   List,
   Minus,
+  Refresh,
+  RefreshRight,
+  Sort,
+  Switch,
   VideoPause,
   VideoPlay
 } from '@element-plus/icons-vue'
@@ -228,6 +239,28 @@ const volumeIcon = computed(() => {
   if (vol < 30) return VolumeLow
   if (vol < 70) return VolumeMedium
   return VolumeHigh
+})
+
+// 播放模式图标
+const playModeIcon = computed(() => {
+  switch (playerStore.playMode) {
+    case 'sequence': return Sort
+    case 'loop': return Refresh
+    case 'single': return RefreshRight
+    case 'random': return Switch
+    default: return Sort
+  }
+})
+
+// 播放模式文本
+const playModeText = computed(() => {
+  switch (playerStore.playMode) {
+    case 'sequence': return '顺序播放'
+    case 'loop': return '列表循环'
+    case 'single': return '单曲循环'
+    case 'random': return '随机播放'
+    default: return '顺序播放'
+  }
 })
 
 // 处理音量滚轮
@@ -436,20 +469,22 @@ const handleClose = () => {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
+  justify-content: center;
+  padding: 0 12px;
 }
 
-// 左侧区域（播放队列）
+// 左侧区域（播放队列 + 播放模式）
 .controls-left {
-  width: 32px;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  gap: 16px; // 队列按钮和播放模式按钮之间的间距
 }
 
-// 中间区域（播放控制）
+// 中间区域（播放控制）- 不伸缩，保持固定居中
 .controls-center {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,7 +493,7 @@ const handleClose = () => {
 
 // 右侧区域（音量控制）
 .controls-right {
-  width: 32px;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
