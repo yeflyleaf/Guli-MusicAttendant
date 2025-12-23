@@ -76,6 +76,9 @@ export interface ElectronAPI {
     show: () => void
     isMaximized: () => Promise<boolean>
     setTitle: (title: string) => void
+    switchToMiniPlayer: () => void
+    switchToFullPlayer: () => void
+    isMiniPlayer: () => Promise<boolean>
   }
 
   // 设置相关
