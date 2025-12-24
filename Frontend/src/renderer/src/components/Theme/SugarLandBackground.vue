@@ -740,6 +740,8 @@ onUnmounted(() => {
   height: 65px;
   border-radius: 50%;
   animation: miniDonutFloat 7s ease-in-out infinite;
+  filter: blur(2px); // 虚化效果
+  opacity: 0.6; // 降低透明度
 
   // 甜甜圈洞
   &::before {
