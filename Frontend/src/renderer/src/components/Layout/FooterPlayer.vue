@@ -490,6 +490,26 @@ watch([() => playerStore.isPlaying, () => settingsStore.visualizerEnabled], ([pl
   }
 })
 
+// 监听迷你播放器模式切换，从迷你模式切换回完整模式时重新初始化可视化器
+const handleMiniPlayerModeChange = (isMini: boolean) => {
+  if (!isMini && playerStore.isPlaying && settingsStore.visualizerEnabled) {
+    // 从迷你模式切换回完整模式，需要等待 DOM 更新后重新初始化可视化
+    nextTick(() => {
+      // 额外延迟确保 v-show 的 display 已经恢复
+      setTimeout(() => {
+        if (canvasRef.value) {
+          canvasRef.value.width = canvasRef.value.offsetWidth
+          canvasRef.value.height = canvasRef.value.offsetHeight
+          drawVisualizer()
+        }
+      }, 100)
+    })
+  }
+}
+
+// 注册迷你播放器模式变化监听
+window.electron?.on('window:miniPlayerMode', handleMiniPlayerModeChange as (...args: unknown[]) => void)
+
 // 窗口大小改变时重置画布尺寸
 window.addEventListener('resize', () => {
   if (canvasRef.value) {
