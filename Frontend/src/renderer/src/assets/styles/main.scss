@@ -365,6 +365,56 @@ html.sugarland {
   --scrollbar-thumb-hover: rgba(255, 107, 157, 0.45);
 }
 
+// 废土余晖主题 - 后启示录工业废墟风格
+html.wasteland {
+  // 主色调 - 夕阳橙与氧化铜绿
+  --primary-color: #ff7043; // 夕阳橙
+  --primary-color-rgb: 255, 112, 67;
+  --primary-light: #ff8a65;
+  --primary-dark: #e64a19;
+  --accent-color: #4db6ac; // 氧化铜绿
+
+  // 背景色 - 透明以显示动态背景
+  --bg-primary: transparent;
+  --bg-primary-rgb: 26, 15, 15;
+  --bg-secondary: rgba(42, 26, 26, 0.85);
+  --bg-secondary-rgb: 42, 26, 26;
+  --bg-tertiary: rgba(62, 39, 35, 0.9);
+  --bg-card: rgba(50, 30, 25, 0.7);
+  --bg-hover: rgba(255, 112, 67, 0.1);
+
+  // 文字颜色 - 做旧暖白色
+  --text-primary: #f5e6d3; // 做旧乳白色
+  --text-secondary: #c5a059; // 暗金色
+  --text-muted: #8b7355; // 锈褐色
+
+  // 边框颜色 - 铁锈色边缘
+  --border-color: rgba(197, 160, 89, 0.18);
+  --border-color-light: rgba(197, 160, 89, 0.1);
+  --border-color-hover: rgba(255, 112, 67, 0.3);
+  --border-color-active: rgba(255, 112, 67, 0.5);
+
+  // 渐变 - 夕阳铁锈渐变
+  --gradient-primary: linear-gradient(135deg, #ff7043 0%, #c5a059 50%, #4db6ac 100%);
+  --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(26, 15, 15, 0.5) 100%);
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(255, 112, 67, 0.06) 0%,
+    rgba(141, 64, 4, 0.06) 100%
+  );
+
+  // 阴影 - 暖色发光效果
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 20px rgba(255, 112, 67, 0.25);
+  --shadow-glow-strong: 0 0 40px rgba(255, 112, 67, 0.4);
+
+  // 滚动条 - 铁锈色风格
+  --scrollbar-thumb: rgba(197, 160, 89, 0.25);
+  --scrollbar-thumb-hover: rgba(197, 160, 89, 0.4);
+}
+
 // ==================== 重置样式 ====================
 *,
 *::before,

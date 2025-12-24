@@ -65,6 +65,7 @@ export default {
       themePapercut: 'Papercut Theatre',
       themeQuantum: 'Void Annihilation',
       themeSugarland: 'Sugar Land',
+      themeWasteland: 'Wasteland Afterglow',
       language: 'Language',
       languageDesc: 'Choose the application language',
       fontSize: 'Font Size',

@@ -14,6 +14,9 @@
   <!-- 糖果乐园动态背景 -->
   <SugarLandBackground v-if="showSugarLandBackground" />
 
+  <!-- 废土余晖动态背景 -->
+  <WastelandAfterglowBackground v-if="showWastelandBackground" />
+
   <!-- 启动屏幕 - 等待设置加载完成后再渲染，避免使用默认主题值导致闪烁 -->
   <!-- 窗口在设置加载完成后才显示，确保用户看到的第一帧就是正确的过场动画 -->
   <!-- 星际穿梭主题 -->
@@ -92,6 +95,8 @@
         <QuantumFoamBackground v-if="settingsStore.theme === 'quantum'" :embedded="true" />
         <!-- 歌词页面的糖果乐园背景 -->
         <SugarLandBackground v-if="settingsStore.theme === 'sugarland'" :embedded="true" />
+        <!-- 歌词页面的废土余晖背景 -->
+        <WastelandAfterglowBackground v-if="settingsStore.theme === 'wasteland'" :embedded="true" />
 
         <Lyrics />
       </div>
@@ -121,6 +126,7 @@ import InterstellarCruiseBackground from '@/components/Theme/InterstellarCruiseB
 import PapercutTheatreBackground from '@/components/Theme/PapercutTheatreBackground.vue'
 import QuantumFoamBackground from '@/components/Theme/QuantumFoamBackground.vue'
 import SugarLandBackground from '@/components/Theme/SugarLandBackground.vue'
+import WastelandAfterglowBackground from '@/components/Theme/WastelandAfterglowBackground.vue'
 import { useAudio } from '@/hooks/useAudio'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
@@ -173,6 +179,11 @@ const showQuantumBackground = computed(() => {
 // 糖果乐园动态背景显示控制
 const showSugarLandBackground = computed(() => {
   return settingsStore.isLoaded && settingsStore.theme === 'sugarland' && !showSplash.value
+})
+
+// 废土余晖动态背景显示控制
+const showWastelandBackground = computed(() => {
+  return settingsStore.isLoaded && settingsStore.theme === 'wasteland' && !showSplash.value
 })
 
 const handleSplashFinish = () => {
@@ -501,6 +512,11 @@ window.addEventListener('beforeunload', () => {
 // 糖果乐园主题下歌词页面使用草莓奶昔粉背景色（背景组件会覆盖）
 :global(html.sugarland) .lyrics-overlay {
   background: #fff0f5;
+}
+
+// 废土余晖主题下歌词页面使用油烟黑背景色（背景组件会覆盖）
+:global(html.wasteland) .lyrics-overlay {
+  background: #1a0f0f;
 }
 
 /* 动画效果 */

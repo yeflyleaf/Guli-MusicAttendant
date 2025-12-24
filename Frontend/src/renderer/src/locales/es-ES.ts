@@ -60,6 +60,7 @@ export default {
       themePapercut: 'Teatro de Papel Recortado',
       themeQuantum: 'Aniquilación del Vacío',
       themeSugarland: 'Tierra de Caramelos',
+      themeWasteland: 'Resplandor del Páramo',
       language: 'Idioma',
       languageDesc: 'Elegir el idioma',
       fontSize: 'Tamaño de fuente',

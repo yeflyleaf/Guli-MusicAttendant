@@ -60,6 +60,7 @@ export default {
       themePapercut: 'Бумажный Театр',
       themeQuantum: 'Аннигиляция Пустоты',
       themeSugarland: 'Сахарная Страна',
+      themeWasteland: 'Свечение Пустоши',
       language: 'Язык',
       languageDesc: 'Выберите язык приложения',
       fontSize: 'Размер шрифта',

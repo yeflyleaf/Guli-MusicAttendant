@@ -66,6 +66,7 @@ export default {
       themePapercut: 'Théâtre de Papier Découpé',
       themeQuantum: 'Annihilation du Vide',
       themeSugarland: 'Pays des Bonbons',
+      themeWasteland: 'Lueur du Désert',
       language: 'Langue',
       languageDesc: 'Choisir la langue de l\'application',
       fontSize: 'Taille de police',

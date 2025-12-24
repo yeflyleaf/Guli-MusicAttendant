@@ -134,12 +134,12 @@ export const useSettingsStore = defineStore('settings', {
      * 应用主题
      */
     applyTheme() {
-      document.documentElement.classList.remove('light', 'dark', 'interstellar', 'gothic', 'papercut', 'quantum', 'sugarland')
+      document.documentElement.classList.remove('light', 'dark', 'interstellar', 'gothic', 'papercut', 'quantum', 'sugarland', 'wasteland')
       document.documentElement.classList.add(this.theme)
 
-      // Element Plus 暗色模式（interstellar、gothic、papercut 和 quantum 使用暗色模式）
+      // Element Plus 暗色模式（interstellar、gothic、papercut、quantum 和 wasteland 使用暗色模式）
       // sugarland 使用浅色模式
-      if (this.theme === 'dark' || this.theme === 'interstellar' || this.theme === 'gothic' || this.theme === 'papercut' || this.theme === 'quantum') {
+      if (this.theme === 'dark' || this.theme === 'interstellar' || this.theme === 'gothic' || this.theme === 'papercut' || this.theme === 'quantum' || this.theme === 'wasteland') {
         document.documentElement.classList.add('dark')
       }
     },

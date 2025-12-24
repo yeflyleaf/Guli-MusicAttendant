@@ -66,6 +66,7 @@ export default {
       themePapercut: 'مسرح القصاصات الورقية',
       themeQuantum: 'إفناء الفراغ',
       themeSugarland: 'أرض الحلوى',
+      themeWasteland: 'وهج الأراضي القاحلة',
       language: 'اللغة',
       languageDesc: 'اختر لغة التطبيق',
       fontSize: 'حجم الخط',
