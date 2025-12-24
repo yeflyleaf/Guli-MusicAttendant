@@ -23,6 +23,17 @@
     <!-- 顶层：切伦科夫辐射光晕 -->
     <div class="cherenkov-glow cherenkov-1"></div>
     <div class="cherenkov-glow cherenkov-2"></div>
+
+    <!-- 装饰层：虚空黑洞 -->
+    <div class="void-blackhole">
+      <div class="blackhole-core"></div>
+      <div class="blackhole-singularity"></div>
+      <div class="accretion-disk"></div>
+      <div class="accretion-disk-inner"></div>
+      <div class="event-horizon"></div>
+      <div class="gravitational-lensing"></div>
+      <div class="hawking-radiation"></div>
+    </div>
   </div>
 </template>
 
@@ -522,6 +533,255 @@ onUnmounted(() => {
   50% {
     opacity: 0.2;
     transform: scale(1.15);
+  }
+}
+
+// 虚空黑洞 - 左上区域
+.void-blackhole {
+  position: absolute;
+  top: -10%;
+  left: -8%;
+  width: 560px;
+  height: 560px;
+  animation: blackholeRotate 120s linear infinite;
+
+  // 黑洞核心 - 绝对黑暗
+  .blackhole-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at center,
+        #000000 0%,
+        #000000 60%,
+        rgba(0, 0, 0, 0.95) 80%,
+        rgba(0, 0, 0, 0.8) 100%);
+    border-radius: 50%;
+    box-shadow:
+      0 0 120px 60px rgba(0, 0, 0, 0.9),
+      0 0 200px 120px rgba(0, 0, 0, 0.6),
+      0 0 280px 180px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+
+  // 奇点 - 极小的白色亮点
+  .blackhole-singularity {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 16px 4px rgba(255, 255, 255, 0.8);
+    z-index: 11;
+    animation: singularityPulse 3s ease-in-out infinite;
+  }
+
+  // 吸积盘 - 外层
+  .accretion-disk {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 640px;
+    height: 640px;
+    transform: translate(-50%, -50%) rotateX(75deg);
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+        rgba(0, 240, 255, 0.4) 0deg,
+        rgba(112, 0, 255, 0.3) 60deg,
+        rgba(0, 180, 255, 0.35) 120deg,
+        rgba(180, 0, 255, 0.25) 180deg,
+        rgba(0, 240, 255, 0.4) 240deg,
+        rgba(112, 0, 255, 0.3) 300deg,
+        rgba(0, 240, 255, 0.4) 360deg);
+    mask-image: radial-gradient(circle at center,
+        transparent 25%,
+        black 35%,
+        black 90%,
+        transparent 100%);
+    -webkit-mask-image: radial-gradient(circle at center,
+        transparent 25%,
+        black 35%,
+        black 90%,
+        transparent 100%);
+    filter: blur(4px);
+    animation: accretionSpin 40s linear infinite;
+    z-index: 5;
+  }
+
+  // 吸积盘 - 内层
+  .accretion-disk-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    height: 400px;
+    transform: translate(-50%, -50%) rotateX(75deg);
+    border-radius: 50%;
+    background: conic-gradient(from 180deg,
+        rgba(0, 240, 255, 0.6) 0deg,
+        rgba(255, 100, 200, 0.4) 90deg,
+        rgba(0, 180, 255, 0.5) 180deg,
+        rgba(200, 50, 255, 0.35) 270deg,
+        rgba(0, 240, 255, 0.6) 360deg);
+    mask-image: radial-gradient(circle at center,
+        transparent 40%,
+        black 50%,
+        black 85%,
+        transparent 100%);
+    -webkit-mask-image: radial-gradient(circle at center,
+        transparent 40%,
+        black 50%,
+        black 85%,
+        transparent 100%);
+    filter: blur(3px);
+    animation: accretionSpin 25s linear infinite reverse;
+    z-index: 6;
+  }
+
+  // 事件视界 - 边缘发光
+  .event-horizon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 220px;
+    height: 220px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: transparent;
+    border: 3px solid rgba(0, 240, 255, 0.3);
+    box-shadow:
+      0 0 40px 10px rgba(0, 240, 255, 0.2),
+      inset 0 0 60px 20px rgba(0, 0, 0, 0.8);
+    z-index: 9;
+    animation: eventHorizonPulse 8s ease-in-out infinite;
+  }
+
+  // 引力透镜效应
+  .gravitational-lensing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 560px;
+    height: 560px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+        transparent 30%,
+        rgba(0, 240, 255, 0.03) 50%,
+        rgba(112, 0, 255, 0.02) 70%,
+        transparent 85%);
+    filter: blur(12px);
+    z-index: 4;
+    animation: lensingWobble 20s ease-in-out infinite;
+  }
+
+  // 霍金辐射 - 黑洞边缘的微小粒子散射
+  .hawking-radiation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+        transparent 30%,
+        rgba(0, 240, 255, 0.08) 45%,
+        rgba(180, 100, 255, 0.05) 60%,
+        transparent 75%);
+    z-index: 8;
+    animation: hawkingFlicker 4s ease-in-out infinite;
+  }
+}
+
+@keyframes blackholeRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes singularityPulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+}
+
+@keyframes accretionSpin {
+  from {
+    transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg);
+  }
+}
+
+@keyframes eventHorizonPulse {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px 5px rgba(0, 240, 255, 0.2),
+      inset 0 0 30px 10px rgba(0, 0, 0, 0.8);
+  }
+
+  50% {
+    box-shadow:
+      0 0 30px 10px rgba(0, 240, 255, 0.35),
+      inset 0 0 40px 15px rgba(0, 0, 0, 0.9);
+  }
+}
+
+@keyframes lensingWobble {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 0.9;
+  }
+}
+
+@keyframes hawkingFlicker {
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  25% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  75% {
+    opacity: 0.8;
   }
 }
 </style>
