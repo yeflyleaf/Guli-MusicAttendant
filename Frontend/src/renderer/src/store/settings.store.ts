@@ -1,7 +1,7 @@
 /**
  * 设置状态管理
  */
-import { setLocale } from '@/locales'
+import { setLocale, type LocaleCode } from '@/locales'
 import type { PlayMode, Settings, Theme } from '@/types/settings'
 import { defineStore } from 'pinia'
 
@@ -155,7 +155,7 @@ export const useSettingsStore = defineStore('settings', {
      * 应用语言设置
      */
     applyLanguage() {
-      setLocale(this.language as any)
+      setLocale(this.language as LocaleCode)
     },
 
     /**

@@ -348,20 +348,22 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'SettingsView' })
+
 import { showConfirm } from '@/hooks/useConfirm'
 import { useIpc } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
 import { useSettingsStore } from '@/store/settings.store'
 import type { SplashTheme, Theme } from '@/types/settings'
 import {
-    Close,
-    Folder,
-    FolderOpened,
-    InfoFilled,
-    Monitor,
-    Operation,
-    Plus,
-    Refresh
+  Close,
+  Folder,
+  FolderOpened,
+  InfoFilled,
+  Monitor,
+  Operation,
+  Plus,
+  Refresh
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
@@ -535,7 +537,7 @@ const handleScanAll = async () => {
     const result = await resetAndScanAllFolders()
     ElMessage.success(`扫描完成：新增 ${result.added} 首歌曲`)
     await libraryStore.refreshMusic()
-  } catch (error) {
+  } catch {
     ElMessage.error('扫描失败')
   } finally {
     isScanning.value = false
