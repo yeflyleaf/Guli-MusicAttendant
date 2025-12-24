@@ -57,6 +57,18 @@
         </div>
       </div>
 
+      <!-- 相互啮合的旋转中型齿轮 180px (位于烟囱之间) -->
+      <div class="medium-gear gear-mesh-left">
+        <div class="gear-body">
+          <div class="gear-center"></div>
+        </div>
+      </div>
+      <div class="medium-gear gear-mesh-right">
+        <div class="gear-body">
+          <div class="gear-center"></div>
+        </div>
+      </div>
+
       <!-- 左侧旋转工业排风扇 140px -->
       <div class="industrial-fan fan-left">
         <div class="fan-frame">
@@ -689,6 +701,27 @@ $sand-yellow: #c5a059;
   width: 200px;
   height: 200px;
 
+  // 相互啮合的旋转齿轮 (位于烟囱之间) - 请在此处手动调整位置
+  &.gear-mesh-left {
+    left: 32%; // 左侧齿轮水平位置
+    bottom: 15%; // 左侧齿轮垂直位置
+    width: 180px;
+    height: 180px;
+    animation: gearRotate 20s linear infinite;
+    z-index: 0;
+    opacity: 0.8;
+  }
+
+  &.gear-mesh-right {
+    left: 45%; // 右侧齿轮水平位置 (建议与左侧相差约 8-9% 以啮合)
+    bottom: 26%; // 右侧齿轮垂直位置
+    width: 180px;
+    height: 180px;
+    animation: gearRotate 20s linear infinite reverse; // 反向旋转
+    z-index: 0;
+    opacity: 0.8;
+  }
+
   // 右上方齿轮 200px
   &.gear-right-top {
     right: 8%;
@@ -1194,19 +1227,6 @@ $sand-yellow: #c5a059;
 
   to {
     transform: rotate(360deg);
-  }
-}
-
-// 排风扇微光脉冲
-@keyframes fanGlow {
-
-  0%,
-  100% {
-    opacity: 0.6;
-  }
-
-  50% {
-    opacity: 1;
   }
 }
 
