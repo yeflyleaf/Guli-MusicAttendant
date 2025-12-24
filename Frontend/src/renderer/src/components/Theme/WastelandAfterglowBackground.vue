@@ -96,12 +96,7 @@
         <div class="arm-joint"></div>
       </div>
 
-      <!-- 右侧半掩埋管道 -->
-      <div class="buried-pipes">
-        <div class="pipe pipe-1"></div>
-        <div class="pipe pipe-2"></div>
-        <div class="pipe pipe-3"></div>
-      </div>
+
 
       <!-- 底部建筑群废墟 -->
       <!-- 左侧工厂建筑 280px -->
@@ -864,51 +859,7 @@ $sand-yellow: #c5a059;
   }
 }
 
-// 半掩埋管道
-.buried-pipes {
-  position: absolute;
-  right: 5%;
-  bottom: 20%;
-  width: 200px;
-  height: 120px;
-  opacity: 0.7;
 
-  .pipe {
-    position: absolute;
-    border-radius: 15px;
-    background: linear-gradient(180deg,
-        rgba(62, 39, 35, 0.7) 0%,
-        rgba(42, 26, 26, 0.8) 50%,
-        rgba(30, 18, 15, 0.9) 100%);
-    box-shadow:
-      inset 0 -5px 15px rgba(0, 0, 0, 0.5),
-      0 5px 20px rgba(0, 0, 0, 0.6);
-
-    &.pipe-1 {
-      width: 150px;
-      height: 30px;
-      top: 0;
-      left: 20px;
-      transform: rotate(-5deg);
-    }
-
-    &.pipe-2 {
-      width: 120px;
-      height: 25px;
-      top: 40px;
-      left: 0;
-      transform: rotate(-8deg);
-    }
-
-    &.pipe-3 {
-      width: 100px;
-      height: 22px;
-      top: 75px;
-      left: 40px;
-      transform: rotate(-3deg);
-    }
-  }
-}
 
 // 废墟轮廓 - 丰富的底部建筑群
 .ruin-silhouette {
