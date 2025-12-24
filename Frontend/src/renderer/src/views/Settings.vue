@@ -26,12 +26,12 @@
               <el-select v-model="theme" style="width: 140px" @change="handleThemeChange">
                 <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
                 <el-option :label="$t('settings.appearance.themeLight')" value="light" />
-                <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
+                <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
+                <el-option :label="$t('settings.appearance.themeWasteland')" value="wasteland" />
                 <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                 <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
-                <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
                 <el-option :label="$t('settings.appearance.themeSugarland')" value="sugarland" />
-                <el-option :label="$t('settings.appearance.themeWasteland')" value="wasteland" />
+                <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
               </el-select>
             </div>
 
@@ -44,22 +44,22 @@
                 <el-select v-model="quickSwitchThemes[0]" style="width: 120px" @change="handleQuickSwitchThemesChange">
                   <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
                   <el-option :label="$t('settings.appearance.themeLight')" value="light" />
-                  <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
+                  <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
+                  <el-option :label="$t('settings.appearance.themeWasteland')" value="wasteland" />
                   <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                   <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
-                  <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
                   <el-option :label="$t('settings.appearance.themeSugarland')" value="sugarland" />
-                  <el-option :label="$t('settings.appearance.themeWasteland')" value="wasteland" />
+                  <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
                 </el-select>
                 <el-select v-model="quickSwitchThemes[1]" style="width: 120px" @change="handleQuickSwitchThemesChange">
                   <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
                   <el-option :label="$t('settings.appearance.themeLight')" value="light" />
-                  <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
+                  <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
+                  <el-option :label="$t('settings.appearance.themeWasteland')" value="wasteland" />
                   <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                   <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
-                  <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
                   <el-option :label="$t('settings.appearance.themeSugarland')" value="sugarland" />
-                  <el-option :label="$t('settings.appearance.themeWasteland')" value="wasteland" />
+                  <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
                 </el-select>
               </div>
             </div>
