@@ -64,7 +64,7 @@ export default {
       themeInterstellar: 'رحلة بين النجوم',
       themeGothic: 'ظلال الشموع',
       themePapercut: 'مسرح القصاصات الورقية',
-      themeQuantum: 'رغوة الكم',
+      themeQuantum: 'إفناء الفراغ',
       language: 'اللغة',
       languageDesc: 'اختر لغة التطبيق',
       fontSize: 'حجم الخط',

@@ -58,7 +58,7 @@ export default {
       themeInterstellar: 'Crucero Interestelar',
       themeGothic: 'Sombras de Vela',
       themePapercut: 'Teatro de Papel Recortado',
-      themeQuantum: 'Espuma Cuántica',
+      themeQuantum: 'Aniquilación del Vacío',
       language: 'Idioma',
       languageDesc: 'Elegir el idioma',
       fontSize: 'Tamaño de fuente',

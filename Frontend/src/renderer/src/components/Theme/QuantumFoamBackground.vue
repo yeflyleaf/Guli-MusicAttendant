@@ -24,8 +24,30 @@
     <div class="cherenkov-glow cherenkov-1"></div>
     <div class="cherenkov-glow cherenkov-2"></div>
 
-    <!-- 装饰层：虚空黑洞 -->
+    <!-- 装饰层：虚空黑洞 - 左上 -->
     <div class="void-blackhole">
+      <div class="blackhole-core"></div>
+      <div class="blackhole-singularity"></div>
+      <div class="accretion-disk"></div>
+      <div class="accretion-disk-inner"></div>
+      <div class="event-horizon"></div>
+      <div class="gravitational-lensing"></div>
+      <div class="hawking-radiation"></div>
+    </div>
+
+    <!-- 装饰层：虚空黑洞 - 右下（小型） -->
+    <div class="void-blackhole void-blackhole-small">
+      <div class="blackhole-core"></div>
+      <div class="blackhole-singularity"></div>
+      <div class="accretion-disk"></div>
+      <div class="accretion-disk-inner"></div>
+      <div class="event-horizon"></div>
+      <div class="gravitational-lensing"></div>
+      <div class="hawking-radiation"></div>
+    </div>
+
+    <!-- 装饰层：虚空黑洞 - 右上（小型） -->
+    <div class="void-blackhole void-blackhole-small void-blackhole-top-right">
       <div class="blackhole-core"></div>
       <div class="blackhole-singularity"></div>
       <div class="accretion-disk"></div>
@@ -266,7 +288,7 @@ const initVirtualParticles = () => {
 
   // 泊松分布随机生成 - 模拟虚粒子对的产生与湮灭
   const spawnParticle = () => {
-    if (Math.random() < 0.58) { // 每帧约58%概率生成（高密度）
+    if (Math.random() < 0.78) { // 每帧约58%概率生成（高密度）
       virtualParticles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -697,6 +719,72 @@ onUnmounted(() => {
     z-index: 8;
     animation: hawkingFlicker 4s ease-in-out infinite;
   }
+}
+
+// 右下方小型黑洞 - 尺寸为左上方的一半
+.void-blackhole-small {
+  top: auto;
+  bottom: 1%;
+  left: auto;
+  right: 1%;
+  width: 280px;
+  height: 280px;
+  animation: blackholeRotate 90s linear infinite reverse;
+
+  .blackhole-core {
+    width: 100px;
+    height: 100px;
+    box-shadow:
+      0 0 60px 30px rgba(0, 0, 0, 0.9),
+      0 0 100px 60px rgba(0, 0, 0, 0.6),
+      0 0 140px 90px rgba(0, 0, 0, 0.3);
+  }
+
+  .blackhole-singularity {
+    width: 4px;
+    height: 4px;
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+  }
+
+  .accretion-disk {
+    width: 320px;
+    height: 320px;
+    filter: blur(2px);
+  }
+
+  .accretion-disk-inner {
+    width: 200px;
+    height: 200px;
+    filter: blur(2px);
+  }
+
+  .event-horizon {
+    width: 110px;
+    height: 110px;
+    border-width: 2px;
+    box-shadow:
+      0 0 20px 5px rgba(0, 240, 255, 0.2),
+      inset 0 0 30px 10px rgba(0, 0, 0, 0.8);
+  }
+
+  .gravitational-lensing {
+    width: 280px;
+    height: 280px;
+    filter: blur(6px);
+  }
+
+  .hawking-radiation {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+// 右上方小型黑洞 - 位置覆盖
+.void-blackhole-top-right {
+  bottom: auto;
+  top: -1%; // ← 调整这个值控制垂直位置
+  right: 8%; // ← 调整这个值控制水平位置
+  animation: blackholeRotate 75s linear infinite; // 正向旋转，与右下方区分
 }
 
 @keyframes blackholeRotate {
