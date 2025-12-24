@@ -12,7 +12,6 @@
 [![Vue](https://img.shields.io/badge/Vue-3.5.0-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.0-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.6.3-green.svg)](https://github.com/yeflyleaf/Guli_MusicAttendant)
 
 [功能特性](#功能特性) • [快速开始](#快速开始) • [技术架构](#技术架构) • [项目结构](#项目结构) • [使用说明](#使用说明) • [贡献指南](#贡献指南)
 
