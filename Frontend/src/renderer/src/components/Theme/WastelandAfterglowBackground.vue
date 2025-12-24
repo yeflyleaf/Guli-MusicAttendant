@@ -588,7 +588,8 @@ $sand-yellow: #c5a059;
   &.gear-left-main {
     left: -80px;
     bottom: -60px;
-    transform: rotate(-15deg);
+    // 初始角度 -15deg，动画叠加
+    animation: gearRotate 80s linear infinite;
   }
 
   // 左侧副齿轮 280px（与主齿轮啮合）
@@ -597,8 +598,9 @@ $sand-yellow: #c5a059;
     bottom: 140px;
     width: 280px;
     height: 280px;
-    transform: rotate(8deg);
     opacity: 0.85;
+    // 反向旋转，模拟啮合
+    animation: gearRotate 80s linear infinite reverse;
   }
 
   // 右下巨型齿轮 450px
@@ -607,7 +609,7 @@ $sand-yellow: #c5a059;
     bottom: -100px;
     width: 450px;
     height: 450px;
-    transform: rotate(20deg);
+    animation: gearRotate 70s linear infinite;
   }
 
   .gear-body {
@@ -733,7 +735,7 @@ $sand-yellow: #c5a059;
   &.gear-left-top {
     left: -1%;
     top: -5%;
-    transform: rotate(45deg);
+    animation: gearRotate 40s linear infinite;
     opacity: 0.8;
   }
 
@@ -741,7 +743,7 @@ $sand-yellow: #c5a059;
   &.gear-right-top {
     right: 8%;
     top: 12%;
-    transform: rotate(-20deg);
+    animation: gearRotate 45s linear infinite reverse;
     opacity: 0.75;
   }
 
@@ -751,7 +753,7 @@ $sand-yellow: #c5a059;
     top: -40px;
     width: 160px;
     height: 160px;
-    transform: rotate(15deg);
+    animation: gearRotate 50s linear infinite;
     opacity: 0.6;
   }
 
@@ -807,7 +809,7 @@ $sand-yellow: #c5a059;
   &.gear-small-1 {
     right: 18%;
     bottom: 8%;
-    transform: rotate(25deg);
+    animation: gearRotate 20s linear infinite;
     opacity: 0.75;
   }
 
@@ -816,7 +818,7 @@ $sand-yellow: #c5a059;
     top: 22%;
     width: 70px;
     height: 70px;
-    transform: rotate(-10deg);
+    animation: gearRotate 25s linear infinite reverse;
     opacity: 0.55;
   }
 
@@ -825,7 +827,7 @@ $sand-yellow: #c5a059;
     top: 8%;
     width: 55px;
     height: 55px;
-    transform: rotate(35deg);
+    animation: gearRotate 18s linear infinite;
     opacity: 0.45;
   }
 
@@ -834,7 +836,7 @@ $sand-yellow: #c5a059;
     top: 45%;
     width: 65px;
     height: 65px;
-    transform: rotate(-25deg);
+    animation: gearRotate 22s linear infinite reverse;
     opacity: 0.5;
   }
 
@@ -843,7 +845,7 @@ $sand-yellow: #c5a059;
     top: 15%;
     width: 40px;
     height: 40px;
-    transform: rotate(45deg);
+    animation: gearRotate 20s linear infinite;
     opacity: 0.4;
   }
 
@@ -852,7 +854,7 @@ $sand-yellow: #c5a059;
     bottom: 35%;
     width: 60px;
     height: 60px;
-    transform: rotate(-15deg);
+    animation: gearRotate 24s linear infinite reverse;
     opacity: 0.5;
   }
 
@@ -861,7 +863,7 @@ $sand-yellow: #c5a059;
     top: 60%;
     width: 45px;
     height: 45px;
-    transform: rotate(10deg);
+    animation: gearRotate 19s linear infinite;
     opacity: 0.45;
   }
 
@@ -870,7 +872,7 @@ $sand-yellow: #c5a059;
     top: 25%;
     width: 35px;
     height: 35px;
-    transform: rotate(-30deg);
+    animation: gearRotate 21s linear infinite reverse;
     opacity: 0.35;
   }
 
@@ -1423,6 +1425,17 @@ $sand-yellow: #c5a059;
         animation-delay: -4.8s;
       }
     }
+  }
+}
+
+// 齿轮旋转动画
+@keyframes gearRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 
