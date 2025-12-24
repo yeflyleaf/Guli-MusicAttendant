@@ -17,9 +17,6 @@
     <!-- 顶层：虚粒子闪烁 Canvas -->
     <canvas ref="virtualParticleCanvas" class="virtual-particle-canvas"></canvas>
 
-    <!-- 顶层：弦振动 Canvas -->
-    <canvas ref="stringCanvas" class="string-canvas"></canvas>
-
     <!-- 装饰层：量子磨砂边框效果 -->
     <div class="quantum-vignette"></div>
 
@@ -40,7 +37,6 @@ defineProps<{
 
 const probabilityCanvas = ref<HTMLCanvasElement | null>(null)
 const virtualParticleCanvas = ref<HTMLCanvasElement | null>(null)
-const stringCanvas = ref<HTMLCanvasElement | null>(null)
 
 // 获取全局帧率设置
 const settingsStore = useSettingsStore()
@@ -345,137 +341,9 @@ const initVirtualParticles = () => {
   virtualParticleAnimationId = requestAnimationFrame(animate)
 }
 
-// ==================== 弦振动系统 ====================
-interface StringVibration {
-  x1: number
-  y1: number
-  x2: number
-  y2: number
-  life: number
-  maxLife: number
-  amplitude: number
-  frequency: number
-  phase: number
-  hue: number
-}
-
-let strings: StringVibration[] = []
-let stringAnimationId: number | null = null
-
-const initStrings = () => {
-  const canvas = stringCanvas.value
-  if (!canvas) return
-
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  const resize = () => {
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-  }
-  resize()
-  window.addEventListener('resize', resize)
-
-  // 帧率限制
-  let lastFrameTime = 0
-  const getFrameInterval = () => {
-    const globalFPS = settingsStore.visualizationFrameRate || 60
-    return 1000 / globalFPS
-  }
-
-  // 随机生成弦
-  const spawnString = () => {
-    if (Math.random() < 0.015) { // 低概率生成
-      const x = Math.random() * canvas.width
-      const y = Math.random() * canvas.height
-      const angle = Math.random() * Math.PI * 2
-      const length = 30 + Math.random() * 80
-
-      strings.push({
-        x1: x,
-        y1: y,
-        x2: x + Math.cos(angle) * length,
-        y2: y + Math.sin(angle) * length,
-        life: 0,
-        maxLife: 40 + Math.random() * 60,
-        amplitude: 3 + Math.random() * 8,
-        frequency: 0.1 + Math.random() * 0.2,
-        phase: Math.random() * Math.PI * 2,
-        hue: 180 + Math.random() * 100
-      })
-    }
-  }
-
-  const animate = (currentTime: number) => {
-    const frameInterval = getFrameInterval()
-    if (currentTime - lastFrameTime < frameInterval) {
-      stringAnimationId = requestAnimationFrame(animate)
-      return
-    }
-    lastFrameTime = currentTime
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    spawnString()
-
-    strings = strings.filter(s => {
-      s.life++
-      s.phase += s.frequency
-
-      const progress = s.life / s.maxLife
-      const alpha = Math.sin(progress * Math.PI) * 0.4
-
-      if (alpha > 0.01) {
-        // 绘制振动弦
-        const segments = 20
-        const dx = (s.x2 - s.x1) / segments
-        const dy = (s.y2 - s.y1) / segments
-
-        ctx.beginPath()
-        ctx.moveTo(s.x1, s.y1)
-
-        for (let i = 1; i <= segments; i++) {
-          const t = i / segments
-          const baseX = s.x1 + dx * i
-          const baseY = s.y1 + dy * i
-
-          // 计算垂直于弦的偏移
-          const perpX = -dy / Math.sqrt(dx * dx + dy * dy) || 0
-          const perpY = dx / Math.sqrt(dx * dx + dy * dy) || 0
-
-          // 驻波效果
-          const wave = Math.sin(t * Math.PI) * Math.sin(s.phase) * s.amplitude
-          const x = baseX + perpX * wave
-          const y = baseY + perpY * wave
-
-          ctx.lineTo(x, y)
-        }
-
-        ctx.strokeStyle = `hsla(${s.hue}, 100%, 70%, ${alpha})`
-        ctx.lineWidth = 1
-        ctx.stroke()
-
-        // 发光效果
-        ctx.strokeStyle = `hsla(${s.hue}, 100%, 80%, ${alpha * 0.3})`
-        ctx.lineWidth = 4
-        ctx.filter = 'blur(2px)'
-        ctx.stroke()
-        ctx.filter = 'none'
-      }
-
-      return s.life < s.maxLife
-    })
-
-    stringAnimationId = requestAnimationFrame(animate)
-  }
-
-  stringAnimationId = requestAnimationFrame(animate)
-}
-
 onMounted(() => {
   initProbabilityClouds()
   initVirtualParticles()
-  initStrings()
 })
 
 onUnmounted(() => {
@@ -484,9 +352,6 @@ onUnmounted(() => {
   }
   if (virtualParticleAnimationId) {
     cancelAnimationFrame(virtualParticleAnimationId)
-  }
-  if (stringAnimationId) {
-    cancelAnimationFrame(stringAnimationId)
   }
 })
 </script>
@@ -596,14 +461,6 @@ onUnmounted(() => {
 
 // 虚粒子 Canvas
 .virtual-particle-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-// 弦振动 Canvas
-.string-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
