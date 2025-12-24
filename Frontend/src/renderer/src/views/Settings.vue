@@ -322,7 +322,7 @@
           <div class="about-info">
             <div class="app-info">
               <span class="app-name gradient-text">{{ $t('settings.about.appName') }}</span>
-              <span class="app-version">{{ $t('settings.about.version') }} 1.6.5</span>
+              <span class="app-version">{{ $t('settings.about.version') }} 1.7.0</span>
             </div>
             <p class="app-desc">
               {{ $t('settings.about.description') }}
@@ -370,6 +370,14 @@
 
           <h3 class="subsection-title">{{ $t('settings.about.other') }}</h3>
           <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.about.userDataPath') }}</span>
+                <span class="setting-desc">{{ $t('settings.about.userDataPathDesc') }}</span>
+              </div>
+              <span class="contact-value user-data-path">{{ $t('settings.about.userDataPathValue') }}</span>
+            </div>
+
             <div class="setting-item">
               <div class="setting-label">
                 <span>{{ $t('settings.about.resetSettings') }}</span>
@@ -830,6 +838,16 @@ const handleResetSettings = async () => {
     border-radius: 20px;
     font-size: $font-size-sm;
     color: var(--el-color-primary);
+  }
+
+  &.user-data-path {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 8px;
+    border-radius: $border-radius-sm;
+    border: 1px solid $border-color;
   }
 }
 </style>

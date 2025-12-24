@@ -235,3 +235,9 @@ __snapshots__/
 *.local.json
 *.local.yaml
 *.local.yml
+
+
+
+*.txt
+*.docx
+*.pdf

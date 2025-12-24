@@ -152,6 +152,9 @@ export default {
       visitGitHub: 'Перейти на GitHub',
       license: 'Лицензия',
       licenseDesc: 'Лицензия с открытым исходным кодом',
+      userDataPath: 'Путь данных пользователя',
+      userDataPathDesc: 'Место хранения данных приложения (база данных, кэш обложек и т.д.)',
+      userDataPathValue: 'C:\\Users\\<Имя пользователя>\\AppData\\Roaming\\GL_Music',
       // Other
       other: 'Другое',
       resetSettings: 'Сбросить',

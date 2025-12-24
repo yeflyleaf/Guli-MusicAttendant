@@ -152,6 +152,9 @@ export default {
       visitGitHub: 'Visitar GitHub',
       license: 'Licencia',
       licenseDesc: 'Licencia de código abierto utilizada por este proyecto',
+      userDataPath: 'Ruta de datos de usuario',
+      userDataPathDesc: 'Ubicación de almacenamiento de datos de la aplicación (base de datos, caché de portadas, etc.)',
+      userDataPathValue: 'C:\\Users\\<Nombre de usuario>\\AppData\\Roaming\\GL_Music',
       // Other
       other: 'Otros',
       resetSettings: 'Restablecer',
