@@ -74,9 +74,10 @@
               <div class="mini-queue-header">
                 <span>{{ $t('player.playQueue') }} ({{ playerStore.queueLength }})</span>
               </div>
-              <div class="mini-queue-list">
+              <div class="mini-queue-list" ref="miniQueueListRef">
                 <div v-for="(song, index) in playerStore.queue" :key="song.id" class="mini-queue-item"
-                  :class="{ active: index === playerStore.currentIndex }" @click="handlePlayFromQueue(song)">
+                  :class="{ active: index === playerStore.currentIndex }" :ref="el => setQueueItemRef(el, index)"
+                  @click="handlePlayFromQueue(song)">
                   <span class="queue-song-title truncate">{{ song.title }}</span>
                   <span class="queue-song-artist truncate">{{ song.artist }}</span>
                 </div>
@@ -156,7 +157,7 @@ import {
   VideoPause,
   VideoPlay
 } from '@element-plus/icons-vue'
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 
 const playerStore = usePlayerStore()
 
@@ -166,6 +167,43 @@ const { seek, setVolume } = useAudio(false)
 // 播放队列弹窗控制
 const queuePopoverVisible = ref(false)
 let queueCloseTimer: ReturnType<typeof setTimeout> | null = null
+
+// 迷你播放队列列表 ref
+const miniQueueListRef = ref<HTMLElement | null>(null)
+const queueItemRefs = ref<Map<number, HTMLElement>>(new Map())
+
+// 设置队列项的 ref
+const setQueueItemRef = (el: HTMLElement | null | unknown, index: number) => {
+  if (el instanceof HTMLElement) {
+    queueItemRefs.value.set(index, el)
+  } else {
+    queueItemRefs.value.delete(index)
+  }
+}
+
+// 滚动到当前播放的歌曲
+const scrollToCurrentSong = () => {
+  const currentIndex = playerStore.currentIndex
+  if (currentIndex < 0 || !miniQueueListRef.value) return
+
+  const currentItem = queueItemRefs.value.get(currentIndex)
+  if (currentItem) {
+    currentItem.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+}
+
+// 监听播放队列弹窗显示状态
+watch(queuePopoverVisible, (visible) => {
+  if (visible && playerStore.currentIndex >= 0) {
+    // 使用 nextTick 确保 DOM 已更新
+    nextTick(() => {
+      // 再延迟一小段时间确保 Popover 完全渲染
+      setTimeout(() => {
+        scrollToCurrentSong()
+      }, 100)
+    })
+  }
+})
 
 // 鼠标进入播放队列，取消关闭定时器
 const handleQueueMouseEnter = () => {
