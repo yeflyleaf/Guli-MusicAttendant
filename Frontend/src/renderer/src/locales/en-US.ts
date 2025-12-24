@@ -64,6 +64,7 @@ export default {
       themeGothic: 'Candlelight Shadows',
       themePapercut: 'Papercut Theatre',
       themeQuantum: 'Void Annihilation',
+      themeSugarland: 'Sugar Land',
       language: 'Language',
       languageDesc: 'Choose the application language',
       fontSize: 'Font Size',

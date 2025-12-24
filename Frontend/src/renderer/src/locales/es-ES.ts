@@ -59,6 +59,7 @@ export default {
       themeGothic: 'Sombras de Vela',
       themePapercut: 'Teatro de Papel Recortado',
       themeQuantum: 'Aniquilación del Vacío',
+      themeSugarland: 'Tierra de Caramelos',
       language: 'Idioma',
       languageDesc: 'Elegir el idioma',
       fontSize: 'Tamaño de fuente',

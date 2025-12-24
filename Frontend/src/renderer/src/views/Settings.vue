@@ -30,6 +30,7 @@
                 <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                 <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
                 <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
+                <el-option :label="$t('settings.appearance.themeSugarland')" value="sugarland" />
               </el-select>
             </div>
 
@@ -46,6 +47,7 @@
                   <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                   <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
                   <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
+                  <el-option :label="$t('settings.appearance.themeSugarland')" value="sugarland" />
                 </el-select>
                 <el-select v-model="quickSwitchThemes[1]" style="width: 120px" @change="handleQuickSwitchThemesChange">
                   <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
@@ -54,6 +56,7 @@
                   <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                   <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
                   <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
+                  <el-option :label="$t('settings.appearance.themeSugarland')" value="sugarland" />
                 </el-select>
               </div>
             </div>

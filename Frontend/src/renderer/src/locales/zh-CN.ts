@@ -64,6 +64,7 @@ export default {
       themeGothic: '烛光曳影',
       themePapercut: '剪纸戏梦',
       themeQuantum: '虚空湮灭',
+      themeSugarland: '糖果乐园',
       quickSwitchThemes: '快捷切换主题',
       quickSwitchThemesDesc: '选择标题栏快捷按钮切换的两个主题',
       language: '语言',

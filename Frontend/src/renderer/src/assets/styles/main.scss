@@ -315,6 +315,56 @@ html.quantum {
   --scrollbar-thumb-hover: rgba(0, 240, 255, 0.3);
 }
 
+// 糖果乐园主题 - 多巴胺治愈风格
+html.sugarland {
+  // 主色调 - 草莓粉与薄荷绿
+  --primary-color: #ff6b9d; // 草莓粉
+  --primary-color-rgb: 255, 107, 157;
+  --primary-light: #ff9bc5;
+  --primary-dark: #e05585;
+  --accent-color: #98ff98; // 薄荷绿
+
+  // 背景色 - 透明以显示动态背景
+  --bg-primary: transparent;
+  --bg-primary-rgb: 255, 240, 245;
+  --bg-secondary: rgba(255, 230, 240, 0.85);
+  --bg-secondary-rgb: 255, 230, 240;
+  --bg-tertiary: rgba(255, 245, 248, 0.9);
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-hover: rgba(255, 107, 157, 0.1);
+
+  // 文字颜色 - 高对比度暖色
+  --text-primary: #4a3c5c; // 深紫棕色
+  --text-secondary: #7a6b8a; // 暗紫灰色
+  --text-muted: #a89bb8; // 淡紫灰色
+
+  // 边框颜色 - 粉色边缘
+  --border-color: rgba(255, 107, 157, 0.2);
+  --border-color-light: rgba(255, 107, 157, 0.1);
+  --border-color-hover: rgba(255, 107, 157, 0.35);
+  --border-color-active: rgba(255, 107, 157, 0.5);
+
+  // 渐变 - 马卡龙渐变
+  --gradient-primary: linear-gradient(135deg, #ff6b9d 0%, #ff9bc5 50%, #98ff98 100%);
+  --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(255, 240, 245, 0.5) 100%);
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.08) 0%,
+    rgba(152, 255, 152, 0.08) 100%
+  );
+
+  // 阴影 - 彩色柔和阴影
+  --shadow-sm: 0 2px 8px rgba(255, 105, 180, 0.15);
+  --shadow-md: 0 4px 16px rgba(255, 105, 180, 0.2);
+  --shadow-lg: 0 8px 32px rgba(255, 105, 180, 0.25);
+  --shadow-glow: 0 0 20px rgba(255, 107, 157, 0.3);
+  --shadow-glow-strong: 0 0 40px rgba(255, 107, 157, 0.45);
+
+  // 滚动条 - 粉色风格
+  --scrollbar-thumb: rgba(255, 107, 157, 0.3);
+  --scrollbar-thumb-hover: rgba(255, 107, 157, 0.45);
+}
+
 // ==================== 重置样式 ====================
 *,
 *::before,

@@ -65,6 +65,7 @@ export default {
       themeGothic: 'ظلال الشموع',
       themePapercut: 'مسرح القصاصات الورقية',
       themeQuantum: 'إفناء الفراغ',
+      themeSugarland: 'أرض الحلوى',
       language: 'اللغة',
       languageDesc: 'اختر لغة التطبيق',
       fontSize: 'حجم الخط',

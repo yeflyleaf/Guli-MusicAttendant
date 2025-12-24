@@ -65,6 +65,7 @@ export default {
       themeGothic: 'Ombres de Chandelle',
       themePapercut: 'Théâtre de Papier Découpé',
       themeQuantum: 'Annihilation du Vide',
+      themeSugarland: 'Pays des Bonbons',
       language: 'Langue',
       languageDesc: 'Choisir la langue de l\'application',
       fontSize: 'Taille de police',
