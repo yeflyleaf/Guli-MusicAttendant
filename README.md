@@ -327,7 +327,7 @@ Guli_MusicAttendant/
 
 ## 性能优化
 
-本项目针对大型音乐库场景进行了深度性能优化：
+本项目针对大型音乐库场景进行了深度性能优化，确保在管理数千首歌曲时依然保持流畅体验：
 
 | 优化策略 | 描述 |
 | :--- | :--- |
@@ -338,30 +338,117 @@ Guli_MusicAttendant/
 | **GPU 硬件加速** | 显式启用 GPU 加速，将图形渲染任务卸载至 GPU |
 | **帧率节流** | 音频可视化限制在 30 FPS，在保持流畅度的同时减少 50% CPU 占用 |
 
-> **📊 优化效果**：播放时 CPU 占用率 < 5%，万首音乐库秒级加载。
+### 1. 并行数据预加载
 
-[⬆️ 返回目录](#目录)
+在 Vue 应用挂载之前，通过 `Promise.all()` 同时发起设置加载和音乐库加载请求：
 
----
+```typescript
+// main.ts - 立即开始加载数据（不等待）
+const preloadPromise = Promise.all([
+  settingsStore.loadSettings(),
+  libraryStore.loadAll()
+])
+window.__preloadPromise = preloadPromise
+app.mount('#app') // 与数据加载并行执行
+```
 
-## 数据存储
+此策略将原本串行的「挂载 → 加载数据」流程改为并行执行，有效利用框架初始化阶段的 CPU 空闲时间，减少用户可感知的等待时间。
 
-### 便携模式
+### 2. 启动屏缓冲
 
-本项目支持**完全便携运行**：
+启动屏（Splash Screen）不仅提供视觉反馈，更作为数据预加载的缓冲层。启动动画会等待 `__preloadPromise` 完成后才触发退场动画：
 
-| 环境 | 存储位置 |
-| :--- | :--- |
-| **开发环境** | `Frontend/data/` |
-| **生产环境** | 应用安装目录下的 `data/` |
+```typescript
+// SplashScreen.vue
+const preloadPromise = window.__preloadPromise
+if (preloadPromise) {
+  await preloadPromise // 等待数据加载完成
+}
+startExitAnimation() // 播放退场动画
+```
 
-#### ✅ 优势
+这种设计确保用户看到主界面时，所有必要数据已就绪，实现"数据加载零感知"的用户体验。
 
-- 🔹 U盘即装即用，换电脑无缝迁移
-- 🔹 复制文件夹即完整备份
-- 🔹 不污染系统目录
+### 3. 渐进式渲染
 
-> ⚠️ **注意**：请避免安装在 `C:\Program Files` 等受保护目录，建议安装在 D 盘或其他非系统保护目录。
+对于大型列表（如本地音乐列表），采用渐进式渲染策略避免首屏渲染阻塞：
+
+```typescript
+// LocalMusic.vue
+const renderLimit = ref(20) // 首屏仅渲染 20 条
+const visibleMusicList = computed(() => musicList.value.slice(0, renderLimit.value))
+
+const renderNextBatch = () => {
+  if (renderLimit.value < musicList.value.length) {
+    renderLimit.value = Math.min(renderLimit.value + 40, musicList.value.length)
+    requestAnimationFrame(renderNextBatch) // 利用浏览器空闲时间渲染
+  }
+}
+```
+
+结合 CSS `content-visibility: auto` 属性进一步优化：
+
+```scss
+.list-item {
+  content-visibility: auto;        // 跳过视口外内容的渲染
+  contain-intrinsic-size: 0 56px;  // 预设占位高度避免布局抖动
+}
+```
+
+### 4. 视图层持久化
+
+使用 Vue 的 `<keep-alive>` 组件缓存高频访问的页面，避免重复渲染开销：
+
+```vue
+<keep-alive :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']" :max="10">
+  <router-view v-slot="{ Component }">
+    <component :is="Component" />
+  </router-view>
+</keep-alive>
+```
+
+配合 `onActivated` 生命周期钩子恢复滚动位置，实现无缝的页面切换体验：
+
+```typescript
+onActivated(() => {
+  nextTick(() => {
+    scrollContainer.value.scrollTop = savedScrollTop.value
+  })
+})
+```
+
+### 5. GPU 硬件加速
+
+通过 CSS `will-change` 属性显式声明动画元素，触发浏览器 GPU 加速层（Composite Layer）：
+
+```scss
+.list-header {
+  will-change: transform;  // 提示浏览器优化滚动性能
+  transform: translateZ(0); // 强制创建独立的 GPU 图层
+}
+```
+
+动态背景组件同样采用 Canvas 2D 渲染结合 GPU 合成，确保复杂动画不阻塞主线程。
+
+### 6. 帧率节流
+
+音频可视化和动态背景支持用户自定义帧率（默认 30-240 FPS），在视觉流畅度和资源占用间取得平衡：
+
+```typescript
+// FooterPlayer.vue - 音频可视化
+const FPS = settingsStore.visualizationFrameRate || 30
+const frameInterval = 1000 / FPS
+const draw = () => {
+  const now = performance.now()
+  if (now - lastFrame >= frameInterval) {
+    // 执行绘制...
+    lastFrame = now
+  }
+  animationId = requestAnimationFrame(draw)
+}
+```
+
+用户可在「设置 → 外观 → 帧率」中调整此值，较低帧率（30 FPS）可降低约 50% 的 CPU/GPU 负载，适合性能较弱的设备。
 
 [⬆️ 返回目录](#目录)
 
