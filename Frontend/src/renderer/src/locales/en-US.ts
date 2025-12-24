@@ -150,6 +150,17 @@ export default {
       appName: 'Guli Music Assistant',
       version: 'Version',
       description: 'Local music management system, built with Electron + Vue 3 + TypeScript.',
+      // Contact Us
+      contactUs: 'Contact Us',
+      author: 'Author',
+      authorDesc: 'Project Developer',
+      github: 'GitHub',
+      githubDesc: 'View source code and submit issues',
+      visitGitHub: 'Visit GitHub',
+      license: 'License',
+      licenseDesc: 'Open source license used by this project',
+      // Other
+      other: 'Other',
       resetSettings: 'Reset Settings',
       resetSettingsDesc: 'Restore all settings to default values',
       confirmReset: 'Are you sure you want to restore all settings to default values?',

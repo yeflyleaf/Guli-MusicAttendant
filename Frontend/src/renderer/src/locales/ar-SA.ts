@@ -151,6 +151,17 @@ export default {
       appName: 'مساعد الموسيقى قولي',
       version: 'الإصدار',
       description: 'نظام إدارة الموسيقى المحلية، مبني باستخدام Electron + Vue 3 + TypeScript.',
+      // Contact Us
+      contactUs: 'اتصل بنا',
+      author: 'المؤلف',
+      authorDesc: 'مطور المشروع',
+      github: 'GitHub',
+      githubDesc: 'عرض الكود المصدري وتقديم المشاكل',
+      visitGitHub: 'زيارة GitHub',
+      license: 'الرخصة',
+      licenseDesc: 'رخصة المصدر المفتوح المستخدمة في هذا المشروع',
+      // Other
+      other: 'أخرى',
       resetSettings: 'إعادة تعيين الإعدادات',
       resetSettingsDesc: 'استعادة جميع الإعدادات إلى القيم الافتراضية',
       confirmReset: 'هل أنت متأكد من استعادة جميع الإعدادات إلى القيم الافتراضية؟',

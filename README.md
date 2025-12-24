@@ -1,16 +1,18 @@
-# 🎵 故里音乐助手
+<h1 align="center">🎵 故里音乐助手</h1>
 
-![Logo](Frontend/build/icon.png)
+<p align="center">
+  <img src="./Frontend/build/icons/icon.ico" width="256" alt="Logo">
+</p>
 
-**专业级本地音乐管理系统**
+**本地音乐管理系统**
 
 基于 Electron + Vue 3 + TypeScript + Vite + Element Plus + SQLite 构建的现代化桌面音乐播放器
 
-[![Electron](https://img.shields.io/badge/Electron-33.0.0-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
-[![Vue](https://img.shields.io/badge/Vue-3.4.15-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3.3-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Electron](https://img.shields.io/badge/Electron-39.0.0-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
+[![Vue](https://img.shields.io/badge/Vue-3.5.0-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.0-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.5.0-green.svg)](https://github.com/yeflyleaf/Guli_MusicAttendant)
+[![Version](https://img.shields.io/badge/Version-1.6.3-green.svg)](https://github.com/yeflyleaf/Guli_MusicAttendant)
 
 [功能特性](#功能特性) • [快速开始](#快速开始) • [技术架构](#技术架构) • [项目结构](#项目结构) • [使用说明](#使用说明) • [贡献指南](#贡献指南)
 
@@ -84,8 +86,8 @@
 
 | 依赖 | 版本要求 |
 | :--- | :--- |
-| **Node.js** | >= 18.0.0 |
-| **npm** | >= 9.0.0 |
+| **Node.js** | >= 20.0.0 |
+| **npm** | >= 10.0.0 |
 | **操作系统** | Windows 10+, macOS 10.15+, Linux |
 
 ### 安装与运行
@@ -133,16 +135,16 @@ npm run preview
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                       Electron 33.0.0                           │
+│                       Electron 39.0.0                           │
 ├─────────────────────────────────────────────────────────────────┤
 │  渲染进程 (Renderer)          │  主进程 (Main)                   │
 │  ┌─────────────────────────┐  │  ┌─────────────────────────────┐│
-│  │ Vue 3.4.15 + Vite 5.0   │  │  │ Node.js + SQLite           ││
+│  │ Vue 3.2 + Vite 6.0    │  │  │ Node.js + SQLite           ││
 │  │ ┌─────────────────────┐ │  │  │ ┌─────────────────────────┐││
-│  │ │ Element Plus 2.5.3  │ │  │  │ │ better-sqlite3 11.5.0  │││
-│  │ │ Pinia 2.1.7         │ │  │  │ │ music-metadata 7.14.0  │││
-│  │ │ Vue Router 4.2.5    │ │  │  │ │ electron-store 8.1.0   │││
-│  │ │ Vue I18n 9.14.5     │ │  │  │ └─────────────────────────┘││
+│  │ │ Element Plus 2.13.0 │ │  │  │ │ better-sqlite3 12.5.0  │││
+│  │ │ Pinia 3.0.0         │ │  │  │ │ music-metadata 7.14.0  │││
+│  │ │ Vue Router 4.6.0    │ │  │  │ │ electron-store 8.2.0   │││
+│  │ │ Vue I18n 11.0.0     │ │  │  │ └─────────────────────────┘││
 │  │ └─────────────────────┘ │  │  └─────────────────────────────┘│
 │  └─────────────────────────┘  │                                  │
 ├───────────────────────────────┴──────────────────────────────────┤
@@ -157,35 +159,35 @@ npm run preview
 
 | Package | Version | Description |
 | :--- | :---: | :--- |
-| `vue` | ^3.4.15 | 渐进式 JavaScript 框架 |
-| `vue-router` | ^4.2.5 | Vue.js 官方路由管理器 |
-| `vue-i18n` | ^9.14.5 | Vue.js 国际化插件 |
-| `pinia` | ^2.1.7 | Vue 状态管理库 |
-| `element-plus` | ^2.5.3 | Vue 3 UI 组件库 |
+| `vue` | ^3.2 | 渐进式 JavaScript 框架 |
+| `vue-router` | ^4.6.0 | Vue.js 官方路由管理器 |
+| `vue-i18n` | ^11.0.0 | Vue.js 国际化插件 |
+| `pinia` | ^3.0.0 | Vue 状态管理库 |
+| `element-plus` | ^2.13.0 | Vue 3 UI 组件库 |
 | `@element-plus/icons-vue` | ^2.3.1 | Element Plus 图标库 |
 | `@vueuse/core` | ^14.1.0 | Vue 组合式 API 实用工具集 |
-| `better-sqlite3` | ^11.5.0 | 高性能 Node.js SQLite3 驱动 |
-| `electron-store` | ^8.1.0 | Electron 简单数据持久化 |
+| `better-sqlite3` | ^12.5.0 | 高性能 Node.js SQLite3 驱动 |
+| `electron-store` | ^8.2.0 | Electron 简单数据持久化 |
 | `music-metadata` | ^7.14.0 | 音频文件元数据解析 |
 | `sortablejs` | ^1.15.6 | 拖拽排序库 |
-| `sql.js` | ^1.10.3 | SQLite WebAssembly 版本 |
+| `sql.js` | ^1.12.0 | SQLite WebAssembly 版本 |
 
 #### 🔧 开发依赖 (DevDependencies)
 
 | Package | Version | Description |
 | :--- | :---: | :--- |
-| `electron` | ^33.0.0 | 跨平台桌面应用框架 |
-| `electron-vite` | ^2.0.0 | Electron 开发构建工具 |
-| `electron-builder` | ^24.9.1 | Electron 应用打包工具 |
-| `@electron-toolkit/utils` | ^2.0.1 | Electron 工具库 |
-| `vite` | ^5.0.12 | 下一代前端构建工具 |
-| `@vitejs/plugin-vue` | ^5.0.3 | Vite Vue 插件 |
-| `typescript` | ^5.3.3 | JavaScript 超集语言 |
-| `vue-tsc` | ^1.8.27 | Vue 模板类型检查工具 |
-| `sass` | ^1.70.0 | CSS 预处理器 |
-| `eslint` | ^8.57.1 | JavaScript 代码检查工具 |
+| `electron` | ^39.0.0 | 跨平台桌面应用框架 |
+| `electron-vite` | ^5.0.0 | Electron 开发构建工具 |
+| `electron-builder` | ^26.0.0 | Electron 应用打包工具 |
+| `@electron-toolkit/utils` | ^4.0.0 | Electron 工具库 |
+| `vite` | ^6.0.0 | 下一代前端构建工具 |
+| `@vitejs/plugin-vue` | ^5.2.0 | Vite Vue 插件 |
+| `typescript` | ^5.9.0 | JavaScript 超集语言 |
+| `vue-tsc` | ^2.2.0 | Vue 模板类型检查工具 |
+| `sass` | ^1.87.0 | CSS 预处理器 |
+| `eslint` | ^9.0.0 | JavaScript 代码检查工具 |
 | `eslint-plugin-vue` | ^9.33.0 | Vue.js ESLint 插件 |
-| `prettier` | ^3.2.4 | 代码格式化工具 |
+| `prettier` | ^3.5.0 | 代码格式化工具 |
 | `@intlify/unplugin-vue-i18n` | ^11.0.3 | Vue I18n Vite 插件 |
 
 [⬆️ 返回目录](#目录)

@@ -141,6 +141,17 @@ export default {
       appName: 'Guli Music',
       version: 'Versión',
       description: 'Gestor de música local',
+      // Contact Us
+      contactUs: 'Contáctenos',
+      author: 'Autor',
+      authorDesc: 'Desarrollador del proyecto',
+      github: 'GitHub',
+      githubDesc: 'Ver código fuente y enviar problemas',
+      visitGitHub: 'Visitar GitHub',
+      license: 'Licencia',
+      licenseDesc: 'Licencia de código abierto utilizada por este proyecto',
+      // Other
+      other: 'Otros',
       resetSettings: 'Restablecer',
       resetSettingsDesc: 'Restaurar valores predeterminados',
       confirmReset: '¿Restablecer configuración?',

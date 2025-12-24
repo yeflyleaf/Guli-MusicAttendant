@@ -330,6 +330,39 @@
             </div>
           </div>
 
+          <h3 class="subsection-title">{{ $t('settings.about.contactUs') }}</h3>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.about.author') }}</span>
+                <span class="setting-desc">{{ $t('settings.about.authorDesc') }}</span>
+              </div>
+              <span class="contact-value">yeflyleaf</span>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.about.github') }}</span>
+                <span class="setting-desc">{{ $t('settings.about.githubDesc') }}</span>
+              </div>
+              <el-button type="primary" link @click="handleOpenGitHub">
+                <el-icon>
+                  <Link />
+                </el-icon>
+                {{ $t('settings.about.visitGitHub') }}
+              </el-button>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>{{ $t('settings.about.license') }}</span>
+                <span class="setting-desc">{{ $t('settings.about.licenseDesc') }}</span>
+              </div>
+              <span class="contact-value license-tag">AGPL-3.0</span>
+            </div>
+          </div>
+
+          <h3 class="subsection-title">{{ $t('settings.about.other') }}</h3>
           <div class="setting-group">
             <div class="setting-item">
               <div class="setting-label">
@@ -360,6 +393,7 @@ import {
   Folder,
   FolderOpened,
   InfoFilled,
+  Link,
   Monitor,
   Operation,
   Plus,
@@ -547,6 +581,10 @@ const handleScanAll = async () => {
 }
 
 // --- 其他 ---
+
+const handleOpenGitHub = () => {
+  window.open('https://github.com/yeflyleaf/Guli_MusicAttendant', '_blank')
+}
 
 const handleResetSettings = async () => {
   const confirmed = await showConfirm({ message: t('settings.about.confirmReset'), type: 'warning' })
@@ -770,6 +808,22 @@ const handleResetSettings = async () => {
     border-radius: 20px;
     font-size: $font-size-xs;
     color: $text-secondary;
+  }
+}
+
+// 联系我们样式
+.contact-value {
+  font-size: $font-size-base;
+  color: $text-primary;
+  font-weight: $font-weight-medium;
+
+  &.license-tag {
+    padding: 4px 12px;
+    background: linear-gradient(135deg, rgba(64, 158, 255, 0.1), rgba(103, 194, 58, 0.1));
+    border: 1px solid rgba(64, 158, 255, 0.3);
+    border-radius: 20px;
+    font-size: $font-size-sm;
+    color: var(--el-color-primary);
   }
 }
 </style>

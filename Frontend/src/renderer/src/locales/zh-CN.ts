@@ -152,6 +152,17 @@ export default {
       appName: '故里音乐助手',
       version: '版本',
       description: '本地音乐管理系统，基于 Electron + Vue 3 + TypeScript 构建。',
+      // 联系我们
+      contactUs: '联系我们',
+      author: '作者',
+      authorDesc: '项目开发者',
+      github: 'GitHub',
+      githubDesc: '查看源代码和提交问题',
+      visitGitHub: '访问 GitHub',
+      license: '开源协议',
+      licenseDesc: '项目采用的开源许可证',
+      // 其他
+      other: '其他',
       resetSettings: '重置设置',
       resetSettingsDesc: '将所有设置恢复为默认值',
       confirmReset: '确定要将所有设置恢复为默认值吗？',
