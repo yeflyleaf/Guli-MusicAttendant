@@ -1307,8 +1307,8 @@ $sand-yellow: #c5a059;
 // 夕阳光芒
 .sunset-glow {
   position: absolute;
-  top: 8%;
-  left: 40%;
+  top: 8%; // 垂直位置：数值越大越靠下
+  left: 35%; // 水平位置：数值越大越靠右
   width: 200px;
   height: 200px;
   transform: translate(-50%, 0);
