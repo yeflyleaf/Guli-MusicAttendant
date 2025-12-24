@@ -135,11 +135,11 @@ export const useSettingsStore = defineStore('settings', {
      * 应用主题
      */
     applyTheme() {
-      document.documentElement.classList.remove('light', 'dark', 'interstellar', 'gothic', 'papercut')
+      document.documentElement.classList.remove('light', 'dark', 'interstellar', 'gothic', 'papercut', 'quantum')
       document.documentElement.classList.add(this.theme)
 
-      // Element Plus 暗色模式（interstellar、gothic 和 papercut 也使用暗色模式）
-      if (this.theme === 'dark' || this.theme === 'interstellar' || this.theme === 'gothic' || this.theme === 'papercut') {
+      // Element Plus 暗色模式（interstellar、gothic、papercut 和 quantum 也使用暗色模式）
+      if (this.theme === 'dark' || this.theme === 'interstellar' || this.theme === 'gothic' || this.theme === 'papercut' || this.theme === 'quantum') {
         document.documentElement.classList.add('dark')
       }
     },

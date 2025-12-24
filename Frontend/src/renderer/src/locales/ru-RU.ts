@@ -58,6 +58,7 @@ export default {
       themeInterstellar: 'Межзвёздный Круиз',
       themeGothic: 'Тени Свечей',
       themePapercut: 'Бумажный Театр',
+      themeQuantum: 'Квантовая Пена',
       language: 'Язык',
       languageDesc: 'Выберите язык приложения',
       fontSize: 'Размер шрифта',

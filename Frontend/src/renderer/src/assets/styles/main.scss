@@ -168,10 +168,10 @@ html.interstellar {
 // 暗夜哥特主题 - 幽邃圣所风格
 html.gothic {
   // 主色调 - 琥珀金与深红
-  --primary-color: #C5A059; // 暗金色
+  --primary-color: #c5a059; // 暗金色
   --primary-color-rgb: 197, 160, 89;
-  --primary-light: #D4B97A;
-  --primary-dark: #A68B45;
+  --primary-light: #d4b97a;
+  --primary-dark: #a68b45;
   --accent-color: #720e1e; // 深红宝石
 
   // 背景色 - 透明以显示动态背景
@@ -195,7 +195,7 @@ html.gothic {
   --border-color-active: rgba(197, 160, 89, 0.4);
 
   // 渐变
-  --gradient-primary: linear-gradient(135deg, #C5A059 0%, #720e1e 50%, #0f2c67 100%);
+  --gradient-primary: linear-gradient(135deg, #c5a059 0%, #720e1e 50%, #0f2c67 100%);
   --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(5, 5, 5, 0.5) 100%);
   --gradient-card: linear-gradient(
     135deg,
@@ -263,6 +263,56 @@ html.papercut {
   // 滚动条 - 暖月色风格
   --scrollbar-thumb: rgba(253, 246, 227, 0.15);
   --scrollbar-thumb-hover: rgba(253, 246, 227, 0.25);
+}
+
+// 量子泡沫主题 - 普朗克尺度通量视界风格
+html.quantum {
+  // 主色调 - 切伦科夫蓝与紫外光紫
+  --primary-color: #00f0ff;
+  --primary-color-rgb: 0, 240, 255;
+  --primary-light: #7df9ff;
+  --primary-dark: #00c8d6;
+  --accent-color: #7000ff;
+
+  // 背景色 - 透明以显示动态背景
+  --bg-primary: transparent;
+  --bg-primary-rgb: 2, 12, 27;
+  --bg-secondary: rgba(2, 12, 27, 0.7);
+  --bg-secondary-rgb: 2, 12, 27;
+  --bg-tertiary: rgba(5, 20, 40, 0.8);
+  --bg-card: rgba(10, 25, 50, 0.5);
+  --bg-hover: rgba(0, 240, 255, 0.06);
+
+  // 文字颜色 - 高对比度冷白色
+  --text-primary: #f0f9ff;
+  --text-secondary: #a5d8ff;
+  --text-muted: #5c7a99;
+
+  // 边框颜色 - 赛博青边缘
+  --border-color: rgba(0, 240, 255, 0.12);
+  --border-color-light: rgba(0, 240, 255, 0.06);
+  --border-color-hover: rgba(0, 240, 255, 0.25);
+  --border-color-active: rgba(0, 240, 255, 0.4);
+
+  // 渐变 - 青紫量子渐变
+  --gradient-primary: linear-gradient(135deg, #00f0ff 0%, #7df9ff 40%, #7000ff 100%);
+  --gradient-bg: linear-gradient(180deg, transparent 0%, rgba(2, 12, 27, 0.5) 100%);
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(0, 240, 255, 0.06) 0%,
+    rgba(112, 0, 255, 0.06) 100%
+  );
+
+  // 阴影 - 量子发光效果
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 20px rgba(0, 240, 255, 0.25);
+  --shadow-glow-strong: 0 0 40px rgba(0, 240, 255, 0.4);
+
+  // 滚动条 - 量子青色风格
+  --scrollbar-thumb: rgba(0, 240, 255, 0.18);
+  --scrollbar-thumb-hover: rgba(0, 240, 255, 0.3);
 }
 
 // ==================== 重置样式 ====================

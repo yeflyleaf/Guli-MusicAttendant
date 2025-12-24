@@ -29,6 +29,7 @@
                 <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
                 <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                 <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
+                <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
               </el-select>
             </div>
 
@@ -44,6 +45,7 @@
                   <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
                   <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                   <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
+                  <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
                 </el-select>
                 <el-select v-model="quickSwitchThemes[1]" style="width: 120px" @change="handleQuickSwitchThemesChange">
                   <el-option :label="$t('settings.appearance.themeDark')" value="dark" />
@@ -51,6 +53,7 @@
                   <el-option :label="$t('settings.appearance.themeInterstellar')" value="interstellar" />
                   <el-option :label="$t('settings.appearance.themeGothic')" value="gothic" />
                   <el-option :label="$t('settings.appearance.themePapercut')" value="papercut" />
+                  <el-option :label="$t('settings.appearance.themeQuantum')" value="quantum" />
                 </el-select>
               </div>
             </div>
@@ -351,14 +354,14 @@ import { useLibraryStore } from '@/store/library.store'
 import { useSettingsStore } from '@/store/settings.store'
 import type { SplashTheme, Theme } from '@/types/settings'
 import {
-  Close,
-  Folder,
-  FolderOpened,
-  InfoFilled,
-  Monitor,
-  Operation,
-  Plus,
-  Refresh
+    Close,
+    Folder,
+    FolderOpened,
+    InfoFilled,
+    Monitor,
+    Operation,
+    Plus,
+    Refresh
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'

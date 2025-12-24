@@ -8,6 +8,9 @@
   <!-- 剪纸戏梦动态背景 -->
   <PapercutTheatreBackground v-if="showPapercutBackground" />
 
+  <!-- 量子泡沫动态背景 -->
+  <QuantumFoamBackground v-if="showQuantumBackground" />
+
   <!-- 启动屏幕 - 等待设置加载完成后再渲染，避免使用默认主题值导致闪烁 -->
   <!-- 窗口在设置加载完成后才显示，确保用户看到的第一帧就是正确的过场动画 -->
   <!-- 星际穿梭主题 -->
@@ -82,6 +85,8 @@
         <GothicSanctuaryBackground v-if="settingsStore.theme === 'gothic'" :embedded="true" />
         <!-- 歌词页面的剪纸戏梦背景 -->
         <PapercutTheatreBackground v-if="settingsStore.theme === 'papercut'" :embedded="true" />
+        <!-- 歌词页面的量子泡沫背景 -->
+        <QuantumFoamBackground v-if="settingsStore.theme === 'quantum'" :embedded="true" />
 
         <Lyrics />
       </div>
@@ -109,6 +114,7 @@ import ZenCherryBlossomSplash from '@/components/Layout/ZenCherryBlossomSplash.v
 import GothicSanctuaryBackground from '@/components/Theme/GothicSanctuaryBackground.vue'
 import InterstellarCruiseBackground from '@/components/Theme/InterstellarCruiseBackground.vue'
 import PapercutTheatreBackground from '@/components/Theme/PapercutTheatreBackground.vue'
+import QuantumFoamBackground from '@/components/Theme/QuantumFoamBackground.vue'
 import { useAudio } from '@/hooks/useAudio'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
@@ -151,6 +157,11 @@ const showGothicBackground = computed(() => {
 // 剪纸戏梦动态背景显示控制
 const showPapercutBackground = computed(() => {
   return settingsStore.isLoaded && settingsStore.theme === 'papercut' && !showSplash.value
+})
+
+// 量子泡沫动态背景显示控制
+const showQuantumBackground = computed(() => {
+  return settingsStore.isLoaded && settingsStore.theme === 'quantum' && !showSplash.value
 })
 
 const handleSplashFinish = () => {
@@ -472,6 +483,11 @@ window.addEventListener('beforeunload', () => {
 // 剪纸戏梦主题下歌词页面使用暮山紫背景色（背景组件会覆盖）
 :global(html.papercut) .lyrics-overlay {
   background: #1a1c29;
+}
+
+// 量子泡沫主题下歌词页面使用深邃虚空背景色（背景组件会覆盖）
+:global(html.quantum) .lyrics-overlay {
+  background: #020c1b;
 }
 
 /* 动画效果 */
