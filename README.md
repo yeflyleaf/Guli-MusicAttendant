@@ -1,7 +1,7 @@
 <h1 align="center">🎵 故里音乐助手</h1>
 
 <p align="center">
-  <img src="./Frontend/build/icons/icon.ico" width="256" alt="Logo">
+  <img src="./Frontend/build/icons/icon.ico" width="64" alt="Logo">
 </p>
 
 **本地音乐管理系统**
@@ -133,23 +133,23 @@ npm run preview
 ### 技术栈概览
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                       Electron 39.0.0                           │
-├─────────────────────────────────────────────────────────────────┤
-│  渲染进程 (Renderer)          │  主进程 (Main)                   │
-│  ┌─────────────────────────┐  │  ┌─────────────────────────────┐│
-│  │ Vue 3.2 + Vite 6.0    │  │  │ Node.js + SQLite           ││
-│  │ ┌─────────────────────┐ │  │  │ ┌─────────────────────────┐││
-│  │ │ Element Plus 2.13.0 │ │  │  │ │ better-sqlite3 12.5.0  │││
-│  │ │ Pinia 3.0.0         │ │  │  │ │ music-metadata 7.14.0  │││
-│  │ │ Vue Router 4.6.0    │ │  │  │ │ electron-store 8.2.0   │││
-│  │ │ Vue I18n 11.0.0     │ │  │  │ └─────────────────────────┘││
-│  │ └─────────────────────┘ │  │  └─────────────────────────────┘│
-│  └─────────────────────────┘  │                                  │
-├───────────────────────────────┴──────────────────────────────────┤
-│                     Preload Script (安全桥梁)                     │
-│                     IPC 通信 + Context Bridge                    │
-└─────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+│                         Electron 39.0.0                            │
+├─────────────────────────────────┬──────────────────────────────────┤
+│       渲染进程 (Renderer)       │          主进程 (Main)           │
+│  ┌───────────────────────────┐  │  ┌────────────────────────────┐  │
+│  │    Vue 3.5 + Vite 6.0     │  │  │     Node.js + SQLite       │  │
+│  │  ┌─────────────────────┐  │  │  │  ┌──────────────────────┐  │  │
+│  │  │ Element Plus 2.13   │  │  │  │  │ better-sqlite3 12.5  │  │  │
+│  │  │ Pinia 3.0           │  │  │  │  │ music-metadata 7.14  │  │  │
+│  │  │ Vue Router 4.6      │  │  │  │  │ electron-store 8.2   │  │  │
+│  │  │ Vue I18n 11.0       │  │  │  │  └──────────────────────┘  │  │
+│  │  └─────────────────────┘  │  │  └────────────────────────────┘  │
+│  └───────────────────────────┘  │                                  │
+├─────────────────────────────────┴──────────────────────────────────┤
+│                     Preload Script (安全桥梁)                      │
+│                    IPC 通信 + Context Bridge                       │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
 ### 核心依赖
@@ -197,76 +197,117 @@ npm run preview
 
 ```text
 Guli_MusicAttendant/
-├── Frontend/                          # 前端 Electron 应用
+├── Frontend/                              # 前端 Electron 应用
 │   ├── src/
-│   │   ├── main/                      # 🖥️ Electron 主进程
-│   │   │   ├── index.ts               # 主进程入口
-│   │   │   ├── db/                    # 数据库层
-│   │   │   │   ├── database.ts        # SQLite 连接管理
-│   │   │   │   ├── library.db.ts      # 音乐库数据操作
-│   │   │   │   ├── playlist.db.ts     # 歌单数据操作
-│   │   │   │   └── ...
-│   │   │   ├── ipc/                   # IPC 通信处理
-│   │   │   │   ├── library.ipc.ts     # 音乐库 IPC
-│   │   │   │   ├── playlist.ipc.ts    # 歌单 IPC
-│   │   │   │   ├── window.ipc.ts      # 窗口控制 IPC
-│   │   │   │   └── ...
-│   │   │   ├── services/              # 业务服务层
-│   │   │   │   ├── protocol.service.ts # 自定义协议
-│   │   │   │   ├── lyrics.service.ts  # 歌词解析
-│   │   │   │   └── ...
-│   │   │   ├── types/                 # 类型定义
-│   │   │   └── utils/                 # 工具函数
+│   │   ├── main/                          # 🖥️ Electron 主进程
+│   │   │   ├── index.ts                   # 主进程入口
+│   │   │   ├── db/                        # 数据库层
+│   │   │   │   ├── index.ts               # SQLite 连接管理
+│   │   │   │   ├── schema.sql             # 数据库结构定义
+│   │   │   │   └── repositories/          # 仓储层
+│   │   │   │       ├── music.repo.ts      # 音乐数据仓储
+│   │   │   │       ├── playlist.repo.ts   # 歌单数据仓储
+│   │   │   │       └── setting.repo.ts    # 设置数据仓储
+│   │   │   ├── ipc/                       # IPC 通信处理
+│   │   │   │   ├── index.ts               # IPC 入口
+│   │   │   │   ├── dialog.ipc.ts          # 对话框 IPC
+│   │   │   │   ├── music.ipc.ts           # 音乐库 IPC
+│   │   │   │   ├── playlist.ipc.ts        # 歌单 IPC
+│   │   │   │   ├── settings.ipc.ts        # 设置 IPC
+│   │   │   │   └── window.ipc.ts          # 窗口控制 IPC
+│   │   │   ├── services/                  # 业务服务层
+│   │   │   │   ├── metadata.service.ts    # 元数据解析服务
+│   │   │   │   ├── protocol.service.ts    # 自定义协议服务
+│   │   │   │   ├── scanner.service.ts     # 文件扫描服务
+│   │   │   │   ├── tray.service.ts        # 系统托盘服务
+│   │   │   │   └── window.service.ts      # 窗口管理服务
+│   │   │   ├── types/                     # 主进程类型定义
+│   │   │   │   ├── music.ts
+│   │   │   │   ├── playlist.ts
+│   │   │   │   └── settings.ts
+│   │   │   └── utils/                     # 主进程工具函数
+│   │   │       ├── logger.ts              # 日志工具
+│   │   │       └── paths.ts               # 路径工具
 │   │   │
-│   │   ├── preload/                   # 🔐 预加载脚本
-│   │   │   ├── index.ts               # Context Bridge API
-│   │   │   └── index.d.ts             # 类型声明
+│   │   ├── preload/                       # 🔐 预加载脚本
+│   │   │   ├── index.ts                   # Context Bridge API
+│   │   │   └── index.d.ts                 # 类型声明
 │   │   │
-│   │   └── renderer/                  # 🎨 Vue 渲染进程
-│   │       ├── index.html             # HTML 入口
+│   │   └── renderer/                      # 🎨 Vue 渲染进程
+│   │       ├── index.html                 # HTML 入口
 │   │       └── src/
-│   │           ├── main.ts            # Vue 应用入口
-│   │           ├── App.vue            # 根组件
-│   │           ├── components/        # 公共组件
-│   │           │   ├── Header.vue     # 标题栏
-│   │           │   ├── Sidebar.vue    # 侧边栏
-│   │           │   ├── FooterPlayer.vue # 底部播放器
-│   │           │   ├── MiniPlayer.vue # 迷你播放器
-│   │           │   └── ...
-│   │           ├── views/             # 页面视图
-│   │           │   ├── LocalMusic.vue # 本地音乐
-│   │           │   ├── FavoriteMusic.vue # 我喜欢
-│   │           │   ├── RecentlyPlayed.vue # 最近播放
-│   │           │   ├── PlaylistDetail.vue # 歌单详情
-│   │           │   ├── Settings.vue   # 设置页面
-│   │           │   └── ...
-│   │           ├── store/             # Pinia 状态管理
-│   │           │   ├── library.store.ts # 音乐库状态
-│   │           │   ├── player.store.ts  # 播放器状态
-│   │           │   └── settings.store.ts # 设置状态
-│   │           ├── router/            # Vue Router 配置
-│   │           ├── hooks/             # Vue Composables
-│   │           ├── locales/           # 国际化语言包
-│   │           │   ├── zh-CN.ts       # 中文
-│   │           │   ├── en-US.ts       # 英文
-│   │           │   ├── fr-FR.ts       # 法语
-│   │           │   ├── ru-RU.ts       # 俄语
-│   │           │   ├── es-ES.ts       # 西班牙语
-│   │           │   └── ar-SA.ts       # 阿拉伯语
-│   │           ├── types/             # TypeScript 类型
-│   │           ├── utils/             # 工具函数
-│   │           └── assets/            # 静态资源
+│   │           ├── main.ts                # Vue 应用入口
+│   │           ├── App.vue                # 根组件
+│   │           ├── components/            # 公共组件
+│   │           │   ├── Base/              # 基础组件
+│   │           │   │   ├── AddToPlaylistDialog.vue
+│   │           │   │   ├── CustomConfirmDialog.vue
+│   │           │   │   ├── SearchBar.vue
+│   │           │   │   └── SongCard.vue
+│   │           │   ├── Icons/             # 图标组件
+│   │           │   ├── Layout/            # 布局组件
+│   │           │   │   ├── Header.vue         # 标题栏
+│   │           │   │   ├── Sidebar.vue        # 侧边栏
+│   │           │   │   ├── FooterPlayer.vue   # 底部播放器
+│   │           │   │   ├── MiniPlayer.vue     # 迷你播放器
+│   │           │   │   ├── PlayQueue.vue      # 播放队列
+│   │           │   │   ├── SplashScreen.vue   # 启动屏幕
+│   │           │   │   └── *Splash.vue        # 12 款启动动画
+│   │           │   └── Theme/             # 主题背景组件
+│   │           │       ├── GothicSanctuaryBackground.vue
+│   │           │       ├── InterstellarCruiseBackground.vue
+│   │           │       ├── PapercutTheatreBackground.vue
+│   │           │       ├── QuantumFoamBackground.vue
+│   │           │       ├── SugarLandBackground.vue
+│   │           │       └── WastelandAfterglowBackground.vue
+│   │           ├── views/                 # 页面视图
+│   │           │   ├── Home.vue               # 首页
+│   │           │   ├── LocalMusic.vue         # 本地音乐
+│   │           │   ├── Favorites.vue          # 我喜欢
+│   │           │   ├── RecentlyPlayed.vue     # 最近播放
+│   │           │   ├── Playlists.vue          # 歌单列表
+│   │           │   ├── PlaylistDetail.vue     # 歌单详情
+│   │           │   ├── Lyrics.vue             # 歌词页面
+│   │           │   └── Settings.vue           # 设置页面
+│   │           ├── store/                 # Pinia 状态管理
+│   │           │   ├── library.store.ts       # 音乐库状态
+│   │           │   ├── player.store.ts        # 播放器状态
+│   │           │   └── settings.store.ts      # 设置状态
+│   │           ├── router/                # Vue Router 配置
+│   │           ├── hooks/                 # Vue Composables
+│   │           │   ├── useAudio.ts            # 音频控制
+│   │           │   ├── useConfirm.ts          # 确认对话框
+│   │           │   └── useIpc.ts              # IPC 通信
+│   │           ├── locales/               # 国际化语言包
+│   │           │   ├── index.ts               # i18n 配置
+│   │           │   ├── zh-CN.ts               # 简体中文
+│   │           │   ├── en-US.ts               # English
+│   │           │   ├── fr-FR.ts               # Français
+│   │           │   ├── ru-RU.ts               # Русский
+│   │           │   ├── es-ES.ts               # Español
+│   │           │   └── ar-SA.ts               # العربية
+│   │           ├── types/                 # TypeScript 类型
+│   │           │   ├── electron.d.ts
+│   │           │   ├── music.ts
+│   │           │   ├── playlist.ts
+│   │           │   └── settings.ts
+│   │           ├── utils/                 # 工具函数
+│   │           │   ├── debounce.ts            # 防抖工具
+│   │           │   ├── format.ts              # 格式化工具
+│   │           │   ├── lrc-parser.ts          # LRC 解析
+│   │           │   └── lyrics-parser.ts       # 歌词解析
+│   │           └── assets/                # 静态资源
 │   │
-│   ├── build/                         # 构建资源 (图标等)
-│   ├── e2e/                           # 端到端测试
-│   ├── electron-builder.yml           # 打包配置
-│   ├── electron.vite.config.ts        # Vite 配置
-│   ├── tsconfig.json                  # TypeScript 配置
-│   └── package.json                   # 项目依赖
+│   ├── build/                             # 构建资源 (图标等)
+│   ├── electron-builder.yml               # 打包配置
+│   ├── electron.vite.config.ts            # Vite 配置
+│   ├── eslint.config.mts                  # ESLint 配置
+│   ├── tsconfig.json                      # TypeScript 配置
+│   └── package.json                       # 项目依赖
 │
-├── .gitignore                         # Git 忽略配置
-├── LICENSE                            # AGPL v3 许可证
-└── README.md                          # 项目说明
+├── .gitignore                             # Git 忽略配置
+├── LICENSE                                # AGPL v3 许可证
+└── README.md                              # 项目说明
 ```
 
 [⬆️ 返回目录](#目录)
@@ -493,29 +534,6 @@ if (rangeHeader) {
 | Русский | `ru-RU` | ✅ 完整 |
 | Español | `es-ES` | ✅ 完整 |
 | العربية | `ar-SA` | ✅ 完整 |
-
-[⬆️ 返回目录](#目录)
-
----
-
-## 贡献指南
-
-欢迎提交 Issue 和 Pull Request！
-
-```bash
-# 1. Fork 本仓库
-
-# 2. 创建特性分支
-git checkout -b feature/AmazingFeature
-
-# 3. 提交更改
-git commit -m 'Add some AmazingFeature'
-
-# 4. 推送到分支
-git push origin feature/AmazingFeature
-
-# 5. 提交 Pull Request
-```
 
 [⬆️ 返回目录](#目录)
 
