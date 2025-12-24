@@ -129,7 +129,7 @@ import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 // Props
-const props = defineProps<{
+defineProps<{
   embedded?: boolean
 }>()
 
@@ -302,6 +302,9 @@ const initStardust = () => {
 
     stardustAnimationId = requestAnimationFrame(animate)
   }
+
+  // 启动动画循环
+  stardustAnimationId = requestAnimationFrame(animate)
 }
 
 // 数据雨粒子系统

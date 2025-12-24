@@ -28,7 +28,7 @@
 
       <!-- 浮动光粒子层 -->
       <div class="floating-particles">
-        <div class="particle" v-for="n in 30" :key="'particle-' + n" :style="getParticleStyle(n)"></div>
+        <div class="particle" v-for="n in 30" :key="'particle-' + n" :style="getParticleStyle()"></div>
       </div>
 
       <!-- 第1层 - Canvas 酸雨粒子系统 -->
@@ -90,7 +90,7 @@
         </div>
         <!-- 水珠效果 -->
         <div class="water-droplets">
-          <div class="droplet" v-for="n in 15" :key="n" :style="getDropletStyle(n)"></div>
+          <div class="droplet" v-for="n in 15" :key="n" :style="getDropletStyle()"></div>
         </div>
 
         <!-- 面板内容 -->
@@ -247,7 +247,7 @@ const getNearBuildingStyle = (n: number) => {
 }
 
 // 浮动光粒子样式
-const getParticleStyle = (_n: number) => {
+const getParticleStyle = () => {
   const hue = Math.random() > 0.5 ? 330 : 180 // 粉色或青色
   return {
     left: `${Math.random() * 100}%`,
@@ -260,7 +260,7 @@ const getParticleStyle = (_n: number) => {
 }
 
 // 水滴样式
-const getDropletStyle = (_n: number) => ({
+const getDropletStyle = () => ({
   left: `${5 + Math.random() * 90}%`,
   top: `${Math.random() * 30}%`,
   '--delay': `${Math.random() * 3}s`,
@@ -633,7 +633,7 @@ onMounted(async () => {
   const startTime = Date.now()
 
   // 等待预加载
-  const preloadPromise = (window as any).__preloadPromise
+  const preloadPromise = window.__preloadPromise
   if (preloadPromise) {
     try {
       await preloadPromise

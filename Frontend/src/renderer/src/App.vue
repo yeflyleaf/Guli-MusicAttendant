@@ -296,20 +296,17 @@ const handleMiniPlayerModeChange = (isMini: boolean) => {
 
 // 添加路径验证失败事件监听
 onMounted(() => {
-  window.addEventListener(
-    'music-path-validation-failed',
-    handleMusicPathValidationFailed as unknown as EventListener
-  )
+  // 使用类型断言处理 CustomEvent 监听器
+  const handler = handleMusicPathValidationFailed as unknown as (event: Event) => void
+  window.addEventListener('music-path-validation-failed', handler)
 
   // 监听迷你播放器模式变化
   window.electron?.on('window:miniPlayerMode', handleMiniPlayerModeChange)
 })
 
 onUnmounted(() => {
-  window.removeEventListener(
-    'music-path-validation-failed',
-    handleMusicPathValidationFailed as unknown as EventListener
-  )
+  const handler = handleMusicPathValidationFailed as unknown as (event: Event) => void
+  window.removeEventListener('music-path-validation-failed', handler)
 })
 
 // 设置全局快捷键监听
@@ -318,7 +315,7 @@ useShortcuts()
 // 恢复播放状态（需要等待settings加载完成）
 onMounted(async () => {
   // 等待预加载完成
-  const preloadPromise = (window as any).__preloadPromise
+  const preloadPromise = (window as Window & { __preloadPromise?: Promise<void> }).__preloadPromise
   if (preloadPromise) {
     await preloadPromise
   }

@@ -483,7 +483,7 @@ onMounted(async () => {
   const minDisplayTime = 2500
   const startTime = Date.now()
 
-  const preloadPromise = (window as any).__preloadPromise
+  const preloadPromise = window.__preloadPromise
   if (preloadPromise) {
     try {
       await preloadPromise

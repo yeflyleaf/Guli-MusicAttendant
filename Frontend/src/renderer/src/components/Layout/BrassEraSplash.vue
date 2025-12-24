@@ -644,7 +644,7 @@ onMounted(async () => {
   const startTime = Date.now()
 
   // 等待数据预加载
-  const preloadPromise = (window as any).__preloadPromise
+  const preloadPromise = window.__preloadPromise
   if (preloadPromise) {
     try {
       await preloadPromise

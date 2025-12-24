@@ -552,6 +552,9 @@ const initDustSystem = () => {
 
     dustAnimationId = requestAnimationFrame(animate)
   }
+
+  // 启动动画循环
+  dustAnimationId = requestAnimationFrame(animate)
 }
 
 // 流萤粒子系统

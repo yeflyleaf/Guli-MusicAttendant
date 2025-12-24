@@ -44,15 +44,23 @@ const preloadPromise = Promise.all([
   console.log('[Main] Data preload complete!')
 })
 
+// 扩展 Window 类型以支持 __preloadPromise
+declare global {
+  interface Window {
+    __preloadPromise?: Promise<void>
+  }
+}
+
 // 导出 preloadPromise 供其他组件等待（如果需要）
-;(window as any).__preloadPromise = preloadPromise
+window.__preloadPromise = preloadPromise
 
 // 监听后台自动扫描完成事件，自动刷新音乐库
 // 这确保了在过场动画期间完成扫描后，用户无需手动刷新即可看到最新的音乐列表
-window.electron.on('scan:complete', async (result: any) => {
-  console.log('[Main] Received scan:complete event:', result)
-  if (result && result.added > 0) {
-    console.log(`[Main] Auto-scan added ${result.added} songs, refreshing library...`)
+window.electron.on('scan:complete', async (result) => {
+  const scanResult = result as { added?: number } | undefined
+  console.log('[Main] Received scan:complete event:', scanResult)
+  if (scanResult && scanResult.added && scanResult.added > 0) {
+    console.log(`[Main] Auto-scan added ${scanResult.added} songs, refreshing library...`)
     await libraryStore.refreshMusic()
     console.log('[Main] Library refreshed after auto-scan')
   }

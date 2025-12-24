@@ -116,7 +116,7 @@ export function readLyricsFile(lyricsPath: string): string | null {
     }
     
     // 尝试多种编码读取
-    let content = fs.readFileSync(lyricsPath, 'utf-8')
+    const content = fs.readFileSync(lyricsPath, 'utf-8')
     
     // 检查是否有乱码（简单检测）
     if (content.includes('�')) {
