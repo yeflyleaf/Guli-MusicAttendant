@@ -50,6 +50,13 @@
         </div>
       </div>
 
+      <!-- 左上角中型齿轮 200px -->
+      <div class="medium-gear gear-left-top">
+        <div class="gear-body">
+          <div class="gear-center"></div>
+        </div>
+      </div>
+
       <!-- 顶部中央齿轮 160px -->
       <div class="medium-gear gear-top-center">
         <div class="gear-body">
@@ -719,6 +726,14 @@ $sand-yellow: #c5a059;
     height: 180px;
     animation: gearRotate 20s linear infinite reverse; // 反向旋转
     z-index: 0;
+    opacity: 0.8;
+  }
+
+  // 左上角齿轮 200px
+  &.gear-left-top {
+    left: -1%;
+    top: -5%;
+    transform: rotate(45deg);
     opacity: 0.8;
   }
 
