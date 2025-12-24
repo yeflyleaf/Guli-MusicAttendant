@@ -21,8 +21,17 @@ export function setupSettingsIpc(): void {
   })
 
   // 设置单个配置项
-  ipcMain.handle('settings:set', (_event, key: SettingKey, value: string) => {
-    return settingRepo.setSetting(key, value)
+  ipcMain.handle('settings:set', (_event, key: SettingKey, value: Settings[SettingKey]) => {
+    // 将值转换为字符串存储
+    let strValue: string
+    if (typeof value === 'object') {
+      strValue = JSON.stringify(value)
+    } else if (typeof value === 'boolean') {
+      strValue = value ? 'true' : 'false'
+    } else {
+      strValue = String(value)
+    }
+    return settingRepo.setSetting(key, strValue)
   })
 
   // 批量设置

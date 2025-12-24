@@ -1,12 +1,11 @@
-# ========================
-# Logs
-# ========================
-*.txt
-*.doc
-*.docx
-*.pdf
-*.xls
-*.xlsx
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║            Guli Music Attendant - Git Ignore Configuration                ║
+# ║                    Electron + Vite + Vue 3 Project                         ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+# ============================================================================
+#                                   LOGS
+# ============================================================================
 logs/
 *.log
 npm-debug.log*
@@ -15,113 +14,41 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# ========================
-# Dependencies
-# ========================
+# ESLint output files (generated during linting)
+eslint-output.txt
+eslint-result.json
+
+# ============================================================================
+#                               DEPENDENCIES
+# ============================================================================
 node_modules/
-.npm
+.npm/
 .pnpm-store/
 .yarn/
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 .node_repl_history
 
-# ========================
-# Build Output
-# ========================
+# ============================================================================
+#                              BUILD OUTPUT
+# ============================================================================
+# Vite build output
 dist/
+
+# Electron-Vite build output
 dist-electron/
 dist_electron/
+
+# Electron Builder output
 release/
 out/
 
-# ========================
-# Runtime Data
-# ========================
-data/
-*.sqlite
-*.sqlite3
-*.db
-
-# ========================
-# OS Files
-# ========================
-# macOS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-.AppleDouble
-.LSOverride
-
-# Windows
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# Linux
-*~
-.directory
-
-# ========================
-# Environment Variables
-# ========================
-.env
-.env.*
-!.env.example
-!.env.development.example
-!.env.production.example
-
-# ========================
-# IDEs & Editors
-# ========================
-# JetBrains (WebStorm, IntelliJ)
-.idea/
-
-# VS Code (uncomment if you don't want to share settings)
-# .vscode/
-# *.code-workspace
-
-# Visual Studio
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.user
-
-# Sublime Text
-*.sublime-project
-*.sublime-workspace
-
-# Vim / Neovim
-*.sw?
-*.swp
-*.swo
-Session.vim
-.netrwhist
-
-# Emacs
-*~
-\#*\#
-.projectile
-
-# ========================
-# TypeScript
-# ========================
-*.tsbuildinfo
-tsconfig.tsbuildinfo
-
-# ========================
-# Vite
-# ========================
-*.local
-.vite/
-
-# ========================
-# Electron Builder
-# ========================
+# ============================================================================
+#                           ELECTRON INSTALLER FILES
+# ============================================================================
 *.blockmap
 *.dmg
 *.exe
@@ -131,32 +58,180 @@ tsconfig.tsbuildinfo
 *.snap
 *.pacman
 *.nupkg
+*.msi
 
-# ========================
-# Testing
-# ========================
+# ============================================================================
+#                              RUNTIME DATA
+# ============================================================================
+# SQLite databases
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Application data (user-specific, generated at runtime)
+# Note: Keep project-required data directories tracked
+Frontend/data/
+
+# ============================================================================
+#                               OS FILES
+# ============================================================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.stackdump
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================================================
+#                          ENVIRONMENT VARIABLES
+# ============================================================================
+.env
+.env.*
+!.env.example
+!.env.development.example
+!.env.production.example
+!.env.local.example
+
+# ============================================================================
+#                            IDEs & EDITORS
+# ============================================================================
+# JetBrains IDEs (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+# Note: .vscode is kept for shared settings; uncomment to ignore
+# .vscode/
+# *.code-workspace
+
+# Visual Studio
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.user
+*.userprefs
+*.vcxproj.user
+.vs/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Neovim
+*.sw?
+*.swp
+*.swo
+*.swn
+Session.vim
+.netrwhist
+tags
+
+# Emacs
+\#*\#
+.projectile
+*.elc
+auto-save-list/
+tramp
+.cask/
+
+# Atom
+.atom/
+
+# ============================================================================
+#                              TYPESCRIPT
+# ============================================================================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+tsconfig.*.tsbuildinfo
+
+# ============================================================================
+#                                 VITE
+# ============================================================================
+*.local
+.vite/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# ============================================================================
+#                                TESTING
+# ============================================================================
 coverage/
 .nyc_output/
 test-results/
 playwright-report/
 playwright/.cache/
+.vitest/
+__snapshots__/
 
-# ========================
-# Misc
-# ========================
-*.bak
-*.tmp
-*.temp
-*.cache
+# ============================================================================
+#                                 CACHE
+# ============================================================================
 .cache/
+.parcel-cache/
 .turbo/
 .eslintcache
 .stylelintcache
+.prettiercache
+*.tgz
+
+# ============================================================================
+#                            TEMPORARY FILES
+# ============================================================================
+*.bak
+*.tmp
+*.temp
 *.pid
 *.seed
 *.pid.lock
+*.orig
 
-# Lock files (uncomment if you want to ignore)
+# ============================================================================
+#                              DOCUMENTATION
+# ============================================================================
+# Generated documentation (uncomment if applicable)
+# docs/.vitepress/dist/
+# docs/.vitepress/cache/
+
+# ============================================================================
+#                           OPTIONAL: LOCK FILES
+# ============================================================================
+# Uncomment the lock files you want to ignore (not recommended for reproducibility)
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+# ============================================================================
+#                              LOCAL CONFIG
+# ============================================================================
+# Local configuration files that should not be committed
+*.local.json
+*.local.yaml
+*.local.yml

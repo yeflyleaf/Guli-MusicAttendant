@@ -55,7 +55,7 @@ import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
 import { parseLrc, type LyricLine } from '@/utils/lrc-parser'
 import { Document, Headset } from '@element-plus/icons-vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type ComponentPublicInstance } from 'vue'
 
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
@@ -73,11 +73,11 @@ const currentLineIndex = ref(-1)
 
 const lyricLineRefs = ref<HTMLElement[]>([])
 const isUserScrolling = ref(false)
-let scrollTimeout: NodeJS.Timeout | null = null
+let scrollTimeout: ReturnType<typeof setTimeout> | null = null
 let isAutoScrolling = false
 
 // 设置歌词行 ref
-const setLyricLineRef = (el: any, index: number) => {
+const setLyricLineRef = (el: Element | ComponentPublicInstance | null, index: number) => {
   if (el) {
     lyricLineRefs.value[index] = el as HTMLElement
   }

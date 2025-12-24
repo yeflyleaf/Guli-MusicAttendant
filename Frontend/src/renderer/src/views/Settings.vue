@@ -535,7 +535,9 @@ const handleScanAll = async () => {
 
   try {
     const result = await resetAndScanAllFolders()
-    ElMessage.success(`扫描完成：新增 ${result.added} 首歌曲`)
+    if (result) {
+      ElMessage.success(`扫描完成：新增 ${result.added} 首歌曲`)
+    }
     await libraryStore.refreshMusic()
   } catch {
     ElMessage.error('扫描失败')

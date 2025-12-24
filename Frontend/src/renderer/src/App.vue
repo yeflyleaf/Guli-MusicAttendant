@@ -301,7 +301,7 @@ onMounted(() => {
   window.addEventListener('music-path-validation-failed', handler)
 
   // 监听迷你播放器模式变化
-  window.electron?.on('window:miniPlayerMode', handleMiniPlayerModeChange)
+  window.electron?.on('window:miniPlayerMode', handleMiniPlayerModeChange as (...args: unknown[]) => void)
 })
 
 onUnmounted(() => {

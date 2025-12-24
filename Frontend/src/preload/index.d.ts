@@ -84,8 +84,8 @@ export interface ElectronAPI {
   // 设置相关
   settings: {
     getAll: () => Promise<Settings>
-    get: (key: SettingKey) => Promise<string | null>
-    set: (key: SettingKey, value: string) => Promise<boolean>
+    get: <K extends SettingKey>(key: K) => Promise<Settings[K] | null>
+    set: <K extends SettingKey>(key: K, value: Settings[K]) => Promise<boolean>
     setMultiple: (settings: Partial<Settings>) => Promise<boolean>
     getMusicFolders: () => Promise<string[]>
     addMusicFolder: (folder: string) => Promise<boolean>

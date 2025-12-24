@@ -1,3 +1,7 @@
+import type { Music, MusicQueryParams } from './music'
+import type { Playlist, PlaylistCreateDTO } from './playlist'
+import type { SettingKey, Settings } from './settings'
+
 export { }
 
 declare global {
@@ -5,20 +9,20 @@ declare global {
     electron: {
       // 歌曲相关
       music: {
-        getAll: (params?: any) => Promise<any[]>
-        getById: (id: number) => Promise<any>
-        getByPath: (filePath: string) => Promise<any>
+        getAll: (params?: MusicQueryParams) => Promise<Music[]>
+        getById: (id: number) => Promise<Music | null>
+        getByPath: (filePath: string) => Promise<Music | null>
         delete: (id: number) => Promise<boolean>
         deleteBatch: (ids: number[]) => Promise<number>
         toggleFavorite: (id: number) => Promise<boolean>
         incrementPlayCount: (id: number) => Promise<boolean>
         getCount: () => Promise<number>
-        getFavorites: () => Promise<any[]>
-        getRecentlyPlayed: (limit?: number) => Promise<any[]>
+        getFavorites: () => Promise<Music[]>
+        getRecentlyPlayed: (limit?: number) => Promise<Music[]>
         removeRecentlyPlayed: (ids: number[]) => Promise<boolean>
         clearRecentlyPlayed: () => Promise<boolean>
-        getMostPlayed: (limit?: number) => Promise<any[]>
-        update: (id: number, data: any) => Promise<boolean>
+        getMostPlayed: (limit?: number) => Promise<Music[]>
+        update: (id: number, data: Partial<Music>) => Promise<boolean>
         // 从本地音乐列表隐藏歌曲（不删除数据）
         hideFromLocal: (id: number) => Promise<boolean>
         hideFromLocalBatch: (ids: number[]) => Promise<number>
@@ -28,12 +32,12 @@ declare global {
 
       // 歌单相关
       playlist: {
-        getAll: () => Promise<any[]>
-        getById: (id: number) => Promise<any>
-        create: (data: any) => Promise<number>
-        update: (id: number, data: any) => Promise<boolean>
+        getAll: () => Promise<Playlist[]>
+        getById: (id: number) => Promise<Playlist | null>
+        create: (data: PlaylistCreateDTO) => Promise<number>
+        update: (id: number, data: Partial<Playlist>) => Promise<boolean>
         delete: (id: number) => Promise<boolean>
-        getMusic: (playlistId: number) => Promise<any[]>
+        getMusic: (playlistId: number) => Promise<Music[]>
         addMusic: (playlistId: number, musicId: number) => Promise<boolean>
         addMusicBatch: (playlistId: number, musicIds: number[]) => Promise<number>
         removeMusic: (playlistId: number, musicId: number) => Promise<boolean>
@@ -47,9 +51,9 @@ declare global {
         selectFolder: () => Promise<string | null>
         selectFolders: () => Promise<string[]>
         selectAudioFiles: () => Promise<string[]>
-        scanFolder: (folderPath?: string) => Promise<any>
-        scanAllFolders: () => Promise<any>
-        resetAndScanAllFolders: () => Promise<any>
+        scanFolder: (folderPath?: string) => Promise<{ added: number; updated: number; total: number } | null>
+        scanAllFolders: () => Promise<{ added: number; updated: number; total: number } | null>
+        resetAndScanAllFolders: () => Promise<{ added: number; updated: number; total: number } | null>
         showInFolder: (filePath: string) => void
         openFile: (filePath: string) => Promise<string>
         readFile: (filePath: string) => Promise<string | null>
@@ -86,10 +90,10 @@ declare global {
 
       // 设置相关
       settings: {
-        getAll: () => Promise<any>
-        get: (key: string) => Promise<string | null>
-        set: (key: string, value: string) => Promise<boolean>
-        setMultiple: (settings: any) => Promise<boolean>
+        getAll: () => Promise<Settings>
+        get: <K extends SettingKey>(key: K) => Promise<Settings[K] | null>
+        set: <K extends SettingKey>(key: K, value: Settings[K]) => Promise<boolean>
+        setMultiple: (settings: Partial<Settings>) => Promise<boolean>
         getMusicFolders: () => Promise<string[]>
         addMusicFolder: (folder: string) => Promise<boolean>
         removeMusicFolder: (folder: string) => Promise<boolean>
@@ -97,7 +101,9 @@ declare global {
       }
 
       // 事件监听
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       on: (channel: string, callback: (...args: any[]) => void) => void
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       off: (channel: string, callback: (...args: any[]) => void) => void
       removeAllListeners: (channel: string) => void
     }

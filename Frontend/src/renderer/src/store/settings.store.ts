@@ -2,7 +2,7 @@
  * 设置状态管理
  */
 import { setLocale, type LocaleCode } from '@/locales'
-import type { PlayMode, Settings, Theme } from '@/types/settings'
+import type { PlayMode, Settings, SplashTheme, Theme } from '@/types/settings'
 import { defineStore } from 'pinia'
 
 interface SettingsState extends Settings {
@@ -41,26 +41,25 @@ export const useSettingsStore = defineStore('settings', {
       try {
         const settings = await window.electron.settings.getAll()
 
-        this.theme = settings.theme
-        this.splashTheme = settings.splashTheme ?? 'cosmic'
-        this.volume = settings.volume
-        this.playMode = settings.playMode
+        this.theme = settings.theme as Theme
+        this.splashTheme = (settings.splashTheme ?? 'cosmic') as SplashTheme
+        this.volume = Number(settings.volume ?? 0.7)
+        this.playMode = settings.playMode as PlayMode
         this.language = settings.language
-        this.fontSize = settings.fontSize ?? 14
+        this.fontSize = Number(settings.fontSize ?? 14)
         this.localMusicHeaders = settings.localMusicHeaders ?? ['title', 'artist', 'album', 'duration', 'created_at']
         this.visualizationStyle = settings.visualizationStyle ?? 'bars'
-        this.visualizationFrameRate = settings.visualizationFrameRate ?? 60
-        this.rememberPlaybackStatus = settings.rememberPlaybackStatus ?? true
-        this.gaplessPlayback = settings.gaplessPlayback ?? false
-        this.musicFolders = settings.musicFolders
-        this.autoScan = settings.autoScan
-        this.visualizerEnabled = settings.visualizerEnabled
-        this.disableSplashScreen = settings.disableSplashScreen ?? false
-        this.showTrayIcon = settings.showTrayIcon ?? true
-        this.minimizeToTray = settings.minimizeToTray ?? false
-        this.minimizeToTray = settings.minimizeToTray ?? false
-        this.closeToTray = settings.closeToTray ?? false
-        this.quickSwitchThemes = settings.quickSwitchThemes ?? ['dark', 'light']
+        this.visualizationFrameRate = Number(settings.visualizationFrameRate ?? 60)
+        this.rememberPlaybackStatus = Boolean(settings.rememberPlaybackStatus ?? true)
+        this.gaplessPlayback = Boolean(settings.gaplessPlayback ?? false)
+        this.musicFolders = settings.musicFolders ?? []
+        this.autoScan = Boolean(settings.autoScan ?? true)
+        this.visualizerEnabled = Boolean(settings.visualizerEnabled ?? true)
+        this.disableSplashScreen = Boolean(settings.disableSplashScreen ?? false)
+        this.showTrayIcon = Boolean(settings.showTrayIcon ?? true)
+        this.minimizeToTray = Boolean(settings.minimizeToTray ?? false)
+        this.closeToTray = Boolean(settings.closeToTray ?? false)
+        this.quickSwitchThemes = (settings.quickSwitchThemes ?? ['dark', 'light']) as unknown as [Theme, Theme]
         this.isLoaded = true
 
         // 应用主题和外观
@@ -172,7 +171,7 @@ export const useSettingsStore = defineStore('settings', {
      */
     async setVolume(volume: number) {
       this.volume = volume
-      await window.electron.settings.set('volume', String(volume))
+      await window.electron.settings.setMultiple({ volume })
     },
 
     /**

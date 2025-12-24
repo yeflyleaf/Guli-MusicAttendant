@@ -35,9 +35,8 @@ function initGlobalAudio(playerStore: ReturnType<typeof usePlayerStore>) {
 
   // 初始化 Web Audio API (用于可视化)
   try {
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
-    if (AudioContextClass) {
-      globalAudioContext = new AudioContextClass()
+    if (window.AudioContext) {
+      globalAudioContext = new AudioContext()
       globalAnalyser = globalAudioContext.createAnalyser()
       globalAnalyser.fftSize = 512
 

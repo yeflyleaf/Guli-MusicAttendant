@@ -216,10 +216,10 @@ const electronAPI = {
     getAll: (): Promise<Settings> =>
       ipcRenderer.invoke('settings:getAll'),
 
-    get: (key: SettingKey): Promise<string | null> =>
+    get: <K extends SettingKey>(key: K): Promise<Settings[K] | null> =>
       ipcRenderer.invoke('settings:get', key),
 
-    set: (key: SettingKey, value: string): Promise<boolean> =>
+    set: <K extends SettingKey>(key: K, value: Settings[K]): Promise<boolean> =>
       ipcRenderer.invoke('settings:set', key, value),
 
     setMultiple: (settings: Partial<Settings>): Promise<boolean> =>

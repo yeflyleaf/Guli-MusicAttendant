@@ -160,7 +160,7 @@
                   <el-dropdown-item command="addToQueue">{{ $t('player.addToQueue') }}</el-dropdown-item>
                   <el-dropdown-item command="addToPlaylist">{{ $t('playlist.addToPlaylist') }}</el-dropdown-item>
                   <el-dropdown-item command="showInFolder">{{ $t('localMusic.showInFolder') || '在文件夹中显示'
-                  }}</el-dropdown-item>
+                    }}</el-dropdown-item>
                   <el-dropdown-item command="delete" divided>{{ $t('common.delete') }}</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -509,13 +509,14 @@ const handleCommand = async (command: string, song: Music) => {
     case 'showInFolder':
       showInFolder(song.file_path)
       break
-    case 'delete':
+    case 'delete': {
       const confirmed = await showConfirm({ message: t('localMusic.confirmDeleteSingle'), type: 'warning' })
       if (confirmed) {
         await libraryStore.hideFromLocal(song.id)
         ElMessage.success(t('localMusic.removeSuccess') || '已从本地音乐列表移除')
       }
       break
+    }
   }
 }
 </script>
