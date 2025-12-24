@@ -128,6 +128,18 @@
       <div class="small-gear gear-small-4">
         <div class="gear-body"></div>
       </div>
+      <div class="small-gear gear-small-5">
+        <div class="gear-body"></div>
+      </div>
+      <div class="small-gear gear-small-6">
+        <div class="gear-body"></div>
+      </div>
+      <div class="small-gear gear-small-7">
+        <div class="gear-body"></div>
+      </div>
+      <div class="small-gear gear-small-8">
+        <div class="gear-body"></div>
+      </div>
     </div>
 
     <!-- 故障警示灯 -->
@@ -778,6 +790,42 @@ $sand-yellow: #c5a059;
     opacity: 0.5;
   }
 
+  &.gear-small-5 {
+    left: 45%;
+    top: 15%;
+    width: 40px;
+    height: 40px;
+    transform: rotate(45deg);
+    opacity: 0.4;
+  }
+
+  &.gear-small-6 {
+    right: 30%;
+    bottom: 35%;
+    width: 60px;
+    height: 60px;
+    transform: rotate(-15deg);
+    opacity: 0.5;
+  }
+
+  &.gear-small-7 {
+    left: 15%;
+    top: 60%;
+    width: 45px;
+    height: 45px;
+    transform: rotate(10deg);
+    opacity: 0.45;
+  }
+
+  &.gear-small-8 {
+    right: 42%;
+    top: 25%;
+    width: 35px;
+    height: 35px;
+    transform: rotate(-30deg);
+    opacity: 0.35;
+  }
+
   .gear-body {
     position: absolute;
     inset: 0;
@@ -861,191 +909,158 @@ $sand-yellow: #c5a059;
 
 
 
-// 废墟轮廓 - 丰富的底部建筑群
+// 废墟轮廓 - 连绵不断的底部建筑群
 .ruin-silhouette {
   position: absolute;
   background: rgba(30, 18, 15, 1);
-  border: 1px solid rgba(50, 32, 28, 0.6);
+  border-top: 1px solid rgba(60, 40, 35, 0.5);
   box-shadow:
-    0 0 50px rgba(0, 0, 0, 0.9),
-    inset 0 0 20px rgba(0, 0, 0, 0.5),
-    0 0 3px rgba(255, 112, 67, 0.1);
+    0 0 60px rgba(0, 0, 0, 0.95),
+    inset 0 10px 30px rgba(0, 0, 0, 0.7),
+    0 -1px 3px rgba(255, 112, 67, 0.15);
+  z-index: 2;
 
-  // 左侧工厂建筑 280px
+  // 1. 左侧重型工厂 (0% - 22%)
   &.ruin-factory {
-    left: 3%;
+    left: -2%;
     bottom: 0;
-    width: 180px;
-    height: 280px;
+    width: 24%;
+    height: 300px;
     clip-path: polygon(0% 100%,
-        0% 45%,
-        5% 45%,
-        5% 35%,
-        12% 35%,
-        12% 28%,
-        25% 28%,
-        25% 15%,
-        35% 15%,
-        35% 8%,
-        45% 8%,
-        45% 0%,
-        55% 0%,
-        55% 5%,
-        65% 5%,
-        65% 12%,
-        75% 12%,
-        75% 22%,
-        85% 22%,
-        85% 32%,
-        95% 32%,
-        95% 45%,
-        100% 45%,
+        0% 40%,
+        10% 40%,
+        10% 30%,
+        25% 30%,
+        25% 20%,
+        40% 20%,
+        40% 10%,
+        60% 10%,
+        60% 25%,
+        75% 25%,
+        75% 35%,
+        90% 35%,
+        90% 50%,
+        100% 50%,
         100% 100%);
     opacity: 0.95;
   }
 
-  // 塔楼 220px
+  // 2. 通讯塔楼 (改为高瘦梯形圆柱)
   &.ruin-tower {
-    left: 18%;
+    left: 22%;
     bottom: 0;
-    width: 65px;
+    width: 50px;
+    height: 420px;
+    clip-path: polygon(25% 0%,
+        75% 0%,
+        85% 5%,
+        100% 100%,
+        0% 100%,
+        15% 5%);
+    opacity: 0.9;
+    z-index: 1;
+  }
+
+  // 3. 中间加工厂 (28% - 48%)
+  &.ruin-factory-2 {
+    left: 28%;
+    bottom: 0;
+    width: 20%;
     height: 220px;
     clip-path: polygon(0% 100%,
-        0% 55%,
-        15% 55%,
-        15% 25%,
-        25% 25%,
-        25% 12%,
-        40% 12%,
-        40% 0%,
-        60% 0%,
-        60% 12%,
-        75% 12%,
-        75% 25%,
-        85% 25%,
-        85% 55%,
-        100% 55%,
-        100% 100%);
-    opacity: 0.85;
-  }
-
-  // 中间工厂
-  &.ruin-factory-2 {
-    left: 32%;
-    bottom: 0;
-    width: 140px;
-    height: 160px;
-    clip-path: polygon(0% 100%,
-        0% 60%,
-        8% 60%,
-        8% 40%,
-        20% 40%,
-        20% 25%,
-        35% 25%,
-        35% 15%,
-        50% 10%,
-        65% 15%,
-        65% 25%,
-        80% 25%,
-        80% 40%,
-        92% 40%,
-        92% 60%,
-        100% 60%,
-        100% 100%);
-    opacity: 0.75;
-  }
-
-  // 储油罐
-  &.ruin-tank {
-    left: 50%;
-    bottom: 0;
-    width: 80px;
-    height: 120px;
-    clip-path: polygon(5% 100%,
-        5% 30%,
-        0% 25%,
-        10% 15%,
-        30% 5%,
-        50% 0%,
-        70% 5%,
-        90% 15%,
-        100% 25%,
-        95% 30%,
-        95% 100%);
-    opacity: 0.7;
-  }
-
-  // 烟囱
-  &.ruin-chimney {
-    left: 60%;
-    bottom: 0;
-    width: 35px;
-    height: 200px;
-    clip-path: polygon(10% 100%,
-        10% 8%,
-        0% 5%,
-        25% 0%,
-        75% 0%,
-        100% 5%,
-        90% 8%,
-        90% 100%);
-    opacity: 0.8;
-  }
-
-  // 右侧仓库 180px
-  &.ruin-warehouse {
-    right: 10%;
-    bottom: 0;
-    width: 160px;
-    height: 180px;
-    clip-path: polygon(0% 100%,
-        0% 40%,
-        10% 40%,
-        10% 25%,
-        25% 25%,
-        25% 18%,
-        50% 8%,
-        75% 18%,
-        75% 25%,
-        90% 25%,
-        90% 40%,
+        0% 50%,
+        15% 40%,
+        30% 50%,
+        45% 40%,
+        60% 50%,
+        75% 40%,
+        90% 50%,
         100% 40%,
         100% 100%);
     opacity: 0.85;
   }
 
-  // 小型废墟碎片1
-  &.ruin-debris-1 {
-    left: 26%;
+  // 4. 储油罐群 (45% - 60%)
+  &.ruin-tank {
+    left: 46%;
     bottom: 0;
-    width: 50px;
-    height: 80px;
+    width: 15%;
+    height: 160px;
     clip-path: polygon(0% 100%,
-        10% 60%,
-        30% 40%,
-        50% 20%,
-        70% 0%,
-        80% 30%,
-        100% 50%,
+        5% 30%,
+        15% 20%,
+        30% 20%,
+        40% 30%,
+        50% 30%,
+        60% 20%,
+        75% 20%,
+        85% 30%,
+        95% 30%,
         100% 100%);
-    opacity: 0.6;
+    opacity: 0.8;
   }
 
-  // 小型废墟碎片2
-  &.ruin-debris-2 {
-    right: 28%;
+  // 5. 烟囱 (改为高瘦梯形圆柱)
+  &.ruin-chimney {
+    left: 62%;
     bottom: 0;
-    width: 60px;
-    height: 100px;
+    width: 40px;
+    height: 480px;
+    clip-path: polygon(30% 0%,
+        70% 0%,
+        100% 100%,
+        0% 100%);
+    opacity: 0.85;
+  }
+
+  // 6. 废弃反应堆 (65% - 85%) - 新增
+  &.ruin-debris-1 {
+    left: 66%;
+    bottom: 0;
+    width: 20%;
+    height: 260px;
     clip-path: polygon(0% 100%,
-        0% 70%,
+        10% 60%,
         20% 50%,
-        40% 30%,
-        60% 10%,
-        80% 35%,
-        100% 60%,
+        30% 20%,
+        50% 10%,
+        70% 20%,
+        80% 50%,
+        90% 60%,
         100% 100%);
-    opacity: 0.55;
+    opacity: 0.9;
+  }
+
+  // 7. 右侧大型仓库 (82% - 102%)
+  &.ruin-warehouse {
+    left: 84%;
+    bottom: 0;
+    width: 18%;
+    height: 240px;
+    clip-path: polygon(0% 100%,
+        0% 50%,
+        10% 40%,
+        50% 15%,
+        90% 40%,
+        100% 50%,
+        100% 100%);
+    opacity: 0.95;
+  }
+
+  // 8. 填充碎片 (任意位置填充空隙)
+  &.ruin-debris-2 {
+    left: 40%;
+    bottom: 0;
+    width: 10%;
+    height: 120px;
+    clip-path: polygon(0% 100%,
+        20% 40%,
+        40% 60%,
+        60% 30%,
+        80% 50%,
+        100% 100%);
+    opacity: 0.7;
+    z-index: 0;
   }
 }
 
