@@ -28,6 +28,9 @@ export type LocaleCode = (typeof supportedLocales)[number]['code']
 /**
  * 自定义消息编译器
  * 避免使用 eval/new Function，符合 Electron CSP 策略
+ *
+ * 注意：此功能为实验性特性，会显示警告信息
+ * 但这是在 Electron 环境下避免 CSP 限制的必要方案
  */
 function customMessageCompiler(message: unknown) {
   if (typeof message === 'string') {

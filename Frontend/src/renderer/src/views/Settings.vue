@@ -107,11 +107,11 @@
               </div>
               <div class="setting-control mt-2">
                 <el-checkbox-group v-model="localMusicHeaders" @change="handleHeadersChange">
-                  <el-checkbox label="title">{{ $t('settings.appearance.headerTitle') }}</el-checkbox>
-                  <el-checkbox label="artist">{{ $t('settings.appearance.headerArtist') }}</el-checkbox>
-                  <el-checkbox label="album">{{ $t('settings.appearance.headerAlbum') }}</el-checkbox>
-                  <el-checkbox label="duration">{{ $t('settings.appearance.headerDuration') }}</el-checkbox>
-                  <el-checkbox label="created_at">{{ $t('settings.appearance.headerCreatedAt') }}</el-checkbox>
+                  <el-checkbox value="title">{{ $t('settings.appearance.headerTitle') }}</el-checkbox>
+                  <el-checkbox value="artist">{{ $t('settings.appearance.headerArtist') }}</el-checkbox>
+                  <el-checkbox value="album">{{ $t('settings.appearance.headerAlbum') }}</el-checkbox>
+                  <el-checkbox value="duration">{{ $t('settings.appearance.headerDuration') }}</el-checkbox>
+                  <el-checkbox value="created_at">{{ $t('settings.appearance.headerCreatedAt') }}</el-checkbox>
                 </el-checkbox-group>
               </div>
             </div>
@@ -316,7 +316,7 @@
           <div class="about-info">
             <div class="app-info">
               <span class="app-name gradient-text">{{ $t('settings.about.appName') }}</span>
-              <span class="app-version">{{ $t('settings.about.version') }} 1.6.3</span>
+              <span class="app-version">{{ $t('settings.about.version') }} 1.6.5</span>
             </div>
             <p class="app-desc">
               {{ $t('settings.about.description') }}

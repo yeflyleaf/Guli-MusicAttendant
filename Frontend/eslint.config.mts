@@ -5,6 +5,8 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default defineConfig([
+  // 忽略编译输出和依赖目录
+  { ignores: ["**/dist/**", "**/dist-electron/**", "**/node_modules/**", "**/release/**", "**/*.tsbuildinfo"] },
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts,vue}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: {...globals.browser, ...globals.node} } },
   tseslint.configs.recommended,
   pluginVue.configs["flat/essential"],
