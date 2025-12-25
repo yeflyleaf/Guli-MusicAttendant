@@ -130,7 +130,7 @@ import WastelandAfterglowBackground from '@/components/Theme/WastelandAfterglowB
 import { useAudio } from '@/hooks/useAudio'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
-import { useMemoryOptimization } from '@/hooks/useMemoryOptimization'
+import { isLowMemoryMode, useMemoryOptimization } from '@/hooks/useMemoryOptimization'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
@@ -162,32 +162,32 @@ const isMiniPlayerMode = ref(false)
 
 // 星际巡航动态背景显示控制
 const showInterstellarBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'interstellar' && !showSplash.value
+  return settingsStore.isLoaded && settingsStore.theme === 'interstellar' && !showSplash.value && !isLowMemoryMode.value
 })
 
 // 暗夜哥特动态背景显示控制
 const showGothicBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'gothic' && !showSplash.value
+  return settingsStore.isLoaded && settingsStore.theme === 'gothic' && !showSplash.value && !isLowMemoryMode.value
 })
 
 // 剪纸戏梦动态背景显示控制
 const showPapercutBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'papercut' && !showSplash.value
+  return settingsStore.isLoaded && settingsStore.theme === 'papercut' && !showSplash.value && !isLowMemoryMode.value
 })
 
 // 量子泡沫动态背景显示控制
 const showQuantumBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'quantum' && !showSplash.value
+  return settingsStore.isLoaded && settingsStore.theme === 'quantum' && !showSplash.value && !isLowMemoryMode.value
 })
 
 // 糖果乐园动态背景显示控制
 const showSugarLandBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'sugarland' && !showSplash.value
+  return settingsStore.isLoaded && settingsStore.theme === 'sugarland' && !showSplash.value && !isLowMemoryMode.value
 })
 
 // 废土余晖动态背景显示控制
 const showWastelandBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'wasteland' && !showSplash.value
+  return settingsStore.isLoaded && settingsStore.theme === 'wasteland' && !showSplash.value && !isLowMemoryMode.value
 })
 
 const handleSplashFinish = () => {
@@ -320,6 +320,18 @@ const handleMiniPlayerModeChange = (isMini: boolean) => {
   console.log('[App] Mini player mode:', isMini)
 }
 
+// 处理进入低内存模式
+const handleEnterLowMemory = () => {
+  console.log('[App] Entering low memory mode - clearing store data...')
+  libraryStore.enterLowMemoryMode()
+}
+
+// 处理退出低内存模式
+const handleExitLowMemory = () => {
+  console.log('[App] Exiting low memory mode - restoring store data...')
+  libraryStore.exitLowMemoryMode()
+}
+
 // 添加路径验证失败事件监听
 onMounted(() => {
   // 使用类型断言处理 CustomEvent 监听器
@@ -328,11 +340,19 @@ onMounted(() => {
 
   // 监听迷你播放器模式变化
   window.electron?.on('window:miniPlayerMode', handleMiniPlayerModeChange as (...args: unknown[]) => void)
+
+  // 监听内存优化事件
+  window.addEventListener('memory-optimization:enter-low-memory', handleEnterLowMemory)
+  window.addEventListener('memory-optimization:exit-low-memory', handleExitLowMemory)
 })
 
 onUnmounted(() => {
   const handler = handleMusicPathValidationFailed as unknown as (event: Event) => void
   window.removeEventListener('music-path-validation-failed', handler)
+
+  // 移除内存优化事件监听
+  window.removeEventListener('memory-optimization:enter-low-memory', handleEnterLowMemory)
+  window.removeEventListener('memory-optimization:exit-low-memory', handleExitLowMemory)
 })
 
 // 设置全局快捷键监听

@@ -27,6 +27,16 @@ interface LibraryState {
   invalidMusicIds: Set<number>
   // 文件不存在的歌曲 ID 集合
   missingFileIds: Set<number>
+  // 低内存模式标志
+  isLowMemoryMode: boolean
+  // 低内存模式前的数据备份
+  _lowMemoryBackup: {
+    allMusic: Music[] | null
+    playlists: Playlist[] | null
+    favorites: Music[] | null
+    recentlyPlayed: Music[] | null
+    filteredMusic: Music[] | null
+  } | null
 }
 
 export const useLibraryStore = defineStore('library', {
@@ -40,7 +50,9 @@ export const useLibraryStore = defineStore('library', {
     searchKeyword: '',
     filteredMusic: [],
     invalidMusicIds: new Set(),
-    missingFileIds: new Set()
+    missingFileIds: new Set(),
+    isLowMemoryMode: false,
+    _lowMemoryBackup: null
   }),
 
   getters: {
@@ -465,6 +477,62 @@ export const useLibraryStore = defineStore('library', {
         console.error('[Library] 恢复隐藏歌曲失败:', error)
         return 0
       }
+    },
+
+    /**
+     * 进入低内存模式
+     * 备份并清空大型数组以释放内存
+     * 仅在窗口最小化或隐藏到托盘时调用
+     */
+    enterLowMemoryMode() {
+      if (this.isLowMemoryMode) return
+
+      console.log('[Library] Entering low memory mode...')
+      console.log(`[Library] Before: allMusic=${this.allMusic.length}, favorites=${this.favorites.length}, recentlyPlayed=${this.recentlyPlayed.length}`)
+
+      // 备份当前数据
+      this._lowMemoryBackup = {
+        allMusic: this.allMusic,
+        playlists: this.playlists,
+        favorites: this.favorites,
+        recentlyPlayed: this.recentlyPlayed,
+        filteredMusic: this.filteredMusic,
+      }
+
+      // 清空大型数组
+      this.allMusic = []
+      this.playlists = []
+      this.favorites = []
+      this.recentlyPlayed = []
+      this.filteredMusic = []
+
+      this.isLowMemoryMode = true
+      console.log('[Library] Low memory mode enabled - arrays cleared')
+    },
+
+    /**
+     * 退出低内存模式
+     * 从备份恢复数据
+     */
+    exitLowMemoryMode() {
+      if (!this.isLowMemoryMode) return
+
+      console.log('[Library] Exiting low memory mode...')
+
+      // 从备份恢复数据
+      if (this._lowMemoryBackup) {
+        this.allMusic = this._lowMemoryBackup.allMusic || []
+        this.playlists = this._lowMemoryBackup.playlists || []
+        this.favorites = this._lowMemoryBackup.favorites || []
+        this.recentlyPlayed = this._lowMemoryBackup.recentlyPlayed || []
+        this.filteredMusic = this._lowMemoryBackup.filteredMusic || []
+
+        // 清除备份
+        this._lowMemoryBackup = null
+      }
+
+      this.isLowMemoryMode = false
+      console.log(`[Library] Low memory mode disabled - data restored: allMusic=${this.allMusic.length}`)
     }
   }
 })
