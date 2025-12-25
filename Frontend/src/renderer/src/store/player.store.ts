@@ -33,6 +33,13 @@ interface PlayerState {
   showLyrics: boolean
   // 是否显示播放队列侧边栏
   showQueue: boolean
+  // 低内存模式标志
+  isLowMemoryMode: boolean
+  // 低内存模式前的队列备份
+  _lowMemoryBackup: {
+    queue: Music[] | null
+    playHistory: number[] | null
+  } | null
 }
 
 export const usePlayerStore = defineStore('player', {
@@ -48,7 +55,9 @@ export const usePlayerStore = defineStore('player', {
     currentIndex: -1,
     playHistory: [],
     showLyrics: false,
-    showQueue: false
+    showQueue: false,
+    isLowMemoryMode: false,
+    _lowMemoryBackup: null
   }),
 
   getters: {
@@ -613,6 +622,65 @@ export const usePlayerStore = defineStore('player', {
           this.currentTime = 0
         }
       }
+    },
+
+    /**
+     * 进入低内存模式
+     * 保留当前歌曲，但清空队列以释放内存
+     */
+    enterLowMemoryMode() {
+      if (this.isLowMemoryMode) return
+
+      console.log('[Player] Entering low memory mode...')
+      console.log(`[Player] Before: queue=${this.queue.length}, history=${this.playHistory.length}`)
+
+      // 备份当前数据
+      this._lowMemoryBackup = {
+        queue: this.queue,
+        playHistory: this.playHistory,
+      }
+
+      // 只保留当前歌曲
+      if (this.currentSong) {
+        this.queue = [this.currentSong]
+        this.currentIndex = 0
+      } else {
+        this.queue = []
+        this.currentIndex = -1
+      }
+      this.playHistory = []
+
+      this.isLowMemoryMode = true
+      console.log('[Player] Low memory mode enabled - queue minimized')
+    },
+
+    /**
+     * 退出低内存模式
+     * 从备份恢复队列
+     */
+    exitLowMemoryMode() {
+      if (!this.isLowMemoryMode) return
+
+      console.log('[Player] Exiting low memory mode...')
+
+      if (this._lowMemoryBackup) {
+        // 恢复队列
+        this.queue = this._lowMemoryBackup.queue || []
+        this.playHistory = this._lowMemoryBackup.playHistory || []
+
+        // 找到当前歌曲在队列中的位置
+        if (this.currentSong) {
+          const index = this.queue.findIndex(s => s.id === this.currentSong!.id)
+          if (index !== -1) {
+            this.currentIndex = index
+          }
+        }
+
+        this._lowMemoryBackup = null
+      }
+
+      this.isLowMemoryMode = false
+      console.log(`[Player] Low memory mode disabled - queue restored: ${this.queue.length}`)
     }
   }
 })

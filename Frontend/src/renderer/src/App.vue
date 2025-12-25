@@ -69,9 +69,13 @@
       <!-- 页面内容 -->
       <main class="app-content" :class="{ 'queue-visible': playerStore.showQueue }">
         <router-view v-slot="{ Component }">
-          <keep-alive :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']" :max="10">
+          <!-- 低内存模式下禁用 keep-alive 以释放缓存的组件内存 -->
+          <keep-alive v-if="!isLowMemoryMode" :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']"
+            :max="10">
             <component :is="Component" :key="route.fullPath" />
           </keep-alive>
+          <!-- 低内存模式下不缓存任何组件 -->
+          <component v-else :is="Component" :key="route.fullPath" />
         </router-view>
       </main>
 
@@ -324,12 +328,14 @@ const handleMiniPlayerModeChange = (isMini: boolean) => {
 const handleEnterLowMemory = () => {
   console.log('[App] Entering low memory mode - clearing store data...')
   libraryStore.enterLowMemoryMode()
+  playerStore.enterLowMemoryMode()
 }
 
 // 处理退出低内存模式
 const handleExitLowMemory = () => {
   console.log('[App] Exiting low memory mode - restoring store data...')
   libraryStore.exitLowMemoryMode()
+  playerStore.exitLowMemoryMode()
 }
 
 // 添加路径验证失败事件监听
