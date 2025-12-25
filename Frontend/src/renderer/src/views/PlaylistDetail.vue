@@ -66,7 +66,7 @@
     <!-- 歌曲列表 -->
     <div class="songs-list" ref="scrollContainer" v-if="songs.length > 0">
       <div ref="sortableList" class="sortable-container">
-        <div v-for="(song, index) in songs" :key="song.id" :data-id="song.id" class="list-item" :class="{
+        <div v-for="(song, index) in visibleSongs" :key="song.id" :data-id="song.id" class="list-item" :class="{
           active: playerStore.currentSong?.id === song.id,
           selected: selectedIds.has(song.id),
           'is-draggable': isEditMode,
@@ -484,9 +484,42 @@ const handleSaveEdit = async () => {
   ElMessage.success('保存成功')
 }
 
-onMounted(loadPlaylist)
+// 渐进式渲染：解决首次进入页面时的卡顿问题
+// 先渲染少量数据，然后异步渲染剩余数据
+const renderLimit = ref(10)
+const visibleSongs = computed(() => {
+  return songs.value.slice(0, renderLimit.value)
+})
 
-watch(() => route.params.id, loadPlaylist)
+// 启动渐进式渲染
+const startProgressiveRender = () => {
+  // 延迟执行全量渲染，确保页面切换动画（通常300-500ms）完全结束
+  setTimeout(() => {
+    const total = songs.value.length
+    const batchSize = 50 // 每帧渲染的数量
+
+    const renderNextBatch = () => {
+      if (renderLimit.value < total) {
+        renderLimit.value = Math.min(renderLimit.value + batchSize, total)
+        requestAnimationFrame(renderNextBatch)
+      }
+    }
+
+    requestAnimationFrame(renderNextBatch)
+  }, 600)
+}
+
+onMounted(async () => {
+  await loadPlaylist()
+  startProgressiveRender()
+})
+
+watch(() => route.params.id, async () => {
+  // 切换歌单时重置渲染限制
+  renderLimit.value = 10
+  await loadPlaylist()
+  startProgressiveRender()
+})
 
 // ==================== 导入歌曲相关 ====================
 
