@@ -120,20 +120,20 @@ import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
 import { formatDuration } from '@/utils/format'
 import {
-  CaretLeft,
-  CaretRight,
-  Expand,
-  Headset,
-  List,
-  Reading,
-  Refresh,
-  RefreshRight,
-  Sort,
-  Star,
-  StarFilled,
-  Switch,
-  VideoPause,
-  VideoPlay
+    CaretLeft,
+    CaretRight,
+    Expand,
+    Headset,
+    List,
+    Reading,
+    Refresh,
+    RefreshRight,
+    Sort,
+    Star,
+    StarFilled,
+    Switch,
+    VideoPause,
+    VideoPlay
 } from '@element-plus/icons-vue'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 
@@ -518,8 +518,48 @@ window.addEventListener('resize', () => {
   }
 })
 
+// ============ 内存优化支持 ============
+// 用于保存内存优化前的可视化状态
+let visualizerWasActive = false
+
+// 处理内存优化：暂停可视化
+const handlePauseVisualization = () => {
+  console.log('[FooterPlayer] Memory optimization: pausing visualizer')
+  // 保存当前状态
+  visualizerWasActive = playerStore.isPlaying && settingsStore.visualizerEnabled
+  // 取消动画帧
+  cancelAnimationFrame(animationId)
+  // 清空画布以释放 GPU 资源
+  if (canvasRef.value) {
+    const ctx = canvasRef.value.getContext('2d')
+    ctx?.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
+  }
+}
+
+// 处理内存优化解除：恢复可视化
+const handleResumeVisualization = () => {
+  console.log('[FooterPlayer] Memory optimization: resuming visualizer')
+  // 仅在之前是活跃状态时恢复
+  if (visualizerWasActive && playerStore.isPlaying && settingsStore.visualizerEnabled) {
+    nextTick(() => {
+      if (canvasRef.value) {
+        canvasRef.value.width = canvasRef.value.offsetWidth
+        canvasRef.value.height = canvasRef.value.offsetHeight
+        drawVisualizer()
+      }
+    })
+  }
+}
+
+// 监听内存优化事件
+window.addEventListener('memory-optimization:pause-visualization', handlePauseVisualization)
+window.addEventListener('memory-optimization:resume-visualization', handleResumeVisualization)
+
 onUnmounted(() => {
   cancelAnimationFrame(animationId)
+  // 移除内存优化事件监听
+  window.removeEventListener('memory-optimization:pause-visualization', handlePauseVisualization)
+  window.removeEventListener('memory-optimization:resume-visualization', handleResumeVisualization)
 })
 </script>
 

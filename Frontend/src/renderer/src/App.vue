@@ -130,6 +130,7 @@ import WastelandAfterglowBackground from '@/components/Theme/WastelandAfterglowB
 import { useAudio } from '@/hooks/useAudio'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
+import { useMemoryOptimization } from '@/hooks/useMemoryOptimization'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
@@ -148,6 +149,9 @@ const { t } = useI18n()
 
 // 全局初始化音频系统（确保无论完整模式还是迷你模式，音频控制都能正常工作）
 useAudio(true)
+
+// 初始化内存优化系统（仅在窗口最小化或隐藏到托盘时启用）
+useMemoryOptimization()
 
 // 启动屏幕控制
 const showSplash = ref(true)

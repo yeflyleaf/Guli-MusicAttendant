@@ -10,6 +10,9 @@ import { isForceQuit } from './tray.service'
 // 主窗口实例
 let mainWindow: BrowserWindow | null = null
 
+// 窗口隐藏状态（用于内存优化）
+let isWindowHidden = false
+
 /**
  * 创建主窗口
  */
@@ -70,9 +73,35 @@ export function createMainWindow(): BrowserWindow {
       if (settings.showTrayIcon && settings.closeToTray) {
         event.preventDefault()
         mainWindow?.hide()
+        // 通知渲染进程启用内存优化（窗口隐藏到托盘）
+        notifyWindowHidden()
         return
       }
     }
+  })
+
+  // 监听窗口最小化事件 - 通知渲染进程启用内存优化
+  mainWindow.on('minimize', () => {
+    console.log('[Window] Window minimized')
+    notifyWindowHidden()
+  })
+
+  // 监听窗口隐藏事件 - 通知渲染进程启用内存优化
+  mainWindow.on('hide', () => {
+    console.log('[Window] Window hidden (to tray)')
+    notifyWindowHidden()
+  })
+
+  // 监听窗口恢复事件 - 通知渲染进程禁用内存优化
+  mainWindow.on('restore', () => {
+    console.log('[Window] Window restored')
+    notifyWindowShown()
+  })
+
+  // 监听窗口显示事件 - 通知渲染进程禁用内存优化
+  mainWindow.on('show', () => {
+    console.log('[Window] Window shown')
+    notifyWindowShown()
   })
 
   // 窗口关闭时清理引用
@@ -81,6 +110,28 @@ export function createMainWindow(): BrowserWindow {
   })
 
   return mainWindow
+}
+
+/**
+ * 通知渲染进程窗口已隐藏（最小化或隐藏到托盘）
+ * 渲染进程收到此通知后会启用内存优化
+ */
+function notifyWindowHidden(): void {
+  if (isWindowHidden) return // 避免重复通知
+  isWindowHidden = true
+  mainWindow?.webContents.send('window:hidden')
+  console.log('[Window] Notified renderer: window hidden (memory optimization enabled)')
+}
+
+/**
+ * 通知渲染进程窗口已显示
+ * 渲染进程收到此通知后会禁用内存优化
+ */
+function notifyWindowShown(): void {
+  if (!isWindowHidden) return // 避免重复通知
+  isWindowHidden = false
+  mainWindow?.webContents.send('window:shown')
+  console.log('[Window] Notified renderer: window shown (memory optimization disabled)')
 }
 
 /**

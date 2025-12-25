@@ -248,7 +248,9 @@ const electronAPI = {
       'shortcut:next',
       'shortcut:previous',
       'shortcut:stop',
-      'window:miniPlayerMode'
+      'window:miniPlayerMode',
+      'window:hidden',   // 内存优化：窗口隐藏（最小化或托盘）
+      'window:shown'     // 内存优化：窗口显示
     ]
 
     if (validChannels.includes(channel)) {
