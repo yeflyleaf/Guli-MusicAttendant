@@ -13,7 +13,7 @@ export const useSettingsStore = defineStore('settings', {
   state: (): SettingsState => ({
     theme: 'dark',
     splashTheme: 'cosmic',
-    volume: 0.7,
+    volume: 0.6,
     playMode: 'sequence',
     language: 'zh-CN',
     fontSize: 14,
@@ -21,7 +21,7 @@ export const useSettingsStore = defineStore('settings', {
     visualizationStyle: 'bars',
     visualizationFrameRate: 60,
     rememberPlaybackStatus: true,
-    gaplessPlayback: false,
+    gaplessPlayback: true,
     musicFolders: [],
     autoScan: true,
     visualizerEnabled: true,
