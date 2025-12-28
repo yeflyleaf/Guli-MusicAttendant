@@ -35,6 +35,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: '我的歌单' }
   },
   {
+    path: '/online-search',
+    name: 'OnlineSearch',
+    component: () => import('@/views/OnlineSearch.vue'),
+    meta: { title: '在线搜索' }
+  },
+  {
     path: '/playlist/:id',
     name: 'PlaylistDetail',
     component: () => import('@/views/PlaylistDetail.vue'),

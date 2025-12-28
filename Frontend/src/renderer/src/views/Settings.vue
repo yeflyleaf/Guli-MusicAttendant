@@ -305,6 +305,161 @@
         </div>
       </el-tab-pane>
 
+      <!-- 下载设置 -->
+      <el-tab-pane label="下载设置">
+        <template #label>
+          <span class="tab-label">
+            <el-icon>
+              <Download />
+            </el-icon>
+            下载设置
+          </span>
+        </template>
+
+        <div class="settings-content">
+          <h2 class="section-title">音乐来源</h2>
+
+          <div class="setting-group">
+            <div class="source-list-compact">
+              <div v-if="musicSources.length === 0" class="empty-sources-compact">
+                暂无已安装的音乐源，请点击"自定义源管理"添加
+              </div>
+              <div v-for="source in musicSources" :key="source.id" class="source-item-compact">
+                <el-checkbox v-model="source.enabled" @change="handleSourceEnabledChange(source)">
+                  <span class="source-name">{{ source.name }}</span>
+                  <span class="source-icon">{{ source.icon || '🎵' }}</span>
+                  <span class="source-version">v{{ source.version || '1.0.0' }}</span>
+                  <span v-if="source.initialized" class="source-status success">[初始化成功]</span>
+                </el-checkbox>
+              </div>
+            </div>
+            <div class="source-actions">
+              <el-button @click="showSourceManager = true">自定义源管理</el-button>
+            </div>
+          </div>
+
+          <h2 class="section-title" style="margin-top: 24px;">下载设置</h2>
+
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>是否启用下载功能</span>
+                <span class="setting-desc">启用后可从在线搜索结果下载音乐</span>
+              </div>
+              <el-switch v-model="downloadEnabled" @change="handleDownloadEnabledChange" />
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>下载目录存在同名的文件时跳过此下载任务</span>
+                <span class="setting-desc">避免重复下载相同文件</span>
+              </div>
+              <el-switch v-model="downloadSkipExisting" @change="handleDownloadSkipExistingChange" />
+            </div>
+          </div>
+
+          <h3 class="subsection-title">下载路径</h3>
+          <div class="setting-group">
+            <div class="setting-item block">
+              <div class="setting-label">
+                <span>当前下载路径：{{ downloadPath || '未设置（将使用第一个音乐文件夹）' }}</span>
+              </div>
+              <div class="setting-control mt-2">
+                <el-button @click="handleChangeDownloadPath">更改</el-button>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="subsection-title">同时下载任务数</h3>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>同时下载任务数</span>
+                <span class="setting-desc">设置过大可能会导致 IP 被封，这取决于音源</span>
+              </div>
+              <el-select v-model="downloadConcurrent" style="width: 80px" @change="handleDownloadConcurrentChange">
+                <el-option :label="1" :value="1" />
+                <el-option :label="2" :value="2" />
+                <el-option :label="3" :value="3" />
+                <el-option :label="5" :value="5" />
+                <el-option :label="10" :value="10" />
+              </el-select>
+            </div>
+          </div>
+
+          <h3 class="subsection-title">文件命名方式</h3>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>文件命名方式</span>
+              </div>
+              <el-radio-group v-model="downloadNamingRule" @change="handleDownloadNamingRuleChange">
+                <el-radio value="name-artist">歌名 - 歌手</el-radio>
+                <el-radio value="artist-name">歌手 - 歌名</el-radio>
+                <el-radio value="name">歌名</el-radio>
+              </el-radio-group>
+            </div>
+          </div>
+
+          <h3 class="subsection-title">是否将以下内容嵌入到音频文件中</h3>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>封面嵌入</span>
+              </div>
+              <el-switch v-model="downloadEmbedCover" @change="handleDownloadEmbedCoverChange" />
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>歌词嵌入</span>
+              </div>
+              <el-switch v-model="downloadEmbedLyrics" @change="handleDownloadEmbedLyricsChange" />
+            </div>
+
+            <div class="setting-item" v-if="downloadEmbedLyrics">
+              <div class="setting-label">
+                <span>同时嵌入翻译歌词（如果有）</span>
+              </div>
+              <el-switch v-model="downloadEmbedTranslation" @change="handleDownloadEmbedTranslationChange" />
+            </div>
+
+          </div>
+
+          <h3 class="subsection-title">歌词下载</h3>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>是否启用</span>
+                <span class="setting-desc">同时下载歌词文件到音乐目录</span>
+              </div>
+              <el-switch v-model="downloadLyricsEnabled" @change="handleDownloadLyricsEnabledChange" />
+            </div>
+
+            <div class="setting-item" v-if="downloadLyricsEnabled">
+              <div class="setting-label">
+                <span>同时将翻译歌词写入歌词文件中（如果有）</span>
+              </div>
+              <el-switch v-model="downloadLyricsTranslation" @change="handleDownloadLyricsTranslationChange" />
+            </div>
+
+          </div>
+
+          <h3 class="subsection-title">下载的歌词文件编码格式</h3>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-label">
+                <span>歌词文件编码</span>
+              </div>
+              <el-radio-group v-model="downloadLyricsEncoding" @change="handleDownloadLyricsEncodingChange">
+                <el-radio value="utf-8">UTF-8</el-radio>
+                <el-radio value="gbk">GBK</el-radio>
+              </el-radio-group>
+            </div>
+          </div>
+        </div>
+      </el-tab-pane>
+
       <!-- 关于 -->
       <el-tab-pane :label="$t('settings.about.title')">
         <template #label>
@@ -391,19 +546,25 @@
         </div>
       </el-tab-pane>
     </el-tabs>
+
+    <!-- 自定义源管理对话框 -->
+    <SourceManagerDialog v-model="showSourceManager" :sources="musicSources" @update:sources="handleSourcesUpdate"
+      @import-source="handleImportSource" @remove-source="handleRemoveSource" />
   </div>
 </template>
 
 <script setup lang="ts">
 defineOptions({ name: 'SettingsView' })
 
+import SourceManagerDialog from '@/components/Settings/SourceManagerDialog.vue'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useIpc } from '@/hooks/useIpc'
 import { useLibraryStore } from '@/store/library.store'
 import { useSettingsStore } from '@/store/settings.store'
-import type { SplashTheme, Theme } from '@/types/settings'
+import type { FileNamingRule, LyricsEncoding, MusicSource, SplashTheme, Theme } from '@/types/settings'
 import {
   Close,
+  Download,
   Folder,
   FolderOpened,
   InfoFilled,
@@ -414,7 +575,7 @@ import {
   Refresh
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // 初始化 i18n 以便在模板中使用 $t
@@ -448,6 +609,23 @@ const showTrayIcon = ref(true)
 const minimizeToTray = ref(false)
 const closeToTray = ref(false)
 
+// 下载设置
+const downloadEnabled = ref(true)
+const downloadSkipExisting = ref(true)
+const downloadPath = ref('')
+const downloadConcurrent = ref(3)
+const downloadNamingRule = ref<FileNamingRule>('name-artist')
+const downloadEmbedCover = ref(true)
+const downloadEmbedLyrics = ref(true)
+const downloadEmbedTranslation = ref(true)
+const downloadLyricsEnabled = ref(true)
+const downloadLyricsTranslation = ref(true)
+const downloadLyricsEncoding = ref<LyricsEncoding>('utf-8')
+
+// 音乐源相关 - 使用 computed 从 store 获取
+const showSourceManager = ref(false)
+const musicSources = computed(() => settingsStore.musicSources)
+
 // 初始化设置值
 onMounted(() => {
   theme.value = settingsStore.theme
@@ -469,6 +647,19 @@ onMounted(() => {
   showTrayIcon.value = settingsStore.showTrayIcon
   minimizeToTray.value = settingsStore.minimizeToTray
   closeToTray.value = settingsStore.closeToTray
+
+  // 下载设置
+  downloadEnabled.value = settingsStore.downloadEnabled
+  downloadSkipExisting.value = settingsStore.downloadSkipExisting
+  downloadPath.value = settingsStore.downloadPath
+  downloadConcurrent.value = settingsStore.downloadConcurrent
+  downloadNamingRule.value = settingsStore.downloadNamingRule
+  downloadEmbedCover.value = settingsStore.downloadEmbedCover
+  downloadEmbedLyrics.value = settingsStore.downloadEmbedLyrics
+  downloadEmbedTranslation.value = settingsStore.downloadEmbedTranslation
+  downloadLyricsEnabled.value = settingsStore.downloadLyricsEnabled
+  downloadLyricsTranslation.value = settingsStore.downloadLyricsTranslation
+  downloadLyricsEncoding.value = settingsStore.downloadLyricsEncoding
 })
 
 // --- 外观设置处理 ---
@@ -592,6 +783,146 @@ const handleScanAll = async () => {
   } finally {
     isScanning.value = false
   }
+}
+
+// --- 下载设置处理 ---
+
+const handleDownloadEnabledChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ downloadEnabled: value })
+}
+
+const handleDownloadSkipExistingChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ downloadSkipExisting: value })
+}
+
+const handleChangeDownloadPath = async () => {
+  const folder = await selectFolder()
+  if (!folder) return
+
+  downloadPath.value = folder
+  await settingsStore.saveSettings({ downloadPath: folder })
+  ElMessage.success('下载路径已更改')
+}
+
+const handleDownloadConcurrentChange = async (value: number) => {
+  await settingsStore.saveSettings({ downloadConcurrent: value })
+}
+
+const handleDownloadNamingRuleChange = async (value: FileNamingRule) => {
+  await settingsStore.saveSettings({ downloadNamingRule: value })
+}
+
+const handleDownloadEmbedCoverChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ downloadEmbedCover: value })
+}
+
+const handleDownloadEmbedLyricsChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ downloadEmbedLyrics: value })
+}
+
+const handleDownloadEmbedTranslationChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ downloadEmbedTranslation: value })
+}
+
+const handleDownloadLyricsEnabledChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ downloadLyricsEnabled: value })
+}
+
+const handleDownloadLyricsTranslationChange = async (value: boolean) => {
+  await settingsStore.saveSettings({ downloadLyricsTranslation: value })
+}
+
+const handleDownloadLyricsEncodingChange = async (value: LyricsEncoding) => {
+  await settingsStore.saveSettings({ downloadLyricsEncoding: value })
+}
+
+// --- 音乐源处理 ---
+
+const handleSourceEnabledChange = async (source: MusicSource) => {
+  await settingsStore.toggleMusicSourceEnabled(source.id, source.enabled)
+}
+
+const handleSourcesUpdate = async (sources: MusicSource[]) => {
+  // 批量更新所有音乐源
+  for (const source of sources) {
+    await settingsStore.updateMusicSource(source)
+  }
+}
+
+const handleImportSource = async (type: 'online' | 'local', url?: string) => {
+  if (type === 'online') {
+    if (!url) return
+    ElMessage.info(`正在从 ${url} 导入源...`)
+
+    try {
+      // 从 URL 获取脚本内容
+      const result = await window.electron.dialog.fetchUrlContent(url)
+      if (!result) {
+        ElMessage.error('获取脚本内容失败，请检查 URL 是否正确')
+        return
+      }
+
+      // 创建新的音乐源
+      const newSource: MusicSource = {
+        id: `online_${Date.now()}`,
+        name: result.name || '未知源',
+        version: result.version || '1.0.0',
+        icon: result.icon || '🎵',
+        enabled: true,
+        initialized: false,
+        allowUpdatePopup: true,
+        scriptContent: result.content,
+        sourceUrl: url
+      }
+
+      await settingsStore.addMusicSource(newSource)
+      ElMessage.success(`成功导入音乐源: ${newSource.name}`)
+    } catch (error) {
+      console.error('[Settings] 在线导入失败:', error)
+      ElMessage.error('在线导入失败')
+    }
+  } else {
+    // 本地导入
+    try {
+      const result = await window.electron.dialog.selectScriptFile()
+      if (!result) return
+
+      if (result.error) {
+        ElMessage.error(`读取脚本文件失败: ${result.error}`)
+        return
+      }
+
+      // 创建新的音乐源
+      const newSource: MusicSource = {
+        id: `local_${Date.now()}`,
+        name: result.name || '未知源',
+        version: result.version || '1.0.0',
+        icon: result.icon || '🎵',
+        enabled: true,
+        initialized: false,
+        allowUpdatePopup: true,
+        scriptPath: result.filePath,
+        scriptContent: result.content
+      }
+
+      await settingsStore.addMusicSource(newSource)
+      ElMessage.success(`成功导入音乐源: ${newSource.name}`)
+    } catch (error) {
+      console.error('[Settings] 本地导入失败:', error)
+      ElMessage.error('本地导入失败')
+    }
+  }
+}
+
+const handleRemoveSource = async (source: MusicSource) => {
+  const confirmed = await showConfirm({
+    message: `确定要删除音乐源"${source.name}"吗？`,
+    type: 'warning'
+  })
+  if (!confirmed) return
+
+  await settingsStore.removeMusicSource(source.id)
+  ElMessage.success(`已删除音乐源: ${source.name}`)
 }
 
 // --- 其他 ---
@@ -849,5 +1180,52 @@ const handleResetSettings = async () => {
     border-radius: $border-radius-sm;
     border: 1px solid $border-color;
   }
+}
+
+// 音乐来源列表样式
+.source-list-compact {
+  margin-bottom: $spacing-md;
+}
+
+.empty-sources-compact {
+  padding: $spacing-md;
+  text-align: center;
+  color: $text-muted;
+  font-size: $font-size-sm;
+}
+
+.source-item-compact {
+  padding: $spacing-xs 0;
+
+  .source-name {
+    font-weight: 500;
+  }
+
+  .source-icon {
+    margin-left: $spacing-xs;
+  }
+
+  .source-version {
+    font-size: $font-size-sm;
+    color: $text-muted;
+    margin-left: $spacing-xs;
+  }
+
+  .source-status {
+    font-size: $font-size-sm;
+    margin-left: $spacing-sm;
+
+    &.success {
+      color: $success-color;
+    }
+
+    &.error {
+      color: $error-color;
+    }
+  }
+}
+
+.source-actions {
+  margin-top: $spacing-sm;
 }
 </style>

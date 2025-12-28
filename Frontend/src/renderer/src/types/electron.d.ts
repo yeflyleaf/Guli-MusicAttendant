@@ -73,6 +73,22 @@ declare global {
         }>
         checkFileExists: (filePath: string) => Promise<boolean>
         checkFilesExist: (filePaths: string[]) => Promise<Record<string, boolean>>
+        // 选择脚本文件（音乐源导入）
+        selectScriptFile: () => Promise<{
+          filePath: string
+          content?: string
+          name?: string
+          version?: string
+          icon?: string
+          error?: string
+        } | null>
+        // 下载URL内容
+        fetchUrlContent: (url: string) => Promise<{
+          content: string
+          name?: string
+          version?: string
+          icon?: string
+        } | null>
       }
 
       // 窗口控制

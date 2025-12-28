@@ -168,7 +168,25 @@ const electronAPI = {
       ipcRenderer.invoke('dialog:checkFileExists', filePath),
 
     checkFilesExist: (filePaths: string[]): Promise<Record<string, boolean>> =>
-      ipcRenderer.invoke('dialog:checkFilesExist', filePaths)
+      ipcRenderer.invoke('dialog:checkFilesExist', filePaths),
+
+    // 选择脚本文件（音乐源导入）
+    selectScriptFile: (): Promise<{
+      filePath: string
+      content?: string
+      name?: string
+      version?: string
+      icon?: string
+      error?: string
+    } | null> => ipcRenderer.invoke('dialog:selectScriptFile'),
+
+    // 下载URL内容（在线导入音乐源）
+    fetchUrlContent: (url: string): Promise<{
+      content: string
+      name?: string
+      version?: string
+      icon?: string
+    } | null> => ipcRenderer.invoke('dialog:fetchUrlContent', url)
   },
 
   // ==================== 窗口控制 ====================
@@ -236,6 +254,59 @@ const electronAPI = {
 
     reset: (): Promise<boolean> =>
       ipcRenderer.invoke('settings:reset')
+  },
+
+  // ==================== 在线音乐相关 ====================
+  online: {
+    search: (params: {
+      keyword: string
+      source: string
+      page?: number
+      pageSize?: number
+    }): Promise<{
+      list: Array<{
+        id: string
+        name: string
+        artist: string
+        album?: string
+        duration?: number
+        cover?: string
+        source: string
+        quality?: string
+        playUrl?: string
+        size?: number
+      }>
+      total: number
+      source: string
+      page?: number
+      pageSize?: number
+    }> => ipcRenderer.invoke('online:search', params),
+
+    getPlayUrl: (params: {
+      id: string
+      source: string
+      quality?: string
+    }): Promise<string> => ipcRenderer.invoke('online:getPlayUrl', params),
+
+    download: (params: {
+      music: {
+        id: string
+        name: string
+        artist: string
+        album?: string
+        duration?: number
+        cover?: string
+        source: string
+        quality?: string
+        playUrl?: string
+        size?: number
+      }
+      targetDir?: string
+    }): Promise<{
+      success: boolean
+      localPath?: string
+      error?: string
+    }> => ipcRenderer.invoke('online:download', params)
   },
 
   // ==================== 事件监听 ====================

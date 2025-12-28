@@ -161,6 +161,23 @@ export const usePlayerStore = defineStore('player', {
     },
 
     /**
+     * 立即播放歌曲（用于在线音乐）
+     * 跳过路径验证，不记录播放历史，不污染本地数据
+     * @param song 要播放的歌曲（可以是临时构造的对象）
+     */
+    playNow(song: Music) {
+      console.log('[Player] Playing online music:', song.title)
+
+      // 直接设置当前歌曲，不添加到队列（保持本地队列干净）
+      this.currentSong = song
+      this.isPlaying = true
+      this.currentTime = 0
+
+      // 不调用 _recordPlay，避免污染播放记录
+      // 不添加到 queue，避免与本地音乐混合
+    },
+
+    /**
      * 播放/暂停切换
      */
     togglePlay() {

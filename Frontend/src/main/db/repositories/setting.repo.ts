@@ -103,6 +103,13 @@ export function getAllSettings(): Settings {
           settings.quickSwitchThemes = ['dark', 'light']
         }
         break
+      case 'musicSources':
+        try {
+          settings.musicSources = JSON.parse(row.value)
+        } catch {
+          settings.musicSources = []
+        }
+        break
     }
   }
 
@@ -222,7 +229,8 @@ export function resetSettings(): boolean {
     ['showTrayIcon', 'true'],
     ['minimizeToTray', 'false'],
     ['closeToTray', 'false'],
-    ['quickSwitchThemes', '["dark","light"]']
+    ['quickSwitchThemes', '["dark","light"]'],
+    ['musicSources', '[]']
   ]
 
   return transaction(() => {

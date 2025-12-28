@@ -58,6 +58,17 @@
             </el-icon>
           </span>
         </el-tooltip>
+
+        <!-- 在线搜索 -->
+        <el-tooltip content="在线搜索" placement="bottom" :show-after="300">
+          <span class="nav-icon-btn"
+            :class="{ active: $route.path === '/online-search' }"
+            @click="navigateTo('/online-search')">
+            <el-icon>
+              <Search />
+            </el-icon>
+          </span>
+        </el-tooltip>
       </div>
     </div>
 
@@ -126,18 +137,19 @@ import { useIpc } from '@/hooks/useIpc'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
 import {
-  Aim,
-  Clock,
-  Close,
-  CopyDocument,
-  FullScreen,
-  Headset,
-  HomeFilled,
-  MagicStick,
-  Minus,
-  Setting,
-  Star,
-  Tickets
+    Aim,
+    Clock,
+    Close,
+    CopyDocument,
+    FullScreen,
+    Headset,
+    HomeFilled,
+    MagicStick,
+    Minus,
+    Search,
+    Setting,
+    Star,
+    Tickets
 } from '@element-plus/icons-vue'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

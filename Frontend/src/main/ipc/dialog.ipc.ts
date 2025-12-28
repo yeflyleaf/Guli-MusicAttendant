@@ -4,9 +4,45 @@
  */
 import { dialog, ipcMain, shell } from 'electron'
 import fs from 'fs'
+import path from 'path'
 import * as settingRepo from '../db/repositories/setting.repo'
 import { scanDirectories, scanDirectory } from '../services/scanner.service'
 import { getMainWindow } from '../services/window.service'
+
+/**
+ * 从脚本内容中解析元数据
+ * 支持以下格式的注释头：
+ * // @name 源名称
+ * // @version 1.0.0
+ * // @icon 🎵
+ * // @author 作者名
+ */
+function parseScriptMetadata(content: string, filePath: string): {
+  name: string
+  version: string
+  icon?: string
+  author?: string
+} {
+  const lines = content.split('\n').slice(0, 30) // 只检查前30行
+  const metadata: Record<string, string> = {}
+
+  for (const line of lines) {
+    const match = line.match(/^\s*\/\/\s*@(\w+)\s+(.+)$/)
+    if (match) {
+      metadata[match[1].toLowerCase()] = match[2].trim()
+    }
+  }
+
+  // 如果没有找到名称，使用文件名作为默认名称
+  const defaultName = path.basename(filePath, '.js')
+
+  return {
+    name: metadata.name || defaultName,
+    version: metadata.version || '1.0.0',
+    icon: metadata.icon,
+    author: metadata.author
+  }
+}
 
 /**
  * 注册对话框相关的 IPC 处理器
@@ -65,6 +101,74 @@ export function setupDialogIpc(): void {
     }
 
     return result.filePaths
+  })
+
+  // 选择脚本文件（用于导入音乐源）
+  ipcMain.handle('dialog:selectScriptFile', async () => {
+    const mainWindow = getMainWindow()
+    if (!mainWindow) return null
+
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      title: '选择音乐源脚本文件',
+      filters: [
+        { name: 'JavaScript 文件', extensions: ['js'] },
+        { name: '所有文件', extensions: ['*'] }
+      ]
+    })
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return null
+    }
+
+    // 读取脚本文件内容并解析基本信息
+    const filePath = result.filePaths[0]
+    try {
+      const content = await fs.promises.readFile(filePath, 'utf-8')
+
+      // 尝试从脚本内容中提取元数据（如果脚本遵循特定格式）
+      const metadata = parseScriptMetadata(content, filePath)
+
+      return {
+        filePath,
+        content,
+        ...metadata
+      }
+    } catch (error) {
+      console.error('[Dialog] 读取脚本文件失败:', error)
+      return { filePath, error: '读取文件失败' }
+    }
+  })
+
+  // 从 URL 获取脚本内容（用于在线导入音乐源）
+  ipcMain.handle('dialog:fetchUrlContent', async (_event, url: string) => {
+    try {
+      // 使用 fetch API 获取 URL 内容
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      })
+
+      if (!response.ok) {
+        console.error('[Dialog] 获取 URL 内容失败:', response.status, response.statusText)
+        return null
+      }
+
+      const content = await response.text()
+
+      // 解析脚本元数据
+      const metadata = parseScriptMetadata(content, url)
+
+      return {
+        content,
+        ...metadata,
+        sourceUrl: url
+      }
+    } catch (error) {
+      console.error('[Dialog] 获取 URL 内容失败:', error)
+      return null
+    }
   })
 
   // 扫描文件夹

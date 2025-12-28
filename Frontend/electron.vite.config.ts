@@ -27,7 +27,8 @@ export default defineConfig({
       outDir: 'dist-electron/preload',
       rollupOptions: {
         input: {
-          index: resolve(__dirname, 'src/preload/index.ts')
+          index: resolve(__dirname, 'src/preload/index.ts'),
+          'api-runner': resolve(__dirname, 'src/preload/api-runner.ts')
         }
       }
     }
