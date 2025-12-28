@@ -275,6 +275,7 @@ const electronAPI = {
         quality?: string
         playUrl?: string
         size?: number
+        extra?: Record<string, unknown>
       }>
       total: number
       source: string
@@ -286,6 +287,7 @@ const electronAPI = {
       id: string
       source: string
       quality?: string
+      extra?: Record<string, unknown>
     }): Promise<string> => ipcRenderer.invoke('online:getPlayUrl', params),
 
     download: (params: {
@@ -307,6 +309,69 @@ const electronAPI = {
       localPath?: string
       error?: string
     }> => ipcRenderer.invoke('online:download', params)
+  },
+
+  // ==================== 音乐源管理 ====================
+  source: {
+    // 获取所有源
+    getAll: (): Promise<Array<{
+      id: string
+      name: string
+      version: string
+      description?: string
+      icon?: string
+      author?: string
+      enabled: boolean
+      supports: {
+        search?: boolean
+        getPlayUrl?: boolean
+        getLyrics?: boolean
+      }
+      importedAt: string
+      updatedAt: string
+    }>> => ipcRenderer.invoke('source:getAll'),
+
+    // 获取启用的源
+    getEnabled: (): Promise<Array<{
+      id: string
+      name: string
+      version: string
+      description?: string
+      icon?: string
+      author?: string
+      enabled: boolean
+      supports: {
+        search?: boolean
+        getPlayUrl?: boolean
+        getLyrics?: boolean
+      }
+      importedAt: string
+      updatedAt: string
+    }>> => ipcRenderer.invoke('source:getEnabled'),
+
+    // 导入源脚本
+    import: (scriptContent: string): Promise<{
+      success: boolean
+      error?: string
+      source?: {
+        id: string
+        name: string
+        version: string
+      }
+      isUpdate?: boolean
+    }> => ipcRenderer.invoke('source:import', scriptContent),
+
+    // 删除源
+    delete: (sourceId: string): Promise<boolean> =>
+      ipcRenderer.invoke('source:delete', sourceId),
+
+    // 切换源启用状态
+    toggle: (sourceId: string): Promise<boolean> =>
+      ipcRenderer.invoke('source:toggle', sourceId),
+
+    // 获取已加载的源
+    getLoaded: (): Promise<Array<{ id: string; name: string }>> =>
+      ipcRenderer.invoke('source:getLoaded')
   },
 
   // ==================== 事件监听 ====================

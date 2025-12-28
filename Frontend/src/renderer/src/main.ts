@@ -40,9 +40,20 @@ console.log('[Main] Starting data preload...')
 const preloadPromise = Promise.all([
   settingsStore.loadSettings(),
   libraryStore.loadAll()
-]).then(() => {
+]).then(async () => {
+  // 加载音乐源（在设置加载完成后）
+  try {
+    const sources = await window.electron.source.getAll()
+    if (sources && sources.length > 0) {
+      settingsStore.setMusicSourcesFromBackend(sources)
+      console.log('[Main] Music sources loaded:', sources.length)
+    }
+  } catch (err) {
+    console.error('[Main] Failed to load music sources:', err)
+  }
   console.log('[Main] Data preload complete!')
 })
+
 
 // 扩展 Window 类型以支持 __preloadPromise
 declare global {

@@ -11,6 +11,9 @@ import * as onlineService from '../services/online.service'
 export function setupOnlineIpc(): void {
   console.log('[IPC] Registering online handlers...')
 
+  // 初始化在线服务监听器
+  onlineService.initOnlineServiceListeners()
+
   // 搜索
   ipcMain.handle('online:search', async (_event, params) => {
     try {

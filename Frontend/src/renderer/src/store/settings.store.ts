@@ -370,6 +370,38 @@ export const useSettingsStore = defineStore('settings', {
         console.error('[Settings] 更新音乐来源选项失败:', error)
         return false
       }
+    },
+
+    /**
+     * 从后端同步音乐源列表
+     * 将后端返回的源信息转换为前端 MusicSource 格式
+     */
+    setMusicSourcesFromBackend(sources: Array<{
+      id: string
+      name: string
+      version: string
+      description?: string
+      icon?: string
+      author?: string
+      enabled: boolean
+      supports: {
+        search?: boolean
+        getPlayUrl?: boolean
+        getLyrics?: boolean
+      }
+      importedAt: string
+      updatedAt: string
+    }>) {
+      this.musicSources = sources.map(s => ({
+        id: s.id,
+        name: s.name,
+        version: s.version,
+        icon: s.icon || '🎵',
+        enabled: s.enabled,
+        initialized: true,
+        allowUpdatePopup: true
+      }))
+      console.log('[Settings] 从后端同步音乐源:', this.musicSources.length)
     }
   }
 })

@@ -1,24 +1,25 @@
 /**
  * 在线搜索状态管理
  * 完全独立于本地音乐库，不污染 library.store
+ * 与 source.store 协同工作，使用自定义源进行搜索
  */
 import type {
     DownloadProgress,
     OnlineMusic,
-    OnlineSearchParams,
-    OnlineSource
+    OnlineSearchParams
 } from '@/types/online'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useSourceStore } from './source.store'
 
 export const useOnlineStore = defineStore('online', () => {
+  // 获取源管理 store
+  const sourceStore = useSourceStore()
+
   // ==================== 状态 ====================
 
   /** 搜索关键词 */
   const keyword = ref('')
-
-  /** 当前选中的源 */
-  const currentSource = ref('mock')
 
   /** 搜索结果列表 */
   const searchResults = ref<OnlineMusic[]>([])
@@ -38,11 +39,6 @@ export const useOnlineStore = defineStore('online', () => {
   /** 搜索错误信息 */
   const searchError = ref<string | null>(null)
 
-  /** 可用的音乐源列表 */
-  const sources = ref<OnlineSource[]>([
-    { id: 'mock', name: '测试源', enabled: true, isCustom: false }
-  ])
-
   /** 下载进度映射表 */
   const downloadProgress = ref<Map<string, DownloadProgress>>(new Map())
 
@@ -57,17 +53,26 @@ export const useOnlineStore = defineStore('online', () => {
   /** 总页数 */
   const totalPages = computed(() => Math.ceil(totalResults.value / pageSize.value))
 
+  /** 当前选中的源（从 sourceStore 获取） */
+  const currentSource = computed(() => sourceStore.currentSourceId)
+
   /** 当前源信息 */
-  const currentSourceInfo = computed(() =>
-    sources.value.find(s => s.id === currentSource.value)
-  )
+  const currentSourceInfo = computed(() => sourceStore.currentSource)
 
   /** 启用的源列表 */
-  const enabledSources = computed(() =>
-    sources.value.filter(s => s.enabled)
-  )
+  const enabledSources = computed(() => sourceStore.enabledSources)
+
+  /** 是否有可用源 */
+  const hasAvailableSources = computed(() => sourceStore.hasEnabledSources)
 
   // ==================== 方法 ====================
+
+  /**
+   * 初始化：加载源
+   */
+  async function initialize(): Promise<void> {
+    await sourceStore.loadSources()
+  }
 
   /**
    * 执行搜索
@@ -79,12 +84,25 @@ export const useOnlineStore = defineStore('online', () => {
       return
     }
 
+    // 检查是否有可用源
+    if (!hasAvailableSources.value) {
+      searchError.value = '没有可用的音乐源，请先导入源脚本'
+      return
+    }
+
+    // 使用传入的源或当前选中的源
+    const sourceId = params?.source ?? sourceStore.currentSourceId
+    if (!sourceId) {
+      searchError.value = '请选择一个音乐源'
+      return
+    }
+
     // 更新关键词
     keyword.value = searchKeyword.trim()
 
     // 更新源
     if (params?.source) {
-      currentSource.value = params.source
+      sourceStore.setCurrentSource(params.source)
     }
 
     // 更新页码
@@ -100,12 +118,16 @@ export const useOnlineStore = defineStore('online', () => {
     try {
       const result = await window.electron.online.search({
         keyword: keyword.value,
-        source: currentSource.value,
+        source: sourceId,
         page: currentPage.value,
         pageSize: pageSize.value
       })
 
-      searchResults.value = result.list
+      // 为每个结果添加源信息
+      searchResults.value = result.list.map(item => ({
+        ...item,
+        source: sourceId
+      }))
       totalResults.value = result.total
 
     } catch (error) {
@@ -159,7 +181,8 @@ export const useOnlineStore = defineStore('online', () => {
       const url = await window.electron.online.getPlayUrl({
         id: music.id,
         source: music.source,
-        quality: music.quality
+        quality: music.quality,
+        extra: music.extra
       })
 
       // 更新结果列表中的 playUrl
@@ -189,6 +212,15 @@ export const useOnlineStore = defineStore('online', () => {
     })
 
     try {
+      // 先获取播放链接
+      let playUrl = music.playUrl
+      if (!playUrl) {
+        playUrl = await getPlayUrl(music)
+        if (!playUrl) {
+          throw new Error('无法获取播放链接')
+        }
+      }
+
       // 更新状态为下载中
       downloadProgress.value.set(music.id, {
         id: music.id,
@@ -196,7 +228,13 @@ export const useOnlineStore = defineStore('online', () => {
         status: 'downloading'
       })
 
-      const result = await window.electron.online.download({ music })
+      const result = await window.electron.online.download({
+        music: { ...music, playUrl }
+      })
+
+      if (!result.success) {
+        throw new Error(result.error || '下载失败')
+      }
 
       // 更新状态为完成
       downloadProgress.value.set(music.id, {
@@ -244,7 +282,6 @@ export const useOnlineStore = defineStore('online', () => {
    */
   function reset() {
     keyword.value = ''
-    currentSource.value = 'mock'
     clearResults()
     downloadProgress.value.clear()
   }
@@ -253,55 +290,31 @@ export const useOnlineStore = defineStore('online', () => {
    * 切换源
    */
   function setSource(sourceId: string) {
-    if (sources.value.some(s => s.id === sourceId)) {
-      currentSource.value = sourceId
-    }
-  }
-
-  /**
-   * 添加自定义源
-   */
-  function addCustomSource(source: OnlineSource) {
-    if (!sources.value.some(s => s.id === source.id)) {
-      sources.value.push({ ...source, isCustom: true })
-    }
-  }
-
-  /**
-   * 移除自定义源
-   */
-  function removeCustomSource(sourceId: string) {
-    const index = sources.value.findIndex(s => s.id === sourceId && s.isCustom)
-    if (index !== -1) {
-      sources.value.splice(index, 1)
-      // 如果删除的是当前源，切换回默认源
-      if (currentSource.value === sourceId) {
-        currentSource.value = 'mock'
-      }
-    }
+    sourceStore.setCurrentSource(sourceId)
   }
 
   return {
     // 状态
     keyword,
-    currentSource,
     searchResults,
     totalResults,
     currentPage,
     pageSize,
     isSearching,
     searchError,
-    sources,
     downloadProgress,
     loadingPlayUrl,
 
     // 计算属性
     hasResults,
     totalPages,
+    currentSource,
     currentSourceInfo,
     enabledSources,
+    hasAvailableSources,
 
     // 方法
+    initialize,
     search,
     searchNextPage,
     searchPrevPage,
@@ -311,8 +324,6 @@ export const useOnlineStore = defineStore('online', () => {
     getDownloadProgress,
     clearResults,
     reset,
-    setSource,
-    addCustomSource,
-    removeCustomSource
+    setSource
   }
 })

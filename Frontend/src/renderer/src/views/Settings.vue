@@ -627,7 +627,7 @@ const showSourceManager = ref(false)
 const musicSources = computed(() => settingsStore.musicSources)
 
 // 初始化设置值
-onMounted(() => {
+onMounted(async () => {
   theme.value = settingsStore.theme
   quickSwitchThemes.value = [...settingsStore.quickSwitchThemes]
   language.value = settingsStore.language
@@ -660,6 +660,16 @@ onMounted(() => {
   downloadLyricsEnabled.value = settingsStore.downloadLyricsEnabled
   downloadLyricsTranslation.value = settingsStore.downloadLyricsTranslation
   downloadLyricsEncoding.value = settingsStore.downloadLyricsEncoding
+
+  // 从后端同步音乐源列表
+  try {
+    const sources = await window.electron.source.getAll()
+    if (sources && sources.length > 0) {
+      settingsStore.setMusicSourcesFromBackend(sources)
+    }
+  } catch (err) {
+    console.error('[Settings] 加载音乐源失败:', err)
+  }
 })
 
 // --- 外观设置处理 ---
@@ -838,6 +848,20 @@ const handleDownloadLyricsEncodingChange = async (value: LyricsEncoding) => {
 
 // --- 音乐源处理 ---
 
+/**
+ * 刷新音乐源列表 - 从后端重新获取所有源
+ */
+const refreshMusicSources = async () => {
+  try {
+    const sources = await window.electron.source.getAll()
+    if (sources) {
+      settingsStore.setMusicSourcesFromBackend(sources)
+    }
+  } catch (err) {
+    console.error('[Settings] 刷新音乐源失败:', err)
+  }
+}
+
 const handleSourceEnabledChange = async (source: MusicSource) => {
   await settingsStore.toggleMusicSourceEnabled(source.id, source.enabled)
 }
@@ -862,21 +886,15 @@ const handleImportSource = async (type: 'online' | 'local', url?: string) => {
         return
       }
 
-      // 创建新的音乐源
-      const newSource: MusicSource = {
-        id: `online_${Date.now()}`,
-        name: result.name || '未知源',
-        version: result.version || '1.0.0',
-        icon: result.icon || '🎵',
-        enabled: true,
-        initialized: false,
-        allowUpdatePopup: true,
-        scriptContent: result.content,
-        sourceUrl: url
+      // 使用后端 IPC 导入源
+      const importResult = await window.electron.source.import(result.content)
+      if (importResult.success) {
+        ElMessage.success(`成功导入音乐源: ${importResult.source?.name || '未知'}`)
+        // 刷新本地源列表
+        await refreshMusicSources()
+      } else {
+        ElMessage.error(`导入失败: ${importResult.error}`)
       }
-
-      await settingsStore.addMusicSource(newSource)
-      ElMessage.success(`成功导入音乐源: ${newSource.name}`)
     } catch (error) {
       console.error('[Settings] 在线导入失败:', error)
       ElMessage.error('在线导入失败')
@@ -892,21 +910,20 @@ const handleImportSource = async (type: 'online' | 'local', url?: string) => {
         return
       }
 
-      // 创建新的音乐源
-      const newSource: MusicSource = {
-        id: `local_${Date.now()}`,
-        name: result.name || '未知源',
-        version: result.version || '1.0.0',
-        icon: result.icon || '🎵',
-        enabled: true,
-        initialized: false,
-        allowUpdatePopup: true,
-        scriptPath: result.filePath,
-        scriptContent: result.content
+      if (!result.content) {
+        ElMessage.error('脚本内容为空')
+        return
       }
 
-      await settingsStore.addMusicSource(newSource)
-      ElMessage.success(`成功导入音乐源: ${newSource.name}`)
+      // 使用后端 IPC 导入源
+      const importResult = await window.electron.source.import(result.content)
+      if (importResult.success) {
+        ElMessage.success(`成功导入音乐源: ${importResult.source?.name || '未知'}`)
+        // 刷新本地源列表
+        await refreshMusicSources()
+      } else {
+        ElMessage.error(`导入失败: ${importResult.error}`)
+      }
     } catch (error) {
       console.error('[Settings] 本地导入失败:', error)
       ElMessage.error('本地导入失败')
@@ -915,14 +932,30 @@ const handleImportSource = async (type: 'online' | 'local', url?: string) => {
 }
 
 const handleRemoveSource = async (source: MusicSource) => {
+  console.log('[Settings] handleRemoveSource called with source:', source)
+
   const confirmed = await showConfirm({
     message: `确定要删除音乐源"${source.name}"吗？`,
     type: 'warning'
   })
+  console.log('[Settings] User confirmed:', confirmed)
   if (!confirmed) return
 
-  await settingsStore.removeMusicSource(source.id)
-  ElMessage.success(`已删除音乐源: ${source.name}`)
+  try {
+    console.log('[Settings] Calling electron.source.delete with id:', source.id)
+    const deleted = await window.electron.source.delete(source.id)
+    console.log('[Settings] Delete result:', deleted)
+    if (deleted) {
+      ElMessage.success(`已删除音乐源: ${source.name}`)
+      // 刷新本地源列表
+      await refreshMusicSources()
+    } else {
+      ElMessage.error('删除失败')
+    }
+  } catch (error) {
+    console.error('[Settings] 删除源失败:', error)
+    ElMessage.error('删除失败')
+  }
 }
 
 // --- 其他 ---

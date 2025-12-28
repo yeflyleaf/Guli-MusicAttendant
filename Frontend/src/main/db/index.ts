@@ -73,7 +73,8 @@ export const CACHE_KEYS = {
   ALL_MUSIC: 'music:all',
   FAVORITES: 'music:favorites',
   RECENTLY_PLAYED: 'music:recentlyPlayed',
-  PLAYLISTS: 'playlists:all'
+  PLAYLISTS: 'playlists:all',
+  SOURCES: 'sources:all'
 }
 
 /**
@@ -321,6 +322,21 @@ function getSchema(): string {
     CREATE INDEX IF NOT EXISTS idx_music_artist ON music(artist);
     CREATE INDEX IF NOT EXISTS idx_music_album ON music(album);
     CREATE INDEX IF NOT EXISTS idx_music_file_path ON music(file_path);
+
+    -- 音乐源表
+    CREATE TABLE IF NOT EXISTS sources (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        version TEXT NOT NULL,
+        description TEXT,
+        icon TEXT,
+        author TEXT,
+        script_content TEXT NOT NULL,
+        enabled INTEGER DEFAULT 1,
+        supports TEXT NOT NULL,
+        imported_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    );
 
     -- 插入默认设置
     INSERT OR IGNORE INTO settings (key, value) VALUES

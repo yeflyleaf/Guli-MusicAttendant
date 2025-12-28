@@ -7,6 +7,7 @@ import { setupMusicIpc } from './music.ipc'
 import { setupOnlineIpc } from './online.ipc'
 import { setupPlaylistIpc } from './playlist.ipc'
 import { setupSettingsIpc } from './settings.ipc'
+import { setupSourceIpc } from './source.ipc'
 import { setupWindowIpc } from './window.ipc'
 
 /**
@@ -21,12 +22,13 @@ export function setupAllIpc(): void {
   setupWindowIpc()
   setupSettingsIpc()
   setupOnlineIpc()  // 在线音乐模块
+  setupSourceIpc()  // 自定义音乐源模块
 
   console.log('[IPC] All IPC handlers initialized')
 }
 
 export {
-    setupDialogIpc, setupMusicIpc, setupOnlineIpc,
-    setupPlaylistIpc, setupSettingsIpc, setupWindowIpc
+  setupDialogIpc, setupMusicIpc, setupOnlineIpc,
+  setupPlaylistIpc, setupSettingsIpc, setupSourceIpc, setupWindowIpc
 }
 

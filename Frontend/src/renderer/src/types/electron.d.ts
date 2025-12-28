@@ -116,6 +116,108 @@ declare global {
         reset: () => Promise<boolean>
       }
 
+      // 在线音乐相关
+      online: {
+        search: (params: {
+          keyword: string
+          source: string
+          page?: number
+          pageSize?: number
+        }) => Promise<{
+          list: Array<{
+            id: string
+            name: string
+            artist: string
+            album?: string
+            duration?: number
+            cover?: string
+            source: string
+            quality?: string
+            playUrl?: string
+            size?: number
+            extra?: Record<string, unknown>
+          }>
+          total: number
+          source: string
+          page?: number
+          pageSize?: number
+        }>
+        getPlayUrl: (params: {
+          id: string
+          source: string
+          quality?: string
+          extra?: Record<string, unknown>
+        }) => Promise<string>
+        download: (params: {
+          music: {
+            id: string
+            name: string
+            artist: string
+            album?: string
+            duration?: number
+            cover?: string
+            source: string
+            quality?: string
+            playUrl?: string
+            size?: number
+          }
+          targetDir?: string
+        }) => Promise<{
+          success: boolean
+          localPath?: string
+          error?: string
+        }>
+      }
+
+      // 音乐源管理
+      source: {
+        getAll: () => Promise<Array<{
+          id: string
+          name: string
+          version: string
+          description?: string
+          icon?: string
+          author?: string
+          enabled: boolean
+          supports: {
+            search?: boolean
+            getPlayUrl?: boolean
+            getLyrics?: boolean
+          }
+          importedAt: string
+          updatedAt: string
+        }>>
+        getEnabled: () => Promise<Array<{
+          id: string
+          name: string
+          version: string
+          description?: string
+          icon?: string
+          author?: string
+          enabled: boolean
+          supports: {
+            search?: boolean
+            getPlayUrl?: boolean
+            getLyrics?: boolean
+          }
+          importedAt: string
+          updatedAt: string
+        }>>
+        import: (scriptContent: string) => Promise<{
+          success: boolean
+          error?: string
+          source?: {
+            id: string
+            name: string
+            version: string
+          }
+          isUpdate?: boolean
+        }>
+        delete: (sourceId: string) => Promise<boolean>
+        toggle: (sourceId: string) => Promise<boolean>
+        getLoaded: () => Promise<Array<{ id: string; name: string }>>
+      }
+
       // 事件监听
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       on: (channel: string, callback: (...args: any[]) => void) => void

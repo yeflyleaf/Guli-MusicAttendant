@@ -1,20 +1,35 @@
 /**
  * API Runner 服务
- * 管理隐形窗口（Ghost Window）生命周期
- * 用于安全地执行第三方源脚本
+ * 管理隐形窗口生命周期
+ * 安全执行第三方源脚本
  */
-import { BrowserWindow } from 'electron';
-import { join } from 'path';
+import { BrowserWindow, ipcMain } from 'electron'
+import { join } from 'path'
 
 // 隐形窗口实例
 let ghostWindow: BrowserWindow | null = null
 
-// 已加载的源脚本
-const loadedSources: Map<string, { name: string; initialized: boolean }> = new Map()
+// 已加载的源脚本信息
+interface LoadedSource {
+  name: string
+  initialized: boolean
+  type: 'native' | 'external'  // native = Guli原生, external = 第三方脚本
+  scriptContent?: string
+}
+const loadedSources: Map<string, LoadedSource> = new Map()
+
+// 待处理的请求
+const pendingRequests: Map<string, {
+  resolve: (value: unknown) => void
+  reject: (reason: unknown) => void
+  timeout: NodeJS.Timeout
+}> = new Map()
+
+// 请求超时时间
+const REQUEST_TIMEOUT = 30000
 
 /**
  * 创建隐形窗口
- * 这个窗口用于执行第三方源脚本，完全隔离于主界面
  */
 export function createGhostWindow(): BrowserWindow {
   if (ghostWindow && !ghostWindow.isDestroyed()) {
@@ -22,32 +37,65 @@ export function createGhostWindow(): BrowserWindow {
   }
 
   ghostWindow = new BrowserWindow({
-    show: false,           // 隐形窗口
+    show: false,
     width: 400,
     height: 300,
     webPreferences: {
       preload: join(__dirname, '../preload/api-runner.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: false        // 需要禁用沙盒以使用 preload
+      sandbox: false
     }
   })
 
-  // 加载空白页面
   ghostWindow.loadURL('about:blank')
 
-  // 窗口销毁时清理
   ghostWindow.on('closed', () => {
     ghostWindow = null
     loadedSources.clear()
   })
+
+  // 设置事件监听
+  setupEventListeners()
 
   console.log('[ApiRunner] Ghost window created')
   return ghostWindow
 }
 
 /**
- * 获取隐形窗口实例
+ * 设置 IPC 事件监听
+ */
+function setupEventListeners(): void {
+  // 监听脚本初始化事件
+  ipcMain.on('script:event', (_event, { eventName, data }) => {
+    console.log('[ApiRunner] Script event:', eventName)
+
+    if (eventName === 'inited') {
+      // 脚本初始化完成，记录可用的源
+      if (data && typeof data === 'object' && 'sources' in data) {
+        console.log('[ApiRunner] Sources registered:', Object.keys(data.sources as object))
+      }
+    }
+  })
+
+  // 监听脚本事件结果
+  ipcMain.on('script:eventResult', (_event, { requestId, result, error }) => {
+    const pending = pendingRequests.get(requestId)
+    if (pending) {
+      clearTimeout(pending.timeout)
+      pendingRequests.delete(requestId)
+
+      if (error) {
+        pending.reject(new Error(error))
+      } else {
+        pending.resolve(result)
+      }
+    }
+  })
+}
+
+/**
+ * 获取隐形窗口
  */
 export function getGhostWindow(): BrowserWindow | null {
   return ghostWindow
@@ -66,10 +114,19 @@ export function destroyGhostWindow(): void {
 }
 
 /**
- * 注入并执行源脚本
- * @param sourceId 源标识
- * @param sourceName 源名称
- * @param scriptContent 脚本内容
+ * 检测脚本类型
+ */
+function detectScriptType(scriptContent: string): 'native' | 'external' {
+  // 原生格式检测
+  if (scriptContent.includes('GULI_SOURCE_META') || scriptContent.includes('guliSource')) {
+    return 'native'
+  }
+  // 其他格式视为外部脚本
+  return 'external'
+}
+
+/**
+ * 注入源脚本
  */
 export async function injectSourceScript(
   sourceId: string,
@@ -77,40 +134,119 @@ export async function injectSourceScript(
   scriptContent: string
 ): Promise<boolean> {
   const window = createGhostWindow()
+  const scriptType = detectScriptType(scriptContent)
 
   try {
-    // 注入脚本
+    // 对外部脚本设置环境
+    if (scriptType === 'external') {
+      const setupCode = `
+        (function() {
+          // 设置脚本信息
+          ['lx', 'musicApi', 'sourceApi'].forEach(function(apiName) {
+            if (window[apiName] && window[apiName].currentScriptInfo) {
+              window[apiName].currentScriptInfo.version = '1';
+              window[apiName].currentScriptInfo.name = ${JSON.stringify(sourceName)};
+            }
+          });
+        })();
+      `
+      await window.webContents.executeJavaScript(setupCode)
+    }
+
+    // 注入主脚本
     await window.webContents.executeJavaScript(scriptContent)
 
-    loadedSources.set(sourceId, { name: sourceName, initialized: true })
-    console.log(`[ApiRunner] Source script loaded: ${sourceName} (${sourceId})`)
+    loadedSources.set(sourceId, {
+      name: sourceName,
+      initialized: true,
+      type: scriptType,
+      scriptContent
+    })
+
+    console.log(`[ApiRunner] Source loaded: ${sourceName} [${scriptType}]`)
     return true
   } catch (error) {
-    console.error(`[ApiRunner] Failed to load source script: ${sourceName}`, error)
+    console.error(`[ApiRunner] Failed to load: ${sourceName}`, error)
     return false
   }
 }
 
 /**
- * 在源脚本环境中执行代码
- * @param code 要执行的代码
+ * 在隐形窗口执行代码
  */
 export async function executeInGhost(code: string): Promise<unknown> {
   const window = getGhostWindow()
   if (!window || window.isDestroyed()) {
     throw new Error('Ghost window not available')
   }
-
   return window.webContents.executeJavaScript(code)
 }
 
 /**
- * 获取已加载的源列表
+ * 向隐形窗口发送事件
  */
-export function getLoadedSources(): Array<{ id: string; name: string }> {
-  const result: Array<{ id: string; name: string }> = []
-  loadedSources.forEach(({ name }, id) => {
-    result.push({ id, name })
+export function sendScriptEvent(eventName: string, data: unknown): void {
+  const window = getGhostWindow()
+  if (window && !window.isDestroyed()) {
+    window.webContents.send('script:triggerEvent', { eventName, data })
+  }
+}
+
+/**
+ * 调用外部脚本获取音乐URL
+ * 使用事件驱动方式通信
+ */
+export async function callExternalSource(
+  sourceType: string,
+  action: string,
+  musicInfo: Record<string, unknown>,
+  quality: string = '128k'
+): Promise<string> {
+  const window = getGhostWindow()
+  if (!window || window.isDestroyed()) {
+    throw new Error('Ghost window not available')
+  }
+
+  const requestId = `${Date.now()}_${Math.random().toString(36).substring(7)}`
+
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      pendingRequests.delete(requestId)
+      reject(new Error('Request timeout'))
+    }, REQUEST_TIMEOUT)
+
+    pendingRequests.set(requestId, { resolve: resolve as (v: unknown) => void, reject, timeout })
+
+    // 发送请求事件
+    window.webContents.send('script:triggerEvent', {
+      eventName: 'request',
+      data: {
+        requestId,
+        source: sourceType,
+        action,
+        info: {
+          musicInfo,
+          type: quality
+        }
+      }
+    })
+  })
+}
+
+/**
+ * 获取源类型
+ */
+export function getSourceType(sourceId: string): 'native' | 'external' | null {
+  return loadedSources.get(sourceId)?.type ?? null
+}
+
+/**
+ * 获取已加载源列表
+ */
+export function getLoadedSources(): Array<{ id: string; name: string; type: string }> {
+  const result: Array<{ id: string; name: string; type: string }> = []
+  loadedSources.forEach(({ name, type }, id) => {
+    result.push({ id, name, type })
   })
   return result
 }
@@ -123,11 +259,10 @@ export function isSourceLoaded(sourceId: string): boolean {
 }
 
 /**
- * 移除已加载的源
+ * 移除源
  */
 export function removeSource(sourceId: string): boolean {
   return loadedSources.delete(sourceId)
 }
 
-// 初始化时不创建窗口，按需创建
 console.log('[ApiRunner] Service initialized (window will be created on demand)')

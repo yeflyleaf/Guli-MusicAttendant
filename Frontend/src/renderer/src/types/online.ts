@@ -27,6 +27,8 @@ export interface OnlineMusic {
   playUrl?: string
   /** 文件大小（字节） */
   size?: number
+  /** 额外数据（源脚本可自定义，用于后续获取播放链接等） */
+  extra?: Record<string, unknown>
 }
 
 /**
