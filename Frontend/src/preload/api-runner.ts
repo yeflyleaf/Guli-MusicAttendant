@@ -152,7 +152,7 @@ function callbackRequest(
 // ==================== 加密工具 ====================
 
 const cryptoUtils = {
-  md5(data: string | Buffer, digest: BufferEncoding = 'hex'): string {
+  md5(data: string | Buffer, digest: crypto.BinaryToTextEncoding = 'hex'): string {
     const input = typeof data === 'string' ? data : data.toString()
     return crypto.createHash('md5').update(input).digest(digest)
   },
@@ -361,18 +361,29 @@ scriptApiNames.forEach(name => {
 ipcRenderer.on('script:triggerEvent', (_event, { eventName, data }) => {
   const handlers = eventHandlers.get(eventName)
   if (handlers) {
-    handlers.forEach(handler => {
+    handlers.forEach(async handler => {
       try {
-        const result = handler(data)
-        if (result instanceof Promise) {
-          result.then(res => {
-            ipcRenderer.send('script:eventResult', { eventName, result: res })
-          }).catch(err => {
-            console.error('[ScriptAPI] Handler error:', err)
+        const result = await handler(data)
+
+        // 如果数据中有 requestId，说明这是一个需要回复的请求
+        if (data && typeof data === 'object' && 'requestId' in data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const requestId = (data as any).requestId
+          ipcRenderer.send('script:eventResult', {
+            requestId,
+            result
           })
         }
       } catch (err) {
         console.error('[ScriptAPI] Handler error:', err)
+        if (data && typeof data === 'object' && 'requestId' in data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const requestId = (data as any).requestId
+          ipcRenderer.send('script:eventResult', {
+            requestId,
+            error: err instanceof Error ? err.message : String(err)
+          })
+        }
       }
     })
   }

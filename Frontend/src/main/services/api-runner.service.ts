@@ -44,7 +44,8 @@ export function createGhostWindow(): BrowserWindow {
       preload: join(__dirname, '../preload/api-runner.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: false
+      sandbox: false,
+      webSecurity: false // 允许跨域请求
     }
   })
 
@@ -65,7 +66,15 @@ export function createGhostWindow(): BrowserWindow {
 /**
  * 设置 IPC 事件监听
  */
+let listenersSetup = false
+
+/**
+ * 设置 IPC 事件监听
+ */
 function setupEventListeners(): void {
+  if (listenersSetup) return
+  listenersSetup = true
+
   // 监听脚本初始化事件
   ipcMain.on('script:event', (_event, { eventName, data }) => {
     console.log('[ApiRunner] Script event:', eventName)
@@ -137,13 +146,27 @@ export async function injectSourceScript(
   const scriptType = detectScriptType(scriptContent)
 
   try {
+    // 确保窗口已加载完成
+    if (window.webContents.isLoading()) {
+      await new Promise<void>((resolve) => {
+        window.webContents.once('did-finish-load', () => resolve())
+      })
+    }
+
     // 对外部脚本设置环境
     if (scriptType === 'external') {
       const setupCode = `
         (function() {
+          // 确保全局对象存在
+          if (!window.lx) window.lx = window.guli_api;
+
           // 设置脚本信息
-          ['lx', 'musicApi', 'sourceApi'].forEach(function(apiName) {
-            if (window[apiName] && window[apiName].currentScriptInfo) {
+          const apiNames = ['lx', 'musicApi', 'sourceApi'];
+          apiNames.forEach(function(apiName) {
+            if (window[apiName]) {
+              if (!window[apiName].currentScriptInfo) {
+                window[apiName].currentScriptInfo = {};
+              }
               window[apiName].currentScriptInfo.version = '1';
               window[apiName].currentScriptInfo.name = ${JSON.stringify(sourceName)};
             }
