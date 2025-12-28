@@ -7,6 +7,7 @@ import crypto from 'crypto'
 import { contextBridge, ipcRenderer } from 'electron'
 import http from 'http'
 import https from 'https'
+import zlib from 'zlib'
 
 // ==================== 类型定义 ====================
 
@@ -33,6 +34,28 @@ type ScriptRequestCallback = (
 // ==================== 网络请求封装 ====================
 
 /**
+ * 处理响应数据（解压等）
+ */
+function handleResponseData(chunks: Buffer[], headers: Record<string, string | string[] | undefined>): string {
+  let buffer = Buffer.concat(chunks)
+  const encoding = (headers['content-encoding'] || '').toString().toLowerCase()
+
+  try {
+    if (encoding === 'gzip') {
+      buffer = zlib.gunzipSync(buffer)
+    } else if (encoding === 'deflate') {
+      buffer = zlib.inflateSync(buffer)
+    } else if (encoding === 'br') {
+      buffer = zlib.brotliDecompressSync(buffer)
+    }
+  } catch (err) {
+    console.error('[ApiRunner] Decompression failed:', err)
+  }
+
+  return buffer.toString('utf8')
+}
+
+/**
  * Promise 格式 HTTP 请求
  */
 async function request(url: string, options: RequestOptions = {}): Promise<HttpResponse> {
@@ -47,14 +70,16 @@ async function request(url: string, options: RequestOptions = {}): Promise<HttpR
       method: options.method || 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept-Encoding': 'gzip, deflate, br',
         ...options.headers
       }
     }
 
     const req = protocol.request(reqOptions, (res) => {
-      let body = ''
-      res.on('data', (chunk) => { body += chunk.toString() })
+      const chunks: Buffer[] = []
+      res.on('data', (chunk) => { chunks.push(chunk) })
       res.on('end', () => {
+        const body = handleResponseData(chunks, res.headers)
         resolve({
           status: res.statusCode || 0,
           statusText: res.statusMessage || '',
@@ -96,6 +121,7 @@ function callbackRequest(
     method: options.method || 'GET',
     headers: {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Accept-Encoding': 'gzip, deflate, br',
       ...options.headers
     }
   }
@@ -104,7 +130,7 @@ function callbackRequest(
     const chunks: Buffer[] = []
     res.on('data', (chunk) => { chunks.push(chunk) })
     res.on('end', () => {
-      const body = Buffer.concat(chunks).toString()
+      const body = handleResponseData(chunks, res.headers)
       let parsedBody: unknown = body
       try { parsedBody = JSON.parse(body) } catch { /* keep string */ }
       callback(null, {
@@ -139,27 +165,64 @@ const cryptoUtils = {
     return crypto.createHash('sha256').update(data).digest('hex')
   },
 
-  aesEncrypt(data: string, key: string, iv: string): string {
-    const cipher = crypto.createCipheriv('aes-128-cbc', Buffer.from(key), Buffer.from(iv))
-    let encrypted = cipher.update(data, 'utf8', 'base64')
-    encrypted += cipher.final('base64')
-    return encrypted
+  // 支持 aesEncrypt(data, key, iv) 和 aesEncrypt(data, mode, key, iv)
+  aesEncrypt(data: string, modeOrKey: string, keyOrIv: string, iv?: string): string {
+    let mode = 'aes-128-cbc'
+    let key = modeOrKey
+    let ivVal = keyOrIv
+
+    if (iv) {
+      mode = modeOrKey
+      key = keyOrIv
+      ivVal = iv
+    }
+
+    try {
+      const cipher = crypto.createCipheriv(mode, Buffer.from(key), Buffer.from(ivVal))
+      let encrypted = cipher.update(data, 'utf8', 'base64')
+      encrypted += cipher.final('base64')
+      return encrypted
+    } catch (err) {
+      console.error('[Crypto] AES Encrypt failed:', err)
+      return ''
+    }
   },
 
-  aesDecrypt(data: string, key: string, iv: string): string {
-    const decipher = crypto.createDecipheriv('aes-128-cbc', Buffer.from(key), Buffer.from(iv))
-    let decrypted = decipher.update(data, 'base64', 'utf8')
-    decrypted += decipher.final('utf8')
-    return decrypted
+  // 支持 aesDecrypt(data, key, iv) 和 aesDecrypt(data, mode, key, iv)
+  aesDecrypt(data: string, modeOrKey: string, keyOrIv: string, iv?: string): string {
+    let mode = 'aes-128-cbc'
+    let key = modeOrKey
+    let ivVal = keyOrIv
+
+    if (iv) {
+      mode = modeOrKey
+      key = keyOrIv
+      ivVal = iv
+    }
+
+    try {
+      const decipher = crypto.createDecipheriv(mode, Buffer.from(key), Buffer.from(ivVal))
+      let decrypted = decipher.update(data, 'base64', 'utf8')
+      decrypted += decipher.final('utf8')
+      return decrypted
+    } catch (err) {
+      console.error('[Crypto] AES Decrypt failed:', err)
+      return ''
+    }
   },
 
   rsaEncrypt(data: string, publicKey: string): string {
-    const buffer = Buffer.from(data)
-    const encrypted = crypto.publicEncrypt(
-      { key: publicKey, padding: crypto.constants.RSA_PKCS1_PADDING },
-      buffer
-    )
-    return encrypted.toString('base64')
+    try {
+      const buffer = Buffer.from(data)
+      const encrypted = crypto.publicEncrypt(
+        { key: publicKey, padding: crypto.constants.RSA_PKCS1_PADDING },
+        buffer
+      )
+      return encrypted.toString('base64')
+    } catch (err) {
+      console.error('[Crypto] RSA Encrypt failed:', err)
+      return ''
+    }
   },
 
   base64Encode(data: string): string {
@@ -266,6 +329,14 @@ const scriptApi = {
   utils: {
     crypto: {
       md5: cryptoUtils.md5,
+      sha1: cryptoUtils.sha1,
+      sha256: cryptoUtils.sha256,
+      aesEncrypt: cryptoUtils.aesEncrypt,
+      aesDecrypt: cryptoUtils.aesDecrypt,
+      rsaEncrypt: cryptoUtils.rsaEncrypt,
+      base64Encode: cryptoUtils.base64Encode,
+      base64Decode: cryptoUtils.base64Decode,
+      randomString: cryptoUtils.randomString,
       bufToString: cryptoUtils.bufToString
     },
     buffer: bufferUtils

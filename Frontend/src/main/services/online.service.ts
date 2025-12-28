@@ -79,6 +79,25 @@ function generateRequestId(): string {
   return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 }
 
+/**
+ * 解析时长字符串或数字为秒数
+ */
+function parseDuration(duration: string | number | undefined): number {
+  if (typeof duration === 'number') return duration
+  if (!duration) return 0
+
+  if (typeof duration === 'string') {
+    if (duration.includes(':')) {
+      const parts = duration.split(':').map(Number)
+      if (parts.length === 2) return parts[0] * 60 + parts[1]
+      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
+    }
+    const parsed = parseInt(duration)
+    return isNaN(parsed) ? 0 : parsed
+  }
+  return 0
+}
+
 // ==================== 服务方法 ====================
 
 /**
@@ -193,8 +212,7 @@ async function searchWithNativeScript(
 
 /**
  * 使用外部脚本搜索
- * 尝试调用脚本中的 guliSource.search 方法
- * 如果脚本实现了该方法，则可以正常搜索
+ * 通过事件机制调用外部脚本的 search 功能
  */
 async function searchWithExternalScript(
   source: string,
@@ -205,57 +223,49 @@ async function searchWithExternalScript(
   console.log('[OnlineService] Attempting search with external script:', source)
 
   const requestId = generateRequestId()
+  const platform = extractExternalSourceType(source)
 
-  const result = await new Promise<OnlineSearchResult>((resolve, reject) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawResult = await new Promise<any>((resolve, reject) => {
     const timeout = setTimeout(() => {
       pendingRequests.delete(requestId)
       reject(new Error('搜索请求超时'))
     }, REQUEST_TIMEOUT)
 
-    pendingRequests.set(requestId, { resolve: resolve as (value: unknown) => void, reject, timeout })
+    pendingRequests.set(requestId, { resolve, reject, timeout })
 
-    // 尝试调用脚本中的 search 方法
-    executeInGhost(`
-      (async () => {
-        try {
-          // 检查 guliSource.search 是否存在
-          if (typeof guliSource !== 'undefined' && typeof guliSource.search === 'function') {
-            const result = await guliSource.search({
-              keyword: ${JSON.stringify(keyword)},
-              page: ${page},
-              pageSize: ${pageSize}
-            });
-            window.guli_api.send('online:searchResult', {
-              requestId: '${requestId}',
-              success: true,
-              list: result.list || [],
-              total: result.total || 0
-            });
-          } else {
-            // 脚本没有实现 search 方法
-            window.guli_api.send('online:searchResult', {
-              requestId: '${requestId}',
-              success: false,
-              error: '此音乐源脚本未实现搜索功能'
-            });
-          }
-        } catch (err) {
-          window.guli_api.send('online:searchResult', {
-            requestId: '${requestId}',
-            success: false,
-            error: err.message || '搜索失败'
-          });
-        }
-      })();
-    `).catch(err => {
-      clearTimeout(timeout)
-      pendingRequests.delete(requestId)
-      reject(err)
+    // 触发外部脚本的请求事件
+    // LX 脚本通常监听 'request' 事件，action 为 'search'
+    sendScriptEvent('request', {
+      requestId,
+      source: platform,
+      action: 'search',
+      info: {
+        keyword,
+        page,
+        limit: pageSize,
+        type: 'music' // 明确指定搜索类型
+      }
     })
   })
 
+  // 映射结果到 OnlineSearchResult
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const list = (rawResult.list || []).map((item: any) => ({
+    id: item.songmid || item.id || item.musicId,
+    name: item.name || item.title,
+    artist: item.singer || item.artist,
+    album: item.albumName || item.album,
+    duration: parseDuration(item.interval || item.duration),
+    cover: item.img || item.cover || item.pic,
+    source: source, // 使用脚本 ID 作为 source
+    quality: item.quality,
+    extra: item // 保留原始数据
+  }))
+
   return {
-    ...result,
+    list,
+    total: rawResult.total || list.length,
     source,
     page,
     pageSize
@@ -391,6 +401,7 @@ function extractExternalSourceType(sourceId: string): string {
   if (name.includes('咪咕') || name.includes('migu')) return 'mg'
   if (name.includes('qq') || name.includes('腾讯')) return 'tx'
   if (name.includes('网易') || name.includes('netease') || name.includes('云音乐')) return 'wy'
+  if (name.includes('野草') || name.includes('wild')) return 'kw' // 野草通常是酷我源
 
   return 'kw'
 }
@@ -469,7 +480,7 @@ export function initOnlineServiceListeners(): void {
       if (error) {
         pending.reject(new Error(error))
       } else {
-        // 外部脚本返回的是播放URL
+        // 外部脚本返回的是结果对象（搜索结果或播放URL）
         pending.resolve(result)
       }
     }
