@@ -2,7 +2,7 @@
   <div class="settings-view">
     <h1 class="page-title">{{ $t('settings.title') }}</h1>
 
-    <el-tabs tab-position="left" class="settings-tabs">
+    <el-tabs tab-position="left" class="settings-tabs" :before-leave="handleBeforeTabLeave">
       <!-- 外观设置 -->
       <el-tab-pane :label="$t('settings.appearance.title')">
         <template #label>
@@ -306,7 +306,7 @@
       </el-tab-pane>
 
       <!-- 下载设置 -->
-      <el-tab-pane label="下载设置">
+      <el-tab-pane label="下载设置" name="download">
         <template #label>
           <span class="tab-label">
             <el-icon>
@@ -563,16 +563,16 @@ import { useLibraryStore } from '@/store/library.store'
 import { useSettingsStore } from '@/store/settings.store'
 import type { FileNamingRule, LyricsEncoding, MusicSource, SplashTheme, Theme } from '@/types/settings'
 import {
-  Close,
-  Download,
-  Folder,
-  FolderOpened,
-  InfoFilled,
-  Link,
-  Monitor,
-  Operation,
-  Plus,
-  Refresh
+    Close,
+    Download,
+    Folder,
+    FolderOpened,
+    InfoFilled,
+    Link,
+    Monitor,
+    Operation,
+    Plus,
+    Refresh
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'
@@ -586,6 +586,17 @@ const libraryStore = useLibraryStore()
 const { selectFolder, resetAndScanAllFolders } = useIpc()
 
 const isScanning = ref(false)
+
+const handleBeforeTabLeave = (activeName: string) => {
+  if (activeName === 'download') {
+    ElMessage.warning({
+      message: '功能未开放，敬请期待',
+      duration: 3000
+    })
+    return false
+  }
+  return true
+}
 
 // 外观设置
 const theme = ref<Theme>('dark')

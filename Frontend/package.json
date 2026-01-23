@@ -1,6 +1,6 @@
 {
   "name": "guli-music-attendant",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "本地音乐管理系统 - 基于 Electron + Vue 3 + TypeScript + Element Plus + SQLite",
   "main": "./dist-electron/main/index.js",
   "private": true,
@@ -25,6 +25,7 @@
     "better-sqlite3": "^12.5.0",
     "electron-store": "^8.2.0",
     "element-plus": "^2.13.0",
+    "iconv-lite": "^0.7.1",
     "music-metadata": "^7.14.0",
     "pinia": "^3.0.0",
     "sortablejs": "^1.15.6",

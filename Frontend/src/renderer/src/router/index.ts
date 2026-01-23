@@ -65,8 +65,20 @@ const router = createRouter({
   routes
 })
 
+import { ElMessage } from 'element-plus'
+
 // 路由守卫：更新窗口标题
 router.beforeEach((to, _from, next) => {
+  // 暂时屏蔽在线搜索功能
+  if (to.path === '/online-search') {
+    ElMessage.warning({
+      message: '功能未开放，敬请期待',
+      duration: 3000
+    })
+    next(false)
+    return
+  }
+
   const title = to.meta.title as string
   if (title) {
     document.title = `${title} - 故里音乐助手`

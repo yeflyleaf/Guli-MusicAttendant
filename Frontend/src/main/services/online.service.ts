@@ -6,11 +6,11 @@
 import { ipcMain } from 'electron'
 import * as sourceRepo from '../db/repositories/source.repo'
 import {
-  executeInGhost,
-  getSourceType,
-  injectSourceScript,
-  isSourceLoaded,
-  sendScriptEvent
+    executeInGhost,
+    getSourceType,
+    injectSourceScript,
+    isSourceLoaded,
+    sendScriptEvent
 } from './api-runner.service'
 
 // ==================== 类型定义 ====================
@@ -63,7 +63,7 @@ export interface DownloadResult {
 }
 
 // 请求超时时间
-const REQUEST_TIMEOUT = 30000
+const REQUEST_TIMEOUT = 60000 // 60秒，因为外部脚本可能需要更多时间
 
 // 待处理请求映射
 const pendingRequests = new Map<string, {
@@ -105,8 +105,11 @@ function parseDuration(duration: string | number | undefined): number {
  */
 async function ensureSourceLoaded(sourceId: string): Promise<void> {
   if (isSourceLoaded(sourceId)) {
+    console.log(`[OnlineService] Source ${sourceId} is already loaded`)
     return
   }
+
+  console.log(`[OnlineService] Loading source: ${sourceId}`)
 
   const source = sourceRepo.getSourceById(sourceId)
   if (!source) {
@@ -116,7 +119,12 @@ async function ensureSourceLoaded(sourceId: string): Promise<void> {
     throw new Error(`源 ${sourceId} 未启用`)
   }
 
-  await injectSourceScript(sourceId, source.name, source.scriptContent)
+  const success = await injectSourceScript(sourceId, source.name, source.scriptContent)
+  if (!success) {
+    throw new Error(`无法加载源脚本: ${source.name}`)
+  }
+
+  console.log(`[OnlineService] Source ${sourceId} loaded successfully`)
 }
 
 /**
@@ -141,6 +149,7 @@ export async function search(params: OnlineSearchParams): Promise<OnlineSearchRe
 
   // 根据源类型选择不同的调用方式
   const sourceType = getSourceType(source)
+  console.log(`[OnlineService] Source type for ${source}: ${sourceType}`)
 
   if (sourceType === 'external') {
     // 外部脚本使用事件驱动方式
@@ -220,15 +229,17 @@ async function searchWithExternalScript(
   page: number,
   pageSize: number
 ): Promise<OnlineSearchResult> {
-  console.log('[OnlineService] Attempting search with external script:', source)
+  console.log('[OnlineService] Searching with external script:', source)
 
   const requestId = generateRequestId()
   const platform = extractExternalSourceType(source)
+  console.log(`[OnlineService] External search: source=${source}, platform=${platform}, keyword=${keyword}, requestId=${requestId}`)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawResult = await new Promise<any>((resolve, reject) => {
     const timeout = setTimeout(() => {
       pendingRequests.delete(requestId)
+      console.error(`[OnlineService] Search request ${requestId} timed out`)
       reject(new Error('搜索请求超时'))
     }, REQUEST_TIMEOUT)
 
@@ -236,6 +247,7 @@ async function searchWithExternalScript(
 
     // 触发外部脚本的请求事件
     // LX 脚本通常监听 'request' 事件，action 为 'search'
+    console.log(`[OnlineService] Sending search request...`)
     sendScriptEvent('request', {
       requestId,
       source: platform,
@@ -249,23 +261,34 @@ async function searchWithExternalScript(
     })
   })
 
+  console.log('[OnlineService] Received raw search result:', rawResult)
+
+  // 检查结果格式
+  if (!rawResult) {
+    console.error('[OnlineService] Empty result from external script')
+    return { list: [], total: 0, source, page, pageSize }
+  }
+
   // 映射结果到 OnlineSearchResult
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const list = (rawResult.list || []).map((item: any) => ({
-    id: item.songmid || item.id || item.musicId,
-    name: item.name || item.title,
-    artist: item.singer || item.artist,
-    album: item.albumName || item.album,
-    duration: parseDuration(item.interval || item.duration),
-    cover: item.img || item.cover || item.pic,
+  const rawList = rawResult.list || rawResult.data || rawResult || []
+  const list = (Array.isArray(rawList) ? rawList : []).map((item: any) => ({
+    id: item.songmid || item.id || item.musicId || String(Math.random()),
+    name: item.name || item.title || item.songName || 'Unknown',
+    artist: item.singer || item.artist || item.singerName || 'Unknown',
+    album: item.albumName || item.album || '',
+    duration: parseDuration(item.interval || item.duration || item.time),
+    cover: item.img || item.cover || item.pic || item.albumPic || '',
     source: source, // 使用脚本 ID 作为 source
     quality: item.quality,
-    extra: item // 保留原始数据
+    extra: item // 保留原始数据，以便获取播放链接时使用
   }))
+
+  console.log(`[OnlineService] Mapped ${list.length} results`)
 
   return {
     list,
-    total: rawResult.total || list.length,
+    total: rawResult.total || rawResult.totalNum || list.length,
     source,
     page,
     pageSize
@@ -355,6 +378,9 @@ async function getPlayUrlWithExternalScript(
   extra: Record<string, unknown>
 ): Promise<string> {
   const requestId = generateRequestId()
+  const platform = extractExternalSourceType(source)
+
+  console.log(`[OnlineService] Getting play URL with external script: source=${source}, platform=${platform}, musicId=${musicId}, quality=${quality}`)
 
   // 从 extra 中获取外部脚本需要的音乐信息
   const musicInfo = extra || {}
@@ -362,11 +388,22 @@ async function getPlayUrlWithExternalScript(
   return new Promise<string>((resolve, reject) => {
     const timeout = setTimeout(() => {
       pendingRequests.delete(requestId)
+      console.error(`[OnlineService] Get play URL request ${requestId} timed out`)
       reject(new Error('获取播放链接超时'))
     }, REQUEST_TIMEOUT)
 
     pendingRequests.set(requestId, {
-      resolve: resolve as (value: unknown) => void,
+      resolve: (result: unknown) => {
+        // 外部脚本可能返回 URL 字符串或包含 URL 的对象
+        if (typeof result === 'string') {
+          resolve(result)
+        } else if (result && typeof result === 'object' && 'url' in result) {
+          resolve((result as { url: string }).url)
+        } else {
+          console.error('[OnlineService] Unexpected result format:', result)
+          reject(new Error('获取的播放链接格式无效'))
+        }
+      },
       reject,
       timeout
     })
@@ -374,12 +411,13 @@ async function getPlayUrlWithExternalScript(
     // 触发外部脚本的请求事件
     sendScriptEvent('request', {
       requestId,
-      source: extractExternalSourceType(source),
+      source: platform,
       action: 'musicUrl',
       info: {
         musicInfo: {
           ...musicInfo,
-          songmid: musicId
+          songmid: musicId,
+          id: musicId
         },
         type: quality
       }
@@ -389,6 +427,7 @@ async function getPlayUrlWithExternalScript(
 
 /**
  * 从源ID提取外部脚本源类型
+ * LX 脚本使用的平台标识：kw(酷我), kg(酷狗), mg(咪咕), tx(QQ音乐), wy(网易)
  */
 function extractExternalSourceType(sourceId: string): string {
   const storedSource = sourceRepo.getSourceById(sourceId)
@@ -402,7 +441,9 @@ function extractExternalSourceType(sourceId: string): string {
   if (name.includes('qq') || name.includes('腾讯')) return 'tx'
   if (name.includes('网易') || name.includes('netease') || name.includes('云音乐')) return 'wy'
   if (name.includes('野草') || name.includes('wild')) return 'kw' // 野草通常是酷我源
+  if (name.includes('花') || name.includes('flower')) return 'kw' // 花海通常是酷我源
 
+  // 默认返回 kw
   return 'kw'
 }
 
@@ -422,7 +463,7 @@ export async function downloadMusic(params: DownloadParams): Promise<DownloadRes
  * 初始化响应监听器
  */
 export function initOnlineServiceListeners(): void {
-  // 搜索结果响应
+  // 搜索结果响应（原生脚本）
   ipcMain.on('online:searchResult', (_event, data: {
     requestId: string
     success: boolean
@@ -430,6 +471,8 @@ export function initOnlineServiceListeners(): void {
     total?: number
     error?: string
   }) => {
+    console.log(`[OnlineService] Received searchResult for ${data.requestId}:`, data.success ? 'success' : data.error)
+
     const pending = pendingRequests.get(data.requestId)
     if (pending) {
       clearTimeout(pending.timeout)
@@ -443,13 +486,15 @@ export function initOnlineServiceListeners(): void {
     }
   })
 
-  // 播放链接结果响应
+  // 播放链接结果响应（原生脚本）
   ipcMain.on('online:playUrlResult', (_event, data: {
     requestId: string
     success: boolean
     url?: string
     error?: string
   }) => {
+    console.log(`[OnlineService] Received playUrlResult for ${data.requestId}:`, data.success ? 'success' : data.error)
+
     const pending = pendingRequests.get(data.requestId)
     if (pending) {
       clearTimeout(pending.timeout)
@@ -463,26 +508,31 @@ export function initOnlineServiceListeners(): void {
     }
   })
 
-  // 外部脚本响应
+  // 外部脚本初始化事件
   ipcMain.on('script:event', (_event, { eventName, data }) => {
     if (eventName === 'inited') {
       console.log('[OnlineService] External script initialized:', data)
     }
   })
 
-  // 外部脚本结果响应
+  // 外部脚本结果响应（关键！外部脚本的搜索/获取URL结果通过这里返回）
   ipcMain.on('script:eventResult', (_event, { requestId, result, error }) => {
+    console.log(`[OnlineService] Received script:eventResult for ${requestId}`)
+
     const pending = pendingRequests.get(requestId)
     if (pending) {
       clearTimeout(pending.timeout)
       pendingRequests.delete(requestId)
 
       if (error) {
+        console.error(`[OnlineService] Script event error for ${requestId}:`, error)
         pending.reject(new Error(error))
       } else {
-        // 外部脚本返回的是结果对象（搜索结果或播放URL）
+        console.log(`[OnlineService] Script event result for ${requestId}:`, result)
         pending.resolve(result)
       }
+    } else {
+      console.warn(`[OnlineService] No pending request found for ${requestId}`)
     }
   })
 

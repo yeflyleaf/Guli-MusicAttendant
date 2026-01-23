@@ -1,394 +1,377 @@
-/**
- * API Runner Preload Script
- * 第三方源脚本运行环境
- * 提供网络请求和加密能力
- */
-import crypto from 'crypto'
 import { contextBridge, ipcRenderer } from 'electron'
-import http from 'http'
-import https from 'https'
-import zlib from 'zlib'
 
-// ==================== 类型定义 ====================
+console.log('[Preload] API Runner starting...')
 
-interface RequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
-  headers?: Record<string, string>
-  body?: string | Record<string, unknown>
-  timeout?: number
-}
+let axios: any
+let crypto: any
+let iconv: any
+let BufferPolyfill: any
 
-interface HttpResponse {
-  status: number
-  statusText: string
-  headers: Record<string, string | string[] | undefined>
-  body: string
-}
-
-type ScriptRequestCallback = (
-  error: Error | null,
-  response?: { statusCode: number; body: unknown; headers: Record<string, string> },
-  body?: string
-) => void
-
-// ==================== 网络请求封装 ====================
-
-/**
- * 处理响应数据（解压等）
- */
-function handleResponseData(chunks: Buffer[], headers: Record<string, string | string[] | undefined>): string {
-  let buffer = Buffer.concat(chunks)
-  const encoding = (headers['content-encoding'] || '').toString().toLowerCase()
-
+try {
+  // 使用 require 动态加载，避免 import 静态分析导致的加载失败
+  // 注意：这需要 sandbox: false
+  axios = require('axios')
+  crypto = require('crypto')
+  iconv = require('iconv-lite')
+  // 尝试加载 buffer 模块，如果失败则尝试使用全局 Buffer
   try {
-    if (encoding === 'gzip') {
-      buffer = zlib.gunzipSync(buffer)
-    } else if (encoding === 'deflate') {
-      buffer = zlib.inflateSync(buffer)
-    } else if (encoding === 'br') {
-      buffer = zlib.brotliDecompressSync(buffer)
-    }
-  } catch (err) {
-    console.error('[ApiRunner] Decompression failed:', err)
+    BufferPolyfill = require('buffer').Buffer
+  } catch (e) {
+    console.warn('[Preload] Failed to require buffer module, trying global Buffer')
+    BufferPolyfill = Buffer
   }
 
-  return buffer.toString('utf8')
+  console.log('[Preload] Modules loaded successfully')
+} catch (e: any) {
+  console.error('[Preload] Failed to load modules:', e)
+  ipcRenderer.send('source-runner-log', { type: 'error', args: ['Module Load Failed', e.message] })
 }
 
-/**
- * Promise 格式 HTTP 请求
- */
-async function request(url: string, options: RequestOptions = {}): Promise<HttpResponse> {
-  return new Promise((resolve, reject) => {
-    const urlObj = new URL(url)
-    const protocol = urlObj.protocol === 'https:' ? https : http
-
-    const reqOptions = {
-      hostname: urlObj.hostname,
-      port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
-      path: urlObj.pathname + urlObj.search,
-      method: options.method || 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept-Encoding': 'gzip, deflate, br',
-        ...options.headers
-      }
-    }
-
-    const req = protocol.request(reqOptions, (res) => {
-      const chunks: Buffer[] = []
-      res.on('data', (chunk) => { chunks.push(chunk) })
-      res.on('end', () => {
-        const body = handleResponseData(chunks, res.headers)
-        resolve({
-          status: res.statusCode || 0,
-          statusText: res.statusMessage || '',
-          headers: res.headers as Record<string, string | string[] | undefined>,
-          body
-        })
-      })
-    })
-
-    req.on('error', reject)
-    req.setTimeout(options.timeout || 30000, () => {
-      req.destroy()
-      reject(new Error('Request timeout'))
-    })
-
-    if (options.body) {
-      const bodyStr = typeof options.body === 'string' ? options.body : JSON.stringify(options.body)
-      req.write(bodyStr)
-    }
-    req.end()
-  })
-}
-
-/**
- * 回调格式 HTTP 请求（兼容第三方脚本）
- */
-function callbackRequest(
-  url: string,
-  options: { method?: string; headers?: Record<string, string>; timeout?: number } = {},
-  callback: ScriptRequestCallback
-): void {
-  const urlObj = new URL(url)
-  const protocol = urlObj.protocol === 'https:' ? https : http
-
-  const reqOptions = {
-    hostname: urlObj.hostname,
-    port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
-    path: urlObj.pathname + urlObj.search,
-    method: options.method || 'GET',
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Accept-Encoding': 'gzip, deflate, br',
-      ...options.headers
-    }
+try {
+  // 1. 模拟 Buffer
+  if (!BufferPolyfill) {
+      console.warn('[Preload] Buffer not found, using global Buffer')
+      BufferPolyfill = Buffer
   }
 
-  const req = protocol.request(reqOptions, (res) => {
-    const chunks: Buffer[] = []
-    res.on('data', (chunk) => { chunks.push(chunk) })
-    res.on('end', () => {
-      const body = handleResponseData(chunks, res.headers)
-      let parsedBody: unknown = body
-      try { parsedBody = JSON.parse(body) } catch { /* keep string */ }
-      callback(null, {
-        statusCode: res.statusCode || 0,
-        body: parsedBody,
-        headers: res.headers as Record<string, string>
-      }, body)
-    })
-  })
+  // 存储外部脚本注册的事件处理器
+  const scriptEventHandlers: Map<string, Function> = new Map()
 
-  req.on('error', (err) => callback(err))
-  req.setTimeout(options.timeout || 30000, () => {
-    req.destroy()
-    callback(new Error('Request timeout'))
-  })
-  req.end()
-}
-
-// ==================== 加密工具 ====================
-
-const cryptoUtils = {
-  md5(data: string | Buffer, digest: crypto.BinaryToTextEncoding = 'hex'): string {
-    const input = typeof data === 'string' ? data : data.toString()
-    return crypto.createHash('md5').update(input).digest(digest)
-  },
-
-  sha1(data: string): string {
-    return crypto.createHash('sha1').update(data).digest('hex')
-  },
-
-  sha256(data: string): string {
-    return crypto.createHash('sha256').update(data).digest('hex')
-  },
-
-  // 支持 aesEncrypt(data, key, iv) 和 aesEncrypt(data, mode, key, iv)
-  aesEncrypt(data: string, modeOrKey: string, keyOrIv: string, iv?: string): string {
-    let mode = 'aes-128-cbc'
-    let key = modeOrKey
-    let ivVal = keyOrIv
-
-    if (iv) {
-      mode = modeOrKey
-      key = keyOrIv
-      ivVal = iv
-    }
-
-    try {
-      const cipher = crypto.createCipheriv(mode, Buffer.from(key), Buffer.from(ivVal))
-      let encrypted = cipher.update(data, 'utf8', 'base64')
-      encrypted += cipher.final('base64')
-      return encrypted
-    } catch (err) {
-      console.error('[Crypto] AES Encrypt failed:', err)
-      return ''
-    }
-  },
-
-  // 支持 aesDecrypt(data, key, iv) 和 aesDecrypt(data, mode, key, iv)
-  aesDecrypt(data: string, modeOrKey: string, keyOrIv: string, iv?: string): string {
-    let mode = 'aes-128-cbc'
-    let key = modeOrKey
-    let ivVal = keyOrIv
-
-    if (iv) {
-      mode = modeOrKey
-      key = keyOrIv
-      ivVal = iv
-    }
-
-    try {
-      const decipher = crypto.createDecipheriv(mode, Buffer.from(key), Buffer.from(ivVal))
-      let decrypted = decipher.update(data, 'base64', 'utf8')
-      decrypted += decipher.final('utf8')
-      return decrypted
-    } catch (err) {
-      console.error('[Crypto] AES Decrypt failed:', err)
-      return ''
-    }
-  },
-
-  rsaEncrypt(data: string, publicKey: string): string {
-    try {
-      const buffer = Buffer.from(data)
-      const encrypted = crypto.publicEncrypt(
-        { key: publicKey, padding: crypto.constants.RSA_PKCS1_PADDING },
-        buffer
-      )
-      return encrypted.toString('base64')
-    } catch (err) {
-      console.error('[Crypto] RSA Encrypt failed:', err)
-      return ''
-    }
-  },
-
-  base64Encode(data: string): string {
-    return Buffer.from(data).toString('base64')
-  },
-
-  base64Decode(data: string): string {
-    return Buffer.from(data, 'base64').toString('utf8')
-  },
-
-  randomString(length: number): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    let result = ''
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    return result
-  },
-
-  bufToString(buffer: Buffer, encoding: BufferEncoding = 'hex'): string {
-    return buffer.toString(encoding)
+  // LX Music 事件名称常量
+  const EVENT_NAMES = {
+    request: 'request',
+    inited: 'inited',
+    updateAlert: 'updateAlert'
   }
-}
 
-// Buffer 工具
-const bufferUtils = {
-  from: (data: string | ArrayBuffer | unknown[], encoding?: BufferEncoding) => {
-    if (typeof data === 'string') return Buffer.from(data, encoding)
-    if (data instanceof ArrayBuffer) return Buffer.from(data)
-    return Buffer.from(data as number[])
-  },
-  alloc: (size: number) => Buffer.alloc(size),
-  concat: (buffers: Buffer[]) => Buffer.concat(buffers),
-  bufToString: (buffer: Buffer, encoding: BufferEncoding = 'utf8') => buffer.toString(encoding)
-}
+  // 2. 构建 LX 核心对象 (API 仿真)
+  const lxHandler = {
+    version: '2.0.0',
+    env: 'desktop',
 
-// ==================== IPC 通信 ====================
+    // 事件名称常量（LX 脚本需要这个）
+    EVENT_NAMES: EVENT_NAMES,
 
-function send(channel: string, data: unknown): void {
-  ipcRenderer.send(channel, data)
-}
-
-function on(channel: string, callback: (...args: unknown[]) => void): void {
-  ipcRenderer.on(channel, (_event, ...args) => callback(...args))
-}
-
-async function invoke(channel: string, ...args: unknown[]): Promise<unknown> {
-  return ipcRenderer.invoke(channel, ...args)
-}
-
-// ==================== 事件系统 ====================
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const eventHandlers: Map<string, Array<(data: any) => void | Promise<any>>> = new Map()
-
-const EVENT_NAMES = {
-  inited: 'inited',
-  request: 'request',
-  updateAlert: 'updateAlert'
-}
-
-// ==================== 暴露 API ====================
-
-// 原生 API
-const guliApi = {
-  request,
-  crypto: cryptoUtils,
-  buffer: bufferUtils,
-  send,
-  on,
-  invoke,
-  version: '1.0.0',
-  log: console.log,
-  warn: console.warn,
-  error: console.error
-}
-
-// 第三方脚本兼容 API
-const scriptApi = {
-  EVENT_NAMES,
-
-  request: callbackRequest,
-
-  on: (eventName: string, handler: (data: unknown) => void | Promise<unknown>) => {
-    if (!eventHandlers.has(eventName)) {
-      eventHandlers.set(eventName, [])
-    }
-    eventHandlers.get(eventName)!.push(handler)
-  },
-
-  send: (eventName: string, data: unknown) => {
-    ipcRenderer.send('script:event', { eventName, data })
-  },
-
-  env: 'desktop',
-  version: '2.8.0',
-
-  currentScriptInfo: {
-    version: '1',
-    rawScript: '',
-    name: ''
-  },
-
-  utils: {
-    crypto: {
-      md5: cryptoUtils.md5,
-      sha1: cryptoUtils.sha1,
-      sha256: cryptoUtils.sha256,
-      aesEncrypt: cryptoUtils.aesEncrypt,
-      aesDecrypt: cryptoUtils.aesDecrypt,
-      rsaEncrypt: cryptoUtils.rsaEncrypt,
-      base64Encode: cryptoUtils.base64Encode,
-      base64Decode: cryptoUtils.base64Decode,
-      randomString: cryptoUtils.randomString,
-      bufToString: cryptoUtils.bufToString
+    // 当前脚本信息（外部脚本会读取这个）
+    currentScriptInfo: {
+      version: '1',
+      name: 'Unknown'
     },
-    buffer: bufferUtils
-  }
-}
 
-// 暴露到全局
-contextBridge.exposeInMainWorld('guli_api', guliApi)
-
-// 使用中性名称暴露第三方脚本 API
-// 注意：第三方脚本可能使用特定的全局变量名
-const scriptApiNames = ['lx', 'musicApi', 'sourceApi']
-scriptApiNames.forEach(name => {
-  try {
-    contextBridge.exposeInMainWorld(name, scriptApi)
-  } catch {
-    // 忽略重复暴露错误
-  }
-})
-
-// 监听来自主进程的事件触发
-ipcRenderer.on('script:triggerEvent', (_event, { eventName, data }) => {
-  const handlers = eventHandlers.get(eventName)
-  if (handlers) {
-    handlers.forEach(async handler => {
-      try {
-        const result = await handler(data)
-
-        // 如果数据中有 requestId，说明这是一个需要回复的请求
-        if (data && typeof data === 'object' && 'requestId' in data) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const requestId = (data as any).requestId
-          ipcRenderer.send('script:eventResult', {
-            requestId,
-            result
-          })
-        }
-      } catch (err) {
-        console.error('[ScriptAPI] Handler error:', err)
-        if (data && typeof data === 'object' && 'requestId' in data) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const requestId = (data as any).requestId
-          ipcRenderer.send('script:eventResult', {
-            requestId,
-            error: err instanceof Error ? err.message : String(err)
-          })
-        }
+    // --- 网络请求核心 (模拟 lx.request) ---
+    // 支持两种调用方式：
+    //   1. Promise: const res = await lx.request(url, options)
+    //   2. Callback: lx.request(url, options, (err, res, body) => {})
+    request: (url: string, options: any = {}, callback?: Function) => {
+      // 如果 options 是回调函数（有时脚本会省略 options）
+      if (typeof options === 'function') {
+        callback = options
+        options = {}
       }
-    })
-  }
-})
 
-// 导出类型
-export type GuliApi = typeof guliApi
-export type ScriptApi = typeof scriptApi
+      const { method = 'get', headers = {}, body, binary = false, form, timeout = 30000 } = options
+
+      console.log(`[Request] ${method.toUpperCase()} ${url}`)
+
+      // 执行 HTTP 请求
+      const requestPromise = axios({
+        url,
+        method,
+        headers,
+        data: form || body,
+        // 重要：使用 'json' 来自动解析 JSON，如果是二进制则用 'arraybuffer'
+        responseType: binary ? 'arraybuffer' : 'json',
+        timeout,
+        validateStatus: () => true
+      }).then((response: any) => {
+        console.log(`[Request] Response ${response.status} from ${url}`)
+
+        // 构造响应对象
+        const resObj = {
+          statusCode: response.status,
+          body: response.data,
+          headers: response.headers,
+          // 兼容一些脚本使用 rawBody
+          rawBody: response.data
+        }
+
+        // 关键：如果有回调，必须执行回调
+        if (callback) {
+          // 回调参数：(error, response, body)
+          callback(null, resObj, response.data)
+        }
+
+        return resObj
+      }).catch((err: any) => {
+        console.error(`[Request] Error for ${url}:`, err.message)
+
+        const errObj = {
+          statusCode: err.response?.status || 0,
+          body: err.message || 'Network Error',
+          headers: err.response?.headers || {},
+          error: err.message
+        }
+
+        // 如果有回调，传递错误
+        if (callback) {
+          callback(err, errObj, null)
+        }
+
+        // 同时返回 Promise（便于 await 调用方式）
+        return errObj
+      })
+
+      return requestPromise
+    },
+
+    // --- 加密工具箱 (模拟 lx.utils) ---
+    utils: {
+      buffer: {
+        from: (...args: any[]) => BufferPolyfill.from.apply(BufferPolyfill, args),
+        concat: (list: any[]) => BufferPolyfill.concat(list),
+        alloc: (size: number) => BufferPolyfill.alloc(size),
+        allocUnsafe: (size: number) => BufferPolyfill.allocUnsafe(size),
+        isBuffer: (obj: any) => BufferPolyfill.isBuffer(obj)
+      },
+      crypto: {
+        // MD5 哈希
+        md5: (str: string) => crypto.createHash('md5').update(str).digest('hex'),
+
+        // AES 加密 - 支持多种模式
+        aesEncrypt: (buffer: any, mode: string, key: any, iv: any) => {
+          const modeStr = `aes-128-${mode.toLowerCase()}`
+          // ECB 模式不需要 IV
+          if (mode.toLowerCase() === 'ecb') {
+            const cipher = crypto.createCipheriv(modeStr, key, null)
+            return BufferPolyfill.concat([cipher.update(buffer), cipher.final()])
+          }
+          const cipher = crypto.createCipheriv(modeStr, key, iv)
+          return BufferPolyfill.concat([cipher.update(buffer), cipher.final()])
+        },
+
+        // AES 解密
+        aesDecrypt: (buffer: any, mode: string, key: any, iv: any) => {
+          const modeStr = `aes-128-${mode.toLowerCase()}`
+          if (mode.toLowerCase() === 'ecb') {
+            const decipher = crypto.createDecipheriv(modeStr, key, null)
+            return BufferPolyfill.concat([decipher.update(buffer), decipher.final()])
+          }
+          const decipher = crypto.createDecipheriv(modeStr, key, iv)
+          return BufferPolyfill.concat([decipher.update(buffer), decipher.final()])
+        },
+
+        // RSA 加密
+        rsaEncrypt: (buffer: any, key: string, padding?: string) => {
+          let paddingType = crypto.constants.RSA_PKCS1_PADDING
+          if (padding === 'RSA_NO_PADDING') {
+            paddingType = crypto.constants.RSA_NO_PADDING
+          } else if (padding === 'RSA_PKCS1_OAEP_PADDING') {
+            paddingType = crypto.constants.RSA_PKCS1_OAEP_PADDING
+          }
+          return crypto.publicEncrypt(
+            { key, padding: paddingType },
+            BufferPolyfill.from(buffer)
+          )
+        },
+
+        // 随机字符串
+        randomString: (len: number) => {
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+          let result = ''
+          const bytes = crypto.randomBytes(len)
+          for (let i = 0; i < len; i++) {
+            result += chars[bytes[i] % chars.length]
+          }
+          return result
+        },
+
+        // 随机字节
+        randomBytes: (len: number) => crypto.randomBytes(len),
+
+        // Base64 编解码
+        base64: {
+          encode: (str: string | Buffer) => {
+            if (BufferPolyfill.isBuffer(str)) {
+              return str.toString('base64')
+            }
+            return BufferPolyfill.from(str).toString('base64')
+          },
+          decode: (str: string) => BufferPolyfill.from(str, 'base64').toString()
+        },
+
+        // SHA1 哈希
+        sha1: (str: string) => crypto.createHash('sha1').update(str).digest('hex'),
+
+        // SHA256 哈希
+        sha256: (str: string) => crypto.createHash('sha256').update(str).digest('hex'),
+
+        // HMAC
+        hmac: (algorithm: string, key: string | Buffer, data: string | Buffer) => {
+          return crypto.createHmac(algorithm, key).update(data).digest()
+        },
+
+        // HMAC SHA256
+        hmacSha256: (key: string | Buffer, data: string | Buffer) => {
+          return crypto.createHmac('sha256', key).update(data).digest('hex')
+        },
+
+        // Buffer 转字符串（LX 脚本使用）
+        bufToString: (buffer: any, encoding?: string) => {
+          if (BufferPolyfill.isBuffer(buffer)) {
+            return buffer.toString(encoding || 'utf8')
+          }
+          if (buffer instanceof Uint8Array) {
+            return BufferPolyfill.from(buffer).toString(encoding || 'utf8')
+          }
+          return String(buffer)
+        }
+      },
+
+      // 字符编码转换
+      iconv: {
+        encode: (str: string, encoding: string) => iconv.encode(str, encoding),
+        decode: (buffer: Buffer, encoding: string) => iconv.decode(buffer, encoding)
+      },
+
+      // 字符串工具
+      string: {
+        // URL 编码
+        encodeURIComponent: (str: string) => encodeURIComponent(str),
+        decodeURIComponent: (str: string) => decodeURIComponent(str),
+        encodeURI: (str: string) => encodeURI(str),
+        decodeURI: (str: string) => decodeURI(str)
+      }
+    },
+
+    // --- 事件系统 (关键！支持 LX 脚本的 lx.on('request', handler)) ---
+    on: (eventName: string, handler: Function) => {
+      console.log(`[Preload] Registering handler for event: ${eventName}`)
+      scriptEventHandlers.set(eventName, handler)
+
+      // 同时监听来自主进程的事件触发
+      ipcRenderer.on(`source-runner-reply-${eventName}`, (_, data) => {
+        try {
+          handler(data)
+        } catch (e) {
+          console.error(`[Preload] Script event handler error for ${eventName}:`, e)
+        }
+      })
+    },
+
+    // 移除事件监听
+    off: (eventName: string) => {
+      scriptEventHandlers.delete(eventName)
+      ipcRenderer.removeAllListeners(`source-runner-reply-${eventName}`)
+    },
+
+    // --- 发送事件 ---
+    send: (channel: string, data: any) => {
+      ipcRenderer.send('source-runner-event', { channel, data })
+    },
+
+    // --- 脚本初始化完成调用 ---
+    onInited: (info: any) => {
+      console.log('[Preload] Source initialized:', info)
+      ipcRenderer.send('script:event', { eventName: 'inited', data: info })
+    }
+  }
+
+  // 3. 监听主进程触发事件
+  // 主进程会发送 'script:triggerEvent' 来触发脚本注册的处理器
+  ipcRenderer.on('script:triggerEvent', async (_, { eventName, data }) => {
+    console.log(`[Preload] Received triggerEvent: ${eventName}`, data)
+
+    const handler = scriptEventHandlers.get(eventName)
+    if (!handler) {
+      console.warn(`[Preload] No handler registered for event: ${eventName}`)
+      // 发送错误结果回主进程
+      if (data.requestId) {
+        ipcRenderer.send('script:eventResult', {
+          requestId: data.requestId,
+          result: null,
+          error: `No handler registered for event: ${eventName}`
+        })
+      }
+      return
+    }
+
+    try {
+      // 调用脚本注册的处理器
+      // LX 脚本的 handler 通常返回 Promise
+      const result = await handler(data)
+
+      console.log(`[Preload] Handler result for ${eventName}:`, result)
+
+      // 将结果发送回主进程
+      if (data.requestId) {
+        ipcRenderer.send('script:eventResult', {
+          requestId: data.requestId,
+          result: result,
+          error: null
+        })
+      }
+    } catch (err: any) {
+      console.error(`[Preload] Handler error for ${eventName}:`, err)
+      if (data.requestId) {
+        ipcRenderer.send('script:eventResult', {
+          requestId: data.requestId,
+          result: null,
+          error: err.message || 'Handler execution failed'
+        })
+      }
+    }
+  })
+
+  // 4. 暴露 lx 对象到全局 window
+  contextBridge.exposeInMainWorld('lx', lxHandler)
+  // 兼容 global.lx
+  contextBridge.exposeInMainWorld('global', { lx: lxHandler })
+
+  // 5. 暴露 guli_api (用于原生脚本通信)
+  const guliApi = {
+    send: (channel: string, data: any) => {
+      ipcRenderer.send(channel, data)
+    },
+    on: (channel: string, func: Function) => {
+      ipcRenderer.on(channel, (_, ...args) => func(...args))
+    }
+  }
+  contextBridge.exposeInMainWorld('guli_api', guliApi)
+
+  // 6. 暴露全局 Buffer
+  contextBridge.exposeInMainWorld('Buffer', {
+    from: (...args: any[]) => BufferPolyfill.from.apply(BufferPolyfill, args),
+    alloc: (size: number) => BufferPolyfill.alloc(size),
+    allocUnsafe: (size: number) => BufferPolyfill.allocUnsafe(size),
+    concat: (list: any[]) => BufferPolyfill.concat(list),
+    isBuffer: (obj: any) => BufferPolyfill.isBuffer(obj)
+  })
+
+  // 7. 劫持控制台日志（用于调试）
+  const sendLog = (type: string, args: any[]) => {
+    ipcRenderer.send('source-runner-log', { type, args })
+  }
+  /* eslint-disable no-console */
+  const originalConsoleLog = console.log
+  const originalConsoleError = console.error
+  const originalConsoleWarn = console.warn
+
+  console.log = (...args) => {
+    originalConsoleLog.apply(console, args)
+    sendLog('log', args)
+  }
+  console.error = (...args) => {
+    originalConsoleError.apply(console, args)
+    sendLog('error', args)
+  }
+  console.warn = (...args) => {
+    originalConsoleWarn.apply(console, args)
+    sendLog('warn', args)
+  }
+
+  console.log('[Preload] API Runner initialization complete')
+
+} catch (err: any) {
+  console.error('[Preload] Initialization failed:', err)
+  ipcRenderer.send('source-runner-log', { type: 'error', args: ['Preload Init Failed', err.message] })
+}

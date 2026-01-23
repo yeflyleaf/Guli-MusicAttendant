@@ -63,7 +63,7 @@
         <el-tooltip content="在线搜索" placement="bottom" :show-after="300">
           <span class="nav-icon-btn"
             :class="{ active: $route.path === '/online-search' }"
-            @click="navigateTo('/online-search')">
+            @click="handleOnlineSearch">
             <el-icon>
               <Search />
             </el-icon>
@@ -151,6 +151,7 @@ import {
     Star,
     Tickets
 } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -160,6 +161,14 @@ const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
 
 const isMaximized = ref(false)
+
+// 在线搜索点击处理
+const handleOnlineSearch = () => {
+  ElMessage.warning({
+    message: '功能未开放，敬请期待',
+    duration: 3000
+  })
+}
 
 // 导航函数：关闭歌词页面后再跳转
 const navigateTo = (path: string) => {
