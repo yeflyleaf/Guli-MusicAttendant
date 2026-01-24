@@ -26,8 +26,8 @@ export function createMainWindow(): BrowserWindow {
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 800,
-    minWidth: 900,
-    minHeight: 600,
+    minWidth: 1100,
+    minHeight: 800,
     title: '故里音乐助手',           // 窗口标题
     show: false,                    // 先隐藏，等准备好再显示
     frame: false,                   // 无边框窗口（自定义标题栏）

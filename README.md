@@ -24,8 +24,9 @@
 基于 Electron + Vue 3 + TypeScript + Vite + Element Plus + SQLite 构建的现代化桌面音乐播放器
 
 ---
+
 <p align="center">
-  <img src="./Frontend/public/Home.png"width="600" alt="Home">
+  <img src="./Frontend/public/Home.png"width="800" alt="Home">
 </p>
 
 ---
