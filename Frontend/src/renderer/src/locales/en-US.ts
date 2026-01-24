@@ -151,7 +151,7 @@ export default {
       sectionTitle: 'About',
       appName: 'Guli Music Assistant',
       version: 'Version',
-      description: 'Local music management system, built with Electron + Vue 3 + TypeScript.',
+      description: 'Local music management system, built with Electron + Vue 3 + TypeScript',
       // Contact Us
       contactUs: 'Contact Us',
       author: 'Author',

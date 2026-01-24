@@ -142,7 +142,7 @@ export default {
       sectionTitle: 'О программе',
       appName: 'Guli Music',
       version: 'Версия',
-      description: 'Локальный музыкальный менеджер',
+      description: 'Система управления локальной музыкой, созданная на Electron + Vue 3 + TypeScript',
       // Contact Us
       contactUs: 'Свяжитесь с нами',
       author: 'Автор',

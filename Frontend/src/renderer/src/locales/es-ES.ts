@@ -142,7 +142,7 @@ export default {
       sectionTitle: 'Acerca de',
       appName: 'Guli Music',
       version: 'Versión',
-      description: 'Gestor de música local',
+      description: 'Sistema de gestión de música local, construido con Electron + Vue 3 + TypeScript',
       // Contact Us
       contactUs: 'Contáctenos',
       author: 'Autor',

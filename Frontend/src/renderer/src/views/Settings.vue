@@ -477,7 +477,6 @@
           <div class="about-info">
             <div class="app-info">
               <span class="app-name gradient-text">{{ $t('settings.about.appName') }}</span>
-              <span class="app-version">{{ $t('settings.about.version') }} 2.0.0</span>
             </div>
             <p class="app-desc">
               {{ $t('settings.about.description') }}
@@ -563,16 +562,16 @@ import { useLibraryStore } from '@/store/library.store'
 import { useSettingsStore } from '@/store/settings.store'
 import type { FileNamingRule, LyricsEncoding, MusicSource, SplashTheme, Theme } from '@/types/settings'
 import {
-    Close,
-    Download,
-    Folder,
-    FolderOpened,
-    InfoFilled,
-    Link,
-    Monitor,
-    Operation,
-    Plus,
-    Refresh
+  Close,
+  Download,
+  Folder,
+  FolderOpened,
+  InfoFilled,
+  Link,
+  Monitor,
+  Operation,
+  Plus,
+  Refresh
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'

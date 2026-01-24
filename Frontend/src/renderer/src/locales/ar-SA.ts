@@ -152,7 +152,7 @@ export default {
       sectionTitle: 'حول',
       appName: 'مساعد الموسيقى قولي',
       version: 'الإصدار',
-      description: 'نظام إدارة الموسيقى المحلية، مبني باستخدام Electron + Vue 3 + TypeScript.',
+      description: 'نظام إدارة الموسيقى المحلية، مبني باستخدام Electron + Vue 3 + TypeScript',
       // Contact Us
       contactUs: 'اتصل بنا',
       author: 'المؤلف',

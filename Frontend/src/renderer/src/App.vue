@@ -134,6 +134,7 @@ import WastelandAfterglowBackground from '@/components/Theme/WastelandAfterglowB
 import { useAudio } from '@/hooks/useAudio'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
+import { useKeyboardControls } from '@/hooks/useKeyboardControls'
 import { isLowMemoryMode, useMemoryOptimization } from '@/hooks/useMemoryOptimization'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
@@ -363,6 +364,7 @@ onUnmounted(() => {
 
 // 设置全局快捷键监听
 useShortcuts()
+useKeyboardControls()
 
 // 恢复播放状态（需要等待settings加载完成）
 onMounted(async () => {
