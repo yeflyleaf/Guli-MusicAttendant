@@ -126,9 +126,9 @@ Guli_MusicAttendant/
 │   │   │   ├── services/                  # 业务逻辑服务 (扫描, 窗口, 托盘等)
 │   │   │   └── utils/                     # 工具函数
 │   │   │
-│   │   ├── preload/                       # 🔐 预加载脚本 (Context Bridge)
+│   │   ├── preload/                       # 预加载脚本 (Context Bridge)
 │   │   │
-│   │   └── renderer/                      # 🎨 Vue 渲染进程
+│   │   └── renderer/                      # Vue 渲染进程
 │   │       ├── src/
 │   │       │   ├── main.ts                # Vue 入口
 │   │       │   ├── App.vue                # 根组件
