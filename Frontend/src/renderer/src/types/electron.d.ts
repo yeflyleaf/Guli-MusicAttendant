@@ -99,7 +99,6 @@ declare global {
         isMaximized: () => Promise<boolean>
         setTitle: (title: string) => void
         show: () => void
-        switchToMiniPlayer: () => void
         switchToFullPlayer: () => void
         isMiniPlayer: () => Promise<boolean>
       }

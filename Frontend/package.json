@@ -1,6 +1,6 @@
 {
   "name": "guli-music-attendant",
-  "version": "2.0.2",
+  "version": "2.0.5",
   "description": "本地音乐管理系统 - 基于 Electron + Vue 3 + TypeScript + Element Plus + SQLite",
   "main": "./dist-electron/main/index.js",
   "private": true,
@@ -15,7 +15,8 @@
     "build:mac": "npm run build && electron-builder --mac --config",
     "build:linux": "npm run build && electron-builder --linux --config",
     "lint": "eslint . --fix --cache",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
