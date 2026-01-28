@@ -32,7 +32,7 @@
           <el-icon>
             <Document />
           </el-icon>
-          <p>暂无歌词</p>
+          <p>{{ t('lyrics.noLyrics') }}</p>
         </div>
       </div>
 
@@ -44,7 +44,7 @@
       <el-icon class="empty-icon">
         <Headset />
       </el-icon>
-      <p>暂无播放</p>
+      <p>{{ t('player.noPlaying') }}</p>
     </div>
   </div>
 </template>
@@ -56,10 +56,12 @@ import { useSettingsStore } from '@/store/settings.store'
 import { parseLrc, type LyricLine } from '@/utils/lrc-parser'
 import { Document, Headset } from '@element-plus/icons-vue'
 import { computed, ref, watch, type ComponentPublicInstance } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
 const { seekPercent } = useAudio()
+const { t } = useI18n()
 
 // 是否显示模糊背景：只有在使用默认主题（dark/light）时才显示
 // 使用动态主题时隐藏模糊背景，以避免性能问题并展示动态背景

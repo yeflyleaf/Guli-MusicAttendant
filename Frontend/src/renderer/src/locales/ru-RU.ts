@@ -241,6 +241,7 @@ export default {
     emptyQueue: 'Пусто',
     addToQueue: 'В очередь',
     nowPlaying: 'Сейчас играет',
+    noPlaying: 'Ничего не воспроизводится',
     noLyrics: 'Нет текста',
     playModeSequence: 'Последовательно',
     playModeLoop: 'Повторять',
@@ -256,6 +257,12 @@ export default {
     fileNotFound: 'Примечание: Этот файл не существует локально.',
     removeFromList: 'Удалить из списка'
   },
+
+  // Lyrics
+  lyrics: {
+    noLyrics: 'Нет текста'
+  },
+
   languages: {
     'zh-CN': '简体中文',
     'en-US': 'English',

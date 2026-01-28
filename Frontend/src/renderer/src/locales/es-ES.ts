@@ -241,6 +241,7 @@ export default {
     emptyQueue: 'Cola vacía',
     addToQueue: 'A la cola',
     nowPlaying: 'Reproduciendo',
+    noPlaying: 'Sin reproducción',
     noLyrics: 'Sin letra',
     playModeSequence: 'Secuencial',
     playModeLoop: 'Repetir todo',
@@ -256,6 +257,12 @@ export default {
     fileNotFound: 'Nota: Este archivo no existe localmente.',
     removeFromList: 'Eliminar de la lista'
   },
+
+  // Lyrics
+  lyrics: {
+    noLyrics: 'Sin letra'
+  },
+
   languages: {
     'zh-CN': '简体中文',
     'en-US': 'English',

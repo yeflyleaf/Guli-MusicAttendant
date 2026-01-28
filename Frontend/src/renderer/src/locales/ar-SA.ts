@@ -263,6 +263,7 @@ export default {
     emptyQueue: 'قائمة التشغيل فارغة',
     addToQueue: 'إضافة إلى القائمة',
     nowPlaying: 'يتم التشغيل الآن',
+    noPlaying: 'لا يوجد تشغيل',
     noLyrics: 'لا تتوفر كلمات',
     playModeSequence: 'تسلسلي',
     playModeLoop: 'تكرار الكل',
@@ -277,6 +278,11 @@ export default {
     fileExistsButNotInFolder: 'ملاحظة: الملف ليس في مجلدات الموسيقى المحددة.',
     fileNotFound: 'ملاحظة: هذا الملف غير موجود محلياً.',
     removeFromList: 'إزالة من القائمة'
+  },
+
+  // Lyrics
+  lyrics: {
+    noLyrics: 'لا تتوفر كلمات'
   },
 
   // Language Names

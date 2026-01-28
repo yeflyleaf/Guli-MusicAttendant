@@ -262,6 +262,7 @@ export default {
     emptyQueue: 'Play queue is empty',
     addToQueue: 'Add to Queue',
     nowPlaying: 'Now Playing',
+    noPlaying: 'No song playing',
     noLyrics: 'No lyrics available',
     playModeSequence: 'Sequential',
     playModeLoop: 'Loop All',
@@ -277,6 +278,11 @@ export default {
     fileExistsButNotInFolder: 'Note: The file is not in the specified music folders. You can add the corresponding folder in "Settings" → "Library".',
     fileNotFound: 'Note: This file does not exist locally, it may have been moved or deleted.',
     removeFromList: 'Remove from List'
+  },
+
+  // Lyrics
+  lyrics: {
+    noLyrics: 'No lyrics available'
   },
 
   // Language Names

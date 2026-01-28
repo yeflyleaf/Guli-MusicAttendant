@@ -263,6 +263,7 @@ export default {
     emptyQueue: 'File d\'attente vide',
     addToQueue: 'Ajouter à la file',
     nowPlaying: 'En cours de lecture',
+    noPlaying: 'Aucune lecture',
     noLyrics: 'Aucune parole disponible',
     playModeSequence: 'Séquentiel',
     playModeLoop: 'Boucle tout',
@@ -277,6 +278,11 @@ export default {
     fileExistsButNotInFolder: 'Note : Le fichier n\'est pas dans les dossiers de musique spécifiés.',
     fileNotFound: 'Note : Ce fichier n\'existe pas localement.',
     removeFromList: 'Supprimer de la liste'
+  },
+
+  // Lyrics
+  lyrics: {
+    noLyrics: 'Aucune parole disponible'
   },
 
   // Language Names

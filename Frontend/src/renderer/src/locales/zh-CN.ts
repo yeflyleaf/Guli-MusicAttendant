@@ -264,6 +264,7 @@ export default {
     emptyQueue: '播放队列为空',
     addToQueue: '添加到播放队列',
     nowPlaying: '正在播放',
+    noPlaying: '暂无播放',
     noLyrics: '暂无歌词',
     playModeSequence: '顺序播放',
     playModeLoop: '列表循环',
@@ -279,6 +280,11 @@ export default {
     fileExistsButNotInFolder: '提示：文件不在指定音乐文件夹内。您可以在"设置"→"音乐库"中添加对应的文件夹。',
     fileNotFound: '提示：该文件在本地不存在，可能已被移动或删除。',
     removeFromList: '从列表中删除'
+  },
+
+  // 歌词
+  lyrics: {
+    noLyrics: '暂无歌词'
   },
 
   // 语言名称
