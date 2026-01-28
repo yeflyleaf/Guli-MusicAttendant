@@ -25,7 +25,8 @@
       <div class="lyrics-content" ref="lyricsContainerRef" @scroll="handleScroll">
         <div v-if="lyrics.length > 0" class="lyrics-scroll">
           <div v-for="(line, index) in lyrics" :key="index" class="lyric-line" :ref="(el) => setLyricLineRef(el, index)"
-            :class="{ active: index === currentLineIndex }" @click="handleSeekToLine(line.time)">
+            :class="{ active: index === currentLineIndex, 'has-translation': !!line.translation }"
+            @click="handleSeekToLine(line.time)">
             <!-- 外语主歌词（始终高亮这一行） -->
             <div class="lyric-main">{{ line.text }}</div>
             <!-- 中文翻译（如果存在） -->
@@ -200,6 +201,15 @@ const loadLyrics = async () => {
 const updateCurrentLine = (time: number) => {
   if (lyrics.value.length === 0) return
 
+  // 特殊处理：如果只有一行歌词（通常是纯音乐），始终高亮这一行
+  if (lyrics.value.length === 1) {
+    if (currentLineIndex.value !== 0) {
+      currentLineIndex.value = 0
+      scrollToCurrentLine()
+    }
+    return
+  }
+
   // 找到最后一个时间小于等于当前时间的歌词
   let index = -1
   for (let i = 0; i < lyrics.value.length; i++) {
@@ -331,12 +341,13 @@ watch(() => playerStore.currentTime, updateCurrentLine)
   align-items: center;
   width: 100%;
   padding: 50vh 0;
-  gap: $spacing-md;
-  /* 歌词单元之间的间距 16px */
+  gap: 12px;
+  /* 调整为更紧凑的间距，原为 $spacing-md (16px) */
 }
 
 .lyric-line {
-  min-height: 50px;
+  min-height: 28px;
+  /* 单行歌词更紧凑，原为 50px */
   padding: 0 $spacing-xl;
   /* 仅保留左右内边距 */
   text-align: center;
@@ -346,6 +357,13 @@ watch(() => playerStore.currentTime, updateCurrentLine)
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  /* 双行歌词（有翻译）保持原有布局 */
+  &.has-translation {
+    min-height: 50px;
+    margin-bottom: 4px;
+    /* 补偿减小的 gap，保持双行歌词的间距感 */
+  }
 
   &:hover {
     .lyric-main {
