@@ -35,11 +35,6 @@ interface PlayerState {
   showQueue: boolean
   // 低内存模式标志
   isLowMemoryMode: boolean
-  // 低内存模式前的队列备份
-  _lowMemoryBackup: {
-    queue: Music[] | null
-    playHistory: number[] | null
-  } | null
 }
 
 export const usePlayerStore = defineStore('player', {
@@ -56,8 +51,7 @@ export const usePlayerStore = defineStore('player', {
     playHistory: [],
     showLyrics: false,
     showQueue: false,
-    isLowMemoryMode: false,
-    _lowMemoryBackup: null
+    isLowMemoryMode: false
   }),
 
   getters: {
@@ -600,9 +594,9 @@ export const usePlayerStore = defineStore('player', {
                 console.log('[Player] Saved current song no longer exists in library, resetting to start')
               }
             } else {
-               // 索引无效，重置
-               this.currentSong = validQueue[0]
-               this.currentTime = 0
+              // 索引无效，重置
+              this.currentSong = validQueue[0]
+              this.currentTime = 0
             }
 
             this.currentIndex = newIndex
@@ -643,61 +637,34 @@ export const usePlayerStore = defineStore('player', {
 
     /**
      * 进入低内存模式
-     * 保留当前歌曲，但清空队列以释放内存
+     * 保留播放队列以支持上一曲/下一曲功能
+     * 只设置标志位，不清空核心播放数据
      */
     enterLowMemoryMode() {
       if (this.isLowMemoryMode) return
 
       console.log('[Player] Entering low memory mode...')
-      console.log(`[Player] Before: queue=${this.queue.length}, history=${this.playHistory.length}`)
+      console.log(`[Player] Queue preserved: ${this.queue.length} songs, history: ${this.playHistory.length}`)
 
-      // 备份当前数据
-      this._lowMemoryBackup = {
-        queue: this.queue,
-        playHistory: this.playHistory,
-      }
-
-      // 只保留当前歌曲
-      if (this.currentSong) {
-        this.queue = [this.currentSong]
-        this.currentIndex = 0
-      } else {
-        this.queue = []
-        this.currentIndex = -1
-      }
-      this.playHistory = []
-
+      // 不再备份和清空队列 - 队列是核心播放功能，必须保持完整
+      // 以支持托盘模式下的上一曲/下一曲功能
       this.isLowMemoryMode = true
-      console.log('[Player] Low memory mode enabled - queue minimized')
+      console.log('[Player] Low memory mode enabled - queue preserved for tray controls')
     },
 
     /**
      * 退出低内存模式
-     * 从备份恢复队列
+     * 由于队列未被清空，无需恢复
      */
     exitLowMemoryMode() {
       if (!this.isLowMemoryMode) return
 
       console.log('[Player] Exiting low memory mode...')
+      console.log(`[Player] Queue status: ${this.queue.length} songs`)
 
-      if (this._lowMemoryBackup) {
-        // 恢复队列
-        this.queue = this._lowMemoryBackup.queue || []
-        this.playHistory = this._lowMemoryBackup.playHistory || []
-
-        // 找到当前歌曲在队列中的位置
-        if (this.currentSong) {
-          const index = this.queue.findIndex(s => s.id === this.currentSong!.id)
-          if (index !== -1) {
-            this.currentIndex = index
-          }
-        }
-
-        this._lowMemoryBackup = null
-      }
-
+      // 队列从未被清空，无需恢复
       this.isLowMemoryMode = false
-      console.log(`[Player] Low memory mode disabled - queue restored: ${this.queue.length}`)
+      console.log('[Player] Low memory mode disabled')
     }
   }
 })
