@@ -171,18 +171,21 @@ function clearAllImages(): void {
 
 /**
  * 恢复所有图片
+ * 注意：不再使用保存的旧 src，而是让 Vue 自然重新渲染
+ * 这样当窗口隐藏期间歌曲变化时，恢复后能正确显示新歌曲的信息
  */
 function restoreAllImages(): void {
   console.log('[MemoryOptimization] Restoring all images...')
 
-  savedState.images.forEach((data, img) => {
-    if (document.contains(img)) {
-      img.src = data.src
-      img.loading = data.loading as 'lazy' | 'eager'
-    }
-  })
-
+  // 清空保存的图片状态（不再恢复旧的 src）
+  // 因为在窗口隐藏期间，用户可能通过托盘切换了歌曲
+  // Vue 的响应式系统会自然从 playerStore 读取最新的 currentSong
   savedState.images.clear()
+
+  // 触发刷新事件，通知播放栏组件需要刷新
+  // Vue 会自动从 store 读取最新的歌曲信息并重新渲染图片
+  window.dispatchEvent(new CustomEvent('memory-optimization:restore-ui'))
+  console.log('[MemoryOptimization] Triggered UI restore event')
 }
 
 /**

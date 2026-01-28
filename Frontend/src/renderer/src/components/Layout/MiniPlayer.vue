@@ -4,7 +4,9 @@
     <div class="cover-section">
       <!-- 封面图 -->
       <div class="cover-wrapper">
+        <!-- refreshKey 用于在从托盘恢复时强制重新渲染图片 -->
         <img v-if="playerStore.currentSong?.cover_path && playerStore.currentSong.cover_path.length > 5"
+          :key="`mini-cover-${playerStore.currentSong.id}-${refreshKey}`"
           :src="`local-image://${playerStore.currentSong.cover_path.replace(/\\\\/g, '/')}`" alt="封面"
           class="cover-image" />
         <div v-else class="cover-placeholder">
@@ -157,7 +159,7 @@ import {
   VideoPause,
   VideoPlay
 } from '@element-plus/icons-vue'
-import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const playerStore = usePlayerStore()
 
@@ -221,12 +223,7 @@ const handleQueueMouseLeave = () => {
   }, 1000)
 }
 
-// 组件卸载时清理定时器
-onUnmounted(() => {
-  if (queueCloseTimer) {
-    clearTimeout(queueCloseTimer)
-  }
-})
+
 
 // 进度条逻辑
 const localProgress = ref(0)
@@ -328,6 +325,29 @@ const handleMinimize = () => {
 const handleClose = () => {
   window.electron?.window?.close?.()
 }
+
+// ============ 托盘恢复时刷新 UI ============
+// 当窗口从托盘恢复时，可能在隐藏期间通过托盘切换了歌曲
+// 需要强制刷新封面图片以显示正确的歌曲信息
+const refreshKey = ref(0)
+
+const handleRestoreUI = () => {
+  console.log('[MiniPlayer] Memory optimization: restoring UI, refreshing cover image')
+  // 增加 refreshKey 强制 Vue 重新创建图片元素
+  refreshKey.value++
+}
+
+// 监听内存优化事件
+onMounted(() => {
+  window.addEventListener('memory-optimization:restore-ui', handleRestoreUI)
+})
+
+onUnmounted(() => {
+  if (queueCloseTimer) {
+    clearTimeout(queueCloseTimer)
+  }
+  window.removeEventListener('memory-optimization:restore-ui', handleRestoreUI)
+})
 </script>
 
 <style lang="scss" scoped>

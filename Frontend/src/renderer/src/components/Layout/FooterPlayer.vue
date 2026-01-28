@@ -8,7 +8,9 @@
     <div class="player-left">
       <div v-if="playerStore.currentSong" class="song-info">
         <div class="song-cover" @click="toggleLyrics">
+          <!-- refreshKey 用于在从托盘恢复时强制重新渲染图片 -->
           <img v-if="playerStore.currentSong.cover_path && playerStore.currentSong.cover_path.length > 5"
+            :key="`cover-${playerStore.currentSong.id}-${refreshKey}`"
             :src="`local-image://${playerStore.currentSong.cover_path.replace(/\\\\/g, '/')}`" alt="封面" />
           <div v-else class="cover-placeholder">
             <el-icon>
@@ -120,22 +122,22 @@ import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
 import { formatDuration } from '@/utils/format'
 import {
-    CaretLeft,
-    CaretRight,
-    Expand,
-    Headset,
-    List,
-    Reading,
-    Refresh,
-    RefreshRight,
-    Sort,
-    Star,
-    StarFilled,
-    Switch,
-    VideoPause,
-    VideoPlay
+  CaretLeft,
+  CaretRight,
+  Expand,
+  Headset,
+  List,
+  Reading,
+  Refresh,
+  RefreshRight,
+  Sort,
+  Star,
+  StarFilled,
+  Switch,
+  VideoPause,
+  VideoPlay
 } from '@element-plus/icons-vue'
-import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const playerStore = usePlayerStore()
 const libraryStore = useLibraryStore()
@@ -551,15 +553,30 @@ const handleResumeVisualization = () => {
   }
 }
 
+// ============ 托盘恢复时刷新 UI ============
+// 当窗口从托盘恢复时，可能在隐藏期间通过托盘切换了歌曲
+// 需要强制刷新封面图片以显示正确的歌曲信息
+const refreshKey = ref(0)
+
+const handleRestoreUI = () => {
+  console.log('[FooterPlayer] Memory optimization: restoring UI, refreshing cover image')
+  // 增加 refreshKey 强制 Vue 重新创建图片元素
+  refreshKey.value++
+}
+
 // 监听内存优化事件
-window.addEventListener('memory-optimization:pause-visualization', handlePauseVisualization)
-window.addEventListener('memory-optimization:resume-visualization', handleResumeVisualization)
+onMounted(() => {
+  window.addEventListener('memory-optimization:pause-visualization', handlePauseVisualization)
+  window.addEventListener('memory-optimization:resume-visualization', handleResumeVisualization)
+  window.addEventListener('memory-optimization:restore-ui', handleRestoreUI)
+})
 
 onUnmounted(() => {
   cancelAnimationFrame(animationId)
   // 移除内存优化事件监听
   window.removeEventListener('memory-optimization:pause-visualization', handlePauseVisualization)
   window.removeEventListener('memory-optimization:resume-visualization', handleResumeVisualization)
+  window.removeEventListener('memory-optimization:restore-ui', handleRestoreUI)
 })
 </script>
 

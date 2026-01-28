@@ -3,12 +3,13 @@
     <div class="lyrics-container" v-if="playerStore.currentSong">
       <!-- 背景 -->
       <!-- 背景 -->
-      <div v-if="showBlurBackground" class="lyrics-bg" :style="coverBgStyle"></div>
+      <div v-if="showBlurBackground" class="lyrics-bg" :style="coverBgStyle" :key="'bg-' + refreshKey"></div>
 
       <!-- 歌曲信息 -->
       <div class="song-info">
         <div class="song-cover">
           <img v-if="playerStore.currentSong.cover_path && playerStore.currentSong.cover_path.length > 5"
+            :key="'cover-' + refreshKey"
             :src="`local-image://${playerStore.currentSong.cover_path.replace(/\\\\/g, '/')}`" alt="封面" />
           <el-icon v-else>
             <Headset />
@@ -58,13 +59,35 @@ import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
 import { parseLrc, type LyricLine } from '@/utils/lrc-parser'
 import { Document, Headset } from '@element-plus/icons-vue'
-import { computed, ref, watch, type ComponentPublicInstance } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch, type ComponentPublicInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const playerStore = usePlayerStore()
 const settingsStore = useSettingsStore()
 const { seekPercent } = useAudio()
 const { t } = useI18n()
+
+// 用于强制刷新图片的 key
+const refreshKey = ref(0)
+
+// 处理内存优化恢复事件
+const handleRestoreUI = async () => {
+  console.log('[Lyrics] Memory optimization: restoring UI, refreshing cover image and lyrics')
+  // 增加 refreshKey 强制 Vue 重新创建图片元素
+  refreshKey.value++
+  // 重新加载歌词并立即定位到当前播放位置
+  await loadLyrics()
+}
+
+onMounted(() => {
+  // 监听内存优化恢复事件
+  window.addEventListener('memory-optimization:restore-ui', handleRestoreUI)
+})
+
+onUnmounted(() => {
+  // 移除事件监听
+  window.removeEventListener('memory-optimization:restore-ui', handleRestoreUI)
+})
 
 // 是否显示模糊背景：只有在使用默认主题（dark/light）时才显示
 // 使用动态主题时隐藏模糊背景，以避免性能问题并展示动态背景
@@ -95,12 +118,16 @@ const scrollToCurrentLine = () => {
   const activeLine = lyricLineRefs.value[currentLineIndex.value]
   if (activeLine) {
     const container = lyricsContainerRef.value
-    const containerHeight = container.clientHeight
-    const lineTop = activeLine.offsetTop
-    const lineHeight = activeLine.clientHeight
 
-    // 计算目标滚动位置，使当前行居中
-    const targetScrollTop = lineTop - containerHeight / 2 + lineHeight / 2
+    // 使用 getBoundingClientRect 进行更精确的计算
+    const containerRect = container.getBoundingClientRect()
+    const lineRect = activeLine.getBoundingClientRect()
+
+    // 计算当前行相对于容器中心的偏移量
+    const offset = lineRect.top - containerRect.top - (containerRect.height / 2) + (lineRect.height / 2)
+
+    // 加上当前的滚动位置
+    const targetScrollTop = container.scrollTop + offset
 
     isAutoScrolling = true
     container.scrollTo({
@@ -153,6 +180,16 @@ const loadLyrics = async () => {
     const content = await window.electron.dialog.readFile(playerStore.currentSong.lyrics_path)
     if (content) {
       lyrics.value = parseLrc(content)
+
+      // 歌词加载完成后，立即根据当前播放时间定位到正确位置
+      // 使用 nextTick 确保 DOM 已更新
+      await nextTick()
+      // 给 DOM 一点时间完成渲染
+      setTimeout(() => {
+        updateCurrentLine(playerStore.currentTime)
+        // 强制滚动到当前行（即使 index 没变）
+        scrollToCurrentLine()
+      }, 50)
     }
   } catch (error) {
     console.error('加载歌词失败:', error)
