@@ -25,7 +25,10 @@
         <div v-if="lyrics.length > 0" class="lyrics-scroll">
           <div v-for="(line, index) in lyrics" :key="index" class="lyric-line" :ref="(el) => setLyricLineRef(el, index)"
             :class="{ active: index === currentLineIndex }" @click="handleSeekToLine(line.time)">
-            {{ line.text }}
+            <!-- 外语主歌词（始终高亮这一行） -->
+            <div class="lyric-main">{{ line.text }}</div>
+            <!-- 中文翻译（如果存在） -->
+            <div v-if="line.translation" class="lyric-translation">{{ line.translation }}</div>
           </div>
         </div>
         <div v-else class="no-lyrics">
@@ -291,28 +294,57 @@ watch(() => playerStore.currentTime, updateCurrentLine)
   align-items: center;
   width: 100%;
   padding: 50vh 0;
-  /* 上下留白，确保第一行和最后一行能居中 */
+  gap: $spacing-md;
+  /* 歌词单元之间的间距 16px */
 }
 
 .lyric-line {
-  height: 50px;
-  line-height: 50px;
+  min-height: 50px;
   padding: 0 $spacing-xl;
-  font-size: $font-size-lg;
-  color: $text-muted;
+  /* 仅保留左右内边距 */
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    color: $text-secondary;
+    .lyric-main {
+      color: $text-secondary;
+    }
   }
 
   &.active {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-semibold;
-    color: $text-primary;
-    transform: scale(1.05);
+    .lyric-main {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $text-primary;
+      transform: scale(1.05);
+    }
+
+    .lyric-translation {
+      color: $text-secondary;
+      opacity: 1;
+    }
+  }
+
+  .lyric-main {
+    font-size: $font-size-lg;
+    line-height: 1.5;
+    color: $text-muted;
+    transition: all 0.3s ease;
+  }
+
+  .lyric-translation {
+    font-size: $font-size-md;
+    line-height: 1.4;
+    color: $text-muted;
+    opacity: 0.7;
+    margin-top: $spacing-xs;
+    /* 主歌词与翻译间距 4px */
+    transition: all 0.3s ease;
   }
 }
 

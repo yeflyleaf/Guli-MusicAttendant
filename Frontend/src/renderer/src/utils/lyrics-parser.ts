@@ -7,6 +7,7 @@
 export interface LyricLine {
   time: number      // 时间（秒）
   text: string      // 歌词文本
+  translation?: string // 翻译文本（可选）
 }
 
 // 歌词元信息
@@ -33,11 +34,11 @@ function parseTime(timeStr: string): number {
   // 匹配 [mm:ss.xx] 或 [mm:ss:xx] 或 [mm:ss]
   const match = timeStr.match(/\[(\d{1,2}):(\d{2})([.:]\d{1,3})?\]/)
   if (!match) return -1
-  
+
   const minutes = parseInt(match[1], 10)
   const seconds = parseInt(match[2], 10)
   const ms = match[3] ? parseFloat('0' + match[3].replace(':', '.')) : 0
-  
+
   return minutes * 60 + seconds + ms
 }
 
@@ -49,7 +50,7 @@ function parseTime(timeStr: string): number {
 function parseMeta(line: string, meta: LyricMeta): boolean {
   const metaMatch = line.match(/^\[(ti|ar|al|by|offset):([^\]]*)\]/)
   if (!metaMatch) return false
-  
+
   const [, tag, value] = metaMatch
   switch (tag) {
     case 'ti':
@@ -68,7 +69,7 @@ function parseMeta(line: string, meta: LyricMeta): boolean {
       meta.offset = parseInt(value.trim(), 10)
       break
   }
-  
+
   return true
 }
 
@@ -82,30 +83,30 @@ export function parseLyrics(lrcContent: string): ParsedLyrics {
     meta: {},
     lines: []
   }
-  
+
   if (!lrcContent) return result
-  
+
   // 按行分割
   const lines = lrcContent.split(/\r?\n/)
-  
+
   for (const line of lines) {
     const trimmedLine = line.trim()
     if (!trimmedLine) continue
-    
+
     // 尝试解析元信息
     if (parseMeta(trimmedLine, result.meta)) {
       continue
     }
-    
+
     // 解析歌词行
     // 支持多时间标签 [00:01.00][00:15.00]歌词内容
     const timeMatches = trimmedLine.match(/\[\d{1,2}:\d{2}([.:]\d{1,3})?\]/g)
     if (!timeMatches) continue
-    
+
     // 获取歌词文本（去除所有时间标签）
     const text = trimmedLine.replace(/\[\d{1,2}:\d{2}([.:]\d{1,3})?\]/g, '').trim()
     if (!text) continue
-    
+
     // 为每个时间标签创建一行
     for (const timeMatch of timeMatches) {
       const time = parseTime(timeMatch)
@@ -114,10 +115,10 @@ export function parseLyrics(lrcContent: string): ParsedLyrics {
       }
     }
   }
-  
+
   // 按时间排序
   result.lines.sort((a, b) => a.time - b.time)
-  
+
   // 应用时间偏移
   if (result.meta.offset) {
     const offsetSec = result.meta.offset / 1000
@@ -126,7 +127,7 @@ export function parseLyrics(lrcContent: string): ParsedLyrics {
       time: line.time + offsetSec
     }))
   }
-  
+
   return result
 }
 
@@ -138,15 +139,15 @@ export function parseLyrics(lrcContent: string): ParsedLyrics {
  */
 export function getCurrentLineIndex(lines: LyricLine[], currentTime: number): number {
   if (lines.length === 0) return -1
-  
+
   // 二分查找
   let left = 0
   let right = lines.length - 1
   let result = -1
-  
+
   while (left <= right) {
     const mid = Math.floor((left + right) / 2)
-    
+
     if (lines[mid].time <= currentTime) {
       result = mid
       left = mid + 1
@@ -154,7 +155,7 @@ export function getCurrentLineIndex(lines: LyricLine[], currentTime: number): nu
       right = mid - 1
     }
   }
-  
+
   return result
 }
 
@@ -174,19 +175,19 @@ export function lyricsToText(lyrics: ParsedLyrics): string {
  */
 export function toLrcString(lyrics: ParsedLyrics): string {
   const lines: string[] = []
-  
+
   // 添加元信息
   if (lyrics.meta.title) lines.push(`[ti:${lyrics.meta.title}]`)
   if (lyrics.meta.artist) lines.push(`[ar:${lyrics.meta.artist}]`)
   if (lyrics.meta.album) lines.push(`[al:${lyrics.meta.album}]`)
   if (lyrics.meta.author) lines.push(`[by:${lyrics.meta.author}]`)
-  
+
   // 添加歌词行
   for (const line of lyrics.lines) {
     const minutes = Math.floor(line.time / 60)
     const seconds = (line.time % 60).toFixed(2)
     lines.push(`[${minutes.toString().padStart(2, '0')}:${seconds.padStart(5, '0')}]${line.text}`)
   }
-  
+
   return lines.join('\n')
 }
