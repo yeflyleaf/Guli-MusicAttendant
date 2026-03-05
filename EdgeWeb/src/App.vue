@@ -16,10 +16,17 @@ const cursorX = ref(0)
 const cursorY = ref(0)
 const cursorVisible = ref(false)
 
+let isCursorTicking = false
 const handleCursorMove = (e: MouseEvent) => {
-  cursorX.value = e.clientX
-  cursorY.value = e.clientY
-  cursorVisible.value = true
+  if (!isCursorTicking) {
+    window.requestAnimationFrame(() => {
+      cursorX.value = e.clientX
+      cursorY.value = e.clientY
+      cursorVisible.value = true
+      isCursorTicking = false
+    })
+    isCursorTicking = true
+  }
 }
 
 const handleCursorLeave = () => {
@@ -33,13 +40,14 @@ onMounted(() => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible')
+          observer?.unobserve(entry.target)
         }
       })
     },
     {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px',
-    }
+    },
   )
 
   // 观察所有需要滚动动画的元素
@@ -78,10 +86,13 @@ onUnmounted(() => {
     </div>
 
     <!-- 鼠标发光效果 -->
-    <div class="cursor-glow" :class="{ visible: cursorVisible }" :style="{
-      left: cursorX + 'px',
-      top: cursorY + 'px'
-    }"></div>
+    <div
+      class="cursor-glow"
+      :class="{ visible: cursorVisible }"
+      :style="{
+        transform: `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`,
+      }"
+    ></div>
 
     <NavBar />
     <main>
@@ -156,12 +167,14 @@ main {
 .flow-beam {
   position: absolute;
   width: 1px;
-  background: linear-gradient(180deg,
-      transparent 0%,
-      rgba(0, 229, 255, 0.0) 10%,
-      rgba(0, 229, 255, 0.15) 50%,
-      rgba(0, 229, 255, 0.0) 90%,
-      transparent 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 229, 255, 0) 10%,
+    rgba(0, 229, 255, 0.15) 50%,
+    rgba(0, 229, 255, 0) 90%,
+    transparent 100%
+  );
   opacity: 0;
   animation: beam-flow linear infinite;
 }
@@ -181,12 +194,14 @@ main {
   animation-duration: 12s;
   animation-delay: -3s;
   transform: rotate(-8deg);
-  background: linear-gradient(180deg,
-      transparent 0%,
-      rgba(124, 77, 255, 0.0) 10%,
-      rgba(124, 77, 255, 0.12) 50%,
-      rgba(124, 77, 255, 0.0) 90%,
-      transparent 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(124, 77, 255, 0) 10%,
+    rgba(124, 77, 255, 0.12) 50%,
+    rgba(124, 77, 255, 0) 90%,
+    transparent 100%
+  );
 }
 
 .flow-beam-3 {
@@ -203,12 +218,14 @@ main {
   animation-duration: 14s;
   animation-delay: -6s;
   transform: rotate(-12deg);
-  background: linear-gradient(180deg,
-      transparent 0%,
-      rgba(29, 233, 182, 0.0) 10%,
-      rgba(29, 233, 182, 0.1) 50%,
-      rgba(29, 233, 182, 0.0) 90%,
-      transparent 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(29, 233, 182, 0) 10%,
+    rgba(29, 233, 182, 0.1) 50%,
+    rgba(29, 233, 182, 0) 90%,
+    transparent 100%
+  );
 }
 
 .flow-beam-5 {
@@ -217,12 +234,14 @@ main {
   animation-duration: 16s;
   animation-delay: -8s;
   transform: rotate(20deg);
-  background: linear-gradient(180deg,
-      transparent 0%,
-      rgba(255, 128, 171, 0.0) 10%,
-      rgba(255, 128, 171, 0.08) 50%,
-      rgba(255, 128, 171, 0.0) 90%,
-      transparent 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 128, 171, 0) 10%,
+    rgba(255, 128, 171, 0.08) 50%,
+    rgba(255, 128, 171, 0) 90%,
+    transparent 100%
+  );
 }
 
 @keyframes beam-flow {
@@ -268,13 +287,15 @@ main {
 .aurora-1 {
   top: 25%;
   left: -50%;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(0, 229, 255, 0.0),
-      rgba(0, 229, 255, 0.25),
-      rgba(29, 233, 182, 0.25),
-      rgba(29, 233, 182, 0.0),
-      transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 229, 255, 0),
+    rgba(0, 229, 255, 0.25),
+    rgba(29, 233, 182, 0.25),
+    rgba(29, 233, 182, 0),
+    transparent
+  );
   animation-duration: 20s;
   background-size: 200% 100%;
   animation-name: aurora-drift, aurora-shimmer;
@@ -283,13 +304,15 @@ main {
 .aurora-2 {
   top: 55%;
   left: -30%;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(124, 77, 255, 0.0),
-      rgba(124, 77, 255, 0.2),
-      rgba(179, 136, 255, 0.2),
-      rgba(179, 136, 255, 0.0),
-      transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(124, 77, 255, 0),
+    rgba(124, 77, 255, 0.2),
+    rgba(179, 136, 255, 0.2),
+    rgba(179, 136, 255, 0),
+    transparent
+  );
   animation-duration: 25s;
   animation-delay: -5s;
   background-size: 200% 100%;
@@ -299,13 +322,15 @@ main {
 .aurora-3 {
   top: 80%;
   left: -40%;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(0, 229, 255, 0.0),
-      rgba(0, 229, 255, 0.15),
-      rgba(255, 128, 171, 0.15),
-      rgba(255, 128, 171, 0.0),
-      transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 229, 255, 0),
+    rgba(0, 229, 255, 0.15),
+    rgba(255, 128, 171, 0.15),
+    rgba(255, 128, 171, 0),
+    transparent
+  );
   animation-duration: 22s;
   animation-delay: -10s;
   background-size: 200% 100%;
@@ -370,20 +395,24 @@ main {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(0, 229, 255, 0.6),
-      rgba(29, 233, 182, 0.6),
-      transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 229, 255, 0.6),
+    rgba(29, 233, 182, 0.6),
+    transparent
+  );
   animation: divider-flow 4s ease-in-out infinite;
 }
 
 .flow-divider-purple .flow-divider-line::before {
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(124, 77, 255, 0.6),
-      rgba(179, 136, 255, 0.6),
-      transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(124, 77, 255, 0.6),
+    rgba(179, 136, 255, 0.6),
+    transparent
+  );
 }
 
 @keyframes divider-flow {
@@ -416,7 +445,6 @@ main {
 }
 
 @keyframes dot-pulse {
-
   0%,
   100% {
     transform: scale(1);
@@ -440,10 +468,9 @@ main {
   background: radial-gradient(circle, rgba(0, 229, 255, 0.04) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
-  transform: translate(-50%, -50%);
   transition: opacity 0.5s ease;
   opacity: 0;
-  will-change: left, top;
+  will-change: transform;
 }
 
 .cursor-glow.visible {

@@ -14,26 +14,47 @@ const navLinks = [
   { label: '下载', href: '#download' },
 ]
 
+let isScrollTicking = false
 function handleScroll() {
-  isScrolled.value = window.scrollY > 30
-
-  // 计算滚动进度
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight
-  scrollProgress.value = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0
-
-  // 判断当前激活的章节
-  const sections = ['download', 'i18n', 'tech', 'preview', 'features']
-  for (const id of sections) {
-    const el = document.getElementById(id)
-    if (el) {
-      const rect = el.getBoundingClientRect()
-      if (rect.top <= 200) {
-        activeSection.value = '#' + id
-        break
+  if (!isScrollTicking) {
+    window.requestAnimationFrame(() => {
+      const currentScrollY = window.scrollY
+      const newIsScrolled = currentScrollY > 30
+      if (isScrolled.value !== newIsScrolled) {
+        isScrolled.value = newIsScrolled
       }
-    }
+
+      // 计算滚动进度
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      const currentProgress = docHeight > 0 ? (currentScrollY / docHeight) * 100 : 0
+      // 避免过于频繁的微小更新
+      if (Math.abs(scrollProgress.value - currentProgress) > 0.5) {
+        scrollProgress.value = currentProgress
+      }
+
+      // 判断当前激活的章节
+      const sections = ['download', 'i18n', 'tech', 'preview', 'features']
+      let newActiveSection = ''
+      for (const id of sections) {
+        const el = document.getElementById(id)
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top <= 200) {
+            newActiveSection = '#' + id
+            break
+          }
+        }
+      }
+      if (currentScrollY < 100) newActiveSection = ''
+
+      if (activeSection.value !== newActiveSection) {
+        activeSection.value = newActiveSection
+      }
+
+      isScrollTicking = false
+    })
+    isScrollTicking = true
   }
-  if (window.scrollY < 100) activeSection.value = ''
 }
 
 function closeMobileMenu() {
@@ -63,12 +84,12 @@ onUnmounted(() => {
       <ul class="navbar-links" :class="{ open: isMobileMenuOpen }">
         <li v-for="link in navLinks" :key="link.href">
           <a :href="link.href" :class="{ active: activeSection === link.href }" @click="closeMobileMenu">{{ link.label
-          }}</a>
+            }}</a>
         </li>
       </ul>
 
       <div class="navbar-actions">
-        <a href="https://github.com/yeflyleaf/Guli_MusicAttendant" target="_blank" rel="noopener noreferrer"
+        <a href="https://github.com/yeflyleaf/Guli-MusicAttendant" target="_blank" rel="noopener noreferrer"
           class="btn btn-secondary btn-github" id="github-link">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path
@@ -105,7 +126,9 @@ onUnmounted(() => {
   background: var(--gradient-accent);
   z-index: 10;
   transition: width 0.1s linear;
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5), 0 0 20px rgba(0, 229, 255, 0.2);
+  box-shadow:
+    0 0 10px rgba(0, 229, 255, 0.5),
+    0 0 20px rgba(0, 229, 255, 0.2);
 }
 
 .navbar.scrolled {
@@ -113,7 +136,9 @@ onUnmounted(() => {
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(0, 229, 255, 0.03);
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(0, 229, 255, 0.03);
 }
 
 .navbar-inner {
