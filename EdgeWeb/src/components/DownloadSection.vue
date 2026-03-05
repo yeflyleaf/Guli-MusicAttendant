@@ -10,7 +10,7 @@ const platforms = [
   },
   {
     name: 'macOS',
-    icon: '🍎',
+    icon: '🍏',
     versions: 'macOS 10.15+',
     downloadUrl: 'https://github.com/yeflyleaf/Guli-MusicAttendant/releases/latest/',
     fileName: 'DMG / Zip',
