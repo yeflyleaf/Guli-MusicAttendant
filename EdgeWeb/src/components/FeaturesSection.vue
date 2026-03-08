@@ -4,15 +4,15 @@ import { ref } from 'vue'
 const features = [
   {
     icon: '🎧',
-    title: '本地音乐管理',
-    description: '智能扫描本地音乐文件夹，自动解析音频元数据，包括标题、艺术家、专辑、封面等信息。',
+    title: '本地音乐播放器',
+    description: '专业的离线音乐管理系统，智能扫描本地文件夹，自动解析音频元数据，带给您纯净的本地听歌体验。',
     gradient: 'linear-gradient(135deg, rgba(0,229,255,0.12), rgba(29,233,182,0.06))',
     borderColor: 'rgba(0,229,255,0.2)',
   },
   {
     icon: '📝',
     title: '歌词同步',
-    description: '支持 LRC 格式歌词同步滚动显示，沉浸式歌词页面，享受极致音乐体验。',
+    description: '支持 LRC 格式歌词同步滚动显示，沉浸式歌词页面，享受极致音乐播放器视听体验。',
     gradient: 'linear-gradient(135deg, rgba(124,77,255,0.12), rgba(179,136,255,0.06))',
     borderColor: 'rgba(124,77,255,0.2)',
   },
@@ -25,8 +25,8 @@ const features = [
   },
   {
     icon: '📋',
-    title: '歌单管理',
-    description: '灵活创建、编辑和删除歌单，自由管理您的音乐收藏，支持收藏和最近播放。',
+    title: '离线歌单',
+    description: '灵活创建、编辑和删除歌单，无需网络即可管理您的音乐收藏，支持本地收藏和最近播放。',
     gradient: 'linear-gradient(135deg, rgba(29,233,182,0.12), rgba(0,229,255,0.06))',
     borderColor: 'rgba(29,233,182,0.2)',
   },
@@ -40,7 +40,7 @@ const features = [
   {
     icon: '⚡',
     title: '极致性能',
-    description: '渐进式渲染、GPU 硬件加速、并行数据预加载，大规模音乐库毫秒级响应。',
+    description: 'GPU 硬件加速、并行数据预加载，即便管理海量离线音乐库，播放器依然毫秒级响应。',
     gradient: 'linear-gradient(135deg, rgba(255,215,64,0.12), rgba(255,171,0,0.06))',
     borderColor: 'rgba(255,215,64,0.2)',
   },

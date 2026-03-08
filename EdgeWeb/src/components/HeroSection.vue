@@ -75,8 +75,8 @@ onUnmounted(() => {
       </h1>
 
       <p class="hero-description animate-on-scroll delay-2">
-        基于 Electron + Vue 3 + TypeScript 构建的现代化桌面音乐播放器<br />
-        优雅管理你的本地音乐库，沉浸式聆听体验
+        基于 Electron + Vue 3 构建的现代化本地离线音乐播放器<br />
+        优雅管理本地库，支持离线音乐播放，为您提供沉浸式聆听体验
       </p>
 
       <div class="hero-actions animate-on-scroll delay-3">

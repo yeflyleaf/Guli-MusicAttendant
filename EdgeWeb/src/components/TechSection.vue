@@ -69,7 +69,7 @@ const techStack = [
 ]
 
 const perfItems = [
-  { label: '并行数据预加载', detail: '启动前并行加载设置和音乐数据', icon: '🚀', progress: 95 },
+  { label: '并行数据预加载', detail: '离线音乐库秒级启动，数据瞬间就绪', icon: '🚀', progress: 95 },
   {
     label: '渐进式渲染',
     detail: '首屏 20 条 + requestAnimationFrame 补全',
@@ -163,7 +163,7 @@ const hoveredPerf = ref<number | null>(null)
         <h3 class="perf-title">
           <span class="gradient-text">⚡ 性能优化</span>
         </h3>
-        <p class="perf-subtitle">针对大型音乐库的深度性能优化</p>
+        <p class="perf-subtitle">针对海量离线音乐库的深度性能优化，打造流畅音乐播放器</p>
 
         <div class="perf-grid">
           <div
