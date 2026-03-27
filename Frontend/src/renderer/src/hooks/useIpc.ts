@@ -2,50 +2,13 @@
  * IPC 通信 Hook
  * 封装与主进程的通信
  */
-import { usePlayerStore } from '@/store/player.store'
-import { useSettingsStore } from '@/store/settings.store'
 import { onMounted, onUnmounted } from 'vue'
 
 export function useIpc() {
-  const playerStore = usePlayerStore()
 
-  // 监听全局快捷键
+  // 监听全局快捷键（现在已委托给 MediaSession 处理蓝牙信号）
   const setupShortcutListeners = () => {
-    // 播放/暂停
-    window.electron.on('shortcut:playPause', () => {
-      playerStore.togglePlay()
-    })
-
-    // 下一曲
-    window.electron.on('shortcut:next', () => {
-      playerStore.next()
-    })
-
-    // 上一曲
-    window.electron.on('shortcut:previous', () => {
-      playerStore.previous()
-    })
-
-    // 停止
-    window.electron.on('shortcut:stop', () => {
-      playerStore.stop()
-    })
-
-    // 音量增大（蓝牙耳机/媒体键）
-    window.electron.on('shortcut:volumeUp', () => {
-      playerStore.volumeUp()
-      // 同步音量到设置持久化
-      const settingsStore = useSettingsStore()
-      settingsStore.setVolume(playerStore.volume)
-    })
-
-    // 音量减小（蓝牙耳机/媒体键）
-    window.electron.on('shortcut:volumeDown', () => {
-      playerStore.volumeDown()
-      // 同步音量到设置持久化
-      const settingsStore = useSettingsStore()
-      settingsStore.setVolume(playerStore.volume)
-    })
+    // 可以在这里添加常规非媒体键的自定义逻辑
   }
 
   // 清理监听器
@@ -54,8 +17,6 @@ export function useIpc() {
     window.electron.removeAllListeners('shortcut:next')
     window.electron.removeAllListeners('shortcut:previous')
     window.electron.removeAllListeners('shortcut:stop')
-    window.electron.removeAllListeners('shortcut:volumeUp')
-    window.electron.removeAllListeners('shortcut:volumeDown')
   }
 
   // 选择文件夹

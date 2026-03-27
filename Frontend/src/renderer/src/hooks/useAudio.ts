@@ -160,6 +160,11 @@ function setupWatchers(
       } else {
         globalAudio.pause()
       }
+
+      // 同步更新 MediaSession 状态（这对蓝牙设备响应是必需的）
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = playing ? 'playing' : 'paused'
+      }
     }
   })
 

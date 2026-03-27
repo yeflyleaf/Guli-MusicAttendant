@@ -139,53 +139,6 @@ if (!gotTheLock) {
  * 注册全局媒体快捷键
  */
 function registerGlobalShortcuts(): void {
-  // 播放/暂停
-  globalShortcut.register('MediaPlayPause', () => {
-    const mainWindow = getMainWindow()
-    if (mainWindow) {
-      mainWindow.webContents.send('shortcut:playPause')
-    }
-  })
-
-  // 下一曲
-  globalShortcut.register('MediaNextTrack', () => {
-    const mainWindow = getMainWindow()
-    if (mainWindow) {
-      mainWindow.webContents.send('shortcut:next')
-    }
-  })
-
-  // 上一曲
-  globalShortcut.register('MediaPreviousTrack', () => {
-    const mainWindow = getMainWindow()
-    if (mainWindow) {
-      mainWindow.webContents.send('shortcut:previous')
-    }
-  })
-
-  // 停止
-  globalShortcut.register('MediaStop', () => {
-    const mainWindow = getMainWindow()
-    if (mainWindow) {
-      mainWindow.webContents.send('shortcut:stop')
-    }
-  })
-
-  // 音量增大
-  globalShortcut.register('VolumeUp', () => {
-    const mainWindow = getMainWindow()
-    if (mainWindow) {
-      mainWindow.webContents.send('shortcut:volumeUp')
-    }
-  })
-
-  // 音量减小
-  globalShortcut.register('VolumeDown', () => {
-    const mainWindow = getMainWindow()
-    if (mainWindow) {
-      mainWindow.webContents.send('shortcut:volumeDown')
-    }
-  })
-
-  console.log('[Main] Global media shortcuts registered')
+  // 媒体键现在由渲染进程的 MediaSession API 处理，以获得更好的蓝牙支持
+  console.log('[Main] Global media keys delegated to MediaSession API')
 }
