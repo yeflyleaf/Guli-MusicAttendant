@@ -235,15 +235,14 @@ async function searchWithExternalScript(
   const platform = extractExternalSourceType(source)
   console.log(`[OnlineService] External search: source=${source}, platform=${platform}, keyword=${keyword}, requestId=${requestId}`)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rawResult = await new Promise<any>((resolve, reject) => {
+  const rawResult = await new Promise<Record<string, unknown>>((resolve, reject) => {
     const timeout = setTimeout(() => {
       pendingRequests.delete(requestId)
       console.error(`[OnlineService] Search request ${requestId} timed out`)
       reject(new Error('搜索请求超时'))
     }, REQUEST_TIMEOUT)
 
-    pendingRequests.set(requestId, { resolve, reject, timeout })
+    pendingRequests.set(requestId, { resolve: resolve as (value: unknown) => void, reject, timeout })
 
     // 触发外部脚本的请求事件
     // LX 脚本通常监听 'request' 事件，action 为 'search'
@@ -270,25 +269,24 @@ async function searchWithExternalScript(
   }
 
   // 映射结果到 OnlineSearchResult
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rawList = rawResult.list || rawResult.data || rawResult || []
-  const list = (Array.isArray(rawList) ? rawList : []).map((item: any) => ({
-    id: item.songmid || item.id || item.musicId || String(Math.random()),
-    name: item.name || item.title || item.songName || 'Unknown',
-    artist: item.singer || item.artist || item.singerName || 'Unknown',
-    album: item.albumName || item.album || '',
-    duration: parseDuration(item.interval || item.duration || item.time),
-    cover: item.img || item.cover || item.pic || item.albumPic || '',
+  const rawList = (rawResult.list || rawResult.data || rawResult || []) as Record<string, unknown>[]
+  const list = (Array.isArray(rawList) ? rawList : []).map((item: Record<string, unknown>) => ({
+    id: String(item.songmid || item.id || item.musicId || Math.random()),
+    name: String(item.name || item.title || item.songName || 'Unknown'),
+    artist: String(item.singer || item.artist || item.singerName || 'Unknown'),
+    album: String(item.albumName || item.album || ''),
+    duration: parseDuration((item.interval ?? item.duration ?? item.time) as string | number | undefined),
+    cover: String(item.img || item.cover || item.pic || item.albumPic || ''),
     source: source, // 使用脚本 ID 作为 source
-    quality: item.quality,
-    extra: item // 保留原始数据，以便获取播放链接时使用
+    quality: item.quality as string | undefined,
+    extra: item as Record<string, unknown> // 保留原始数据，以便获取播放链接时使用
   }))
 
   console.log(`[OnlineService] Mapped ${list.length} results`)
 
   return {
     list,
-    total: rawResult.total || rawResult.totalNum || list.length,
+    total: (typeof rawResult.total === 'number' ? rawResult.total : typeof rawResult.totalNum === 'number' ? rawResult.totalNum : list.length),
     source,
     page,
     pageSize

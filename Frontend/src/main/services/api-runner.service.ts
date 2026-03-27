@@ -4,7 +4,7 @@
  * 安全执行第三方源脚本
  */
 import axios from 'axios'
-import { BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 
 // 隐形窗口实例
@@ -61,7 +61,7 @@ export function createGhostWindow(): BrowserWindow {
   setupEventListeners()
 
   // 开发模式下打开 DevTools 以查看渲染进程错误
-  if (!require('electron').app.isPackaged) {
+  if (!app.isPackaged) {
     ghostWindow.webContents.openDevTools({ mode: 'detach' })
   }
 
@@ -182,9 +182,10 @@ async function fetchScriptContent(urlOrContent: string): Promise<string> {
       })
       console.log('[ApiRunner] Script downloaded successfully, length:', response.data.length)
       return response.data
-    } catch (error: any) {
-      console.error('[ApiRunner] Failed to download script:', error.message)
-      throw new Error(`无法下载脚本: ${error.message}`)
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error)
+      console.error('[ApiRunner] Failed to download script:', message)
+      throw new Error(`无法下载脚本: ${message}`)
     }
   }
   return urlOrContent

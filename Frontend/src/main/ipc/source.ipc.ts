@@ -20,9 +20,10 @@ async function fetchScriptFromUrl(url: string): Promise<string> {
     })
     console.log('[SourceIPC] Script downloaded, length:', response.data.length)
     return response.data
-  } catch (error: any) {
-    console.error('[SourceIPC] Failed to download script:', error.message)
-    throw new Error(`无法下载脚本: ${error.message}`)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('[SourceIPC] Failed to download script:', message)
+    throw new Error(`无法下载脚本: ${message}`)
   }
 }
 
@@ -63,7 +64,7 @@ function parseScriptMetadata(content: string): {
     if (json.description) metadata.description = json.description
     if (json.author) metadata.author = json.author
     return metadata
-  } catch (e) {
+  } catch {
     // 不是 JSON，尝试从注释或代码中提取
   }
 

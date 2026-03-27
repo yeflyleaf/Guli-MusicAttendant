@@ -163,7 +163,7 @@ const playMusic = async (music: OnlineMusic) => {
             id: music.id,
             source: music.source,
             quality: '128k',
-            extra: (music as any).extra
+            extra: (music as OnlineMusic & { extra?: Record<string, unknown> }).extra
         })
 
         if (!url) {

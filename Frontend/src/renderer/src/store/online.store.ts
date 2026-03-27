@@ -215,7 +215,7 @@ export const useOnlineStore = defineStore('online', () => {
       // 先获取播放链接
       let playUrl = music.playUrl
       if (!playUrl) {
-        playUrl = await getPlayUrl(music)
+        playUrl = (await getPlayUrl(music)) ?? undefined
         if (!playUrl) {
           throw new Error('无法获取播放链接')
         }
