@@ -163,7 +163,7 @@ export default {
       licenseDesc: 'Open source license used by this project',
       userDataPath: 'User Data Path',
       userDataPathDesc: 'Storage location for application data (database, cover cache, etc.)',
-      userDataPathValue: 'C:\\Users\\<Username>\\AppData\\Roaming\\GL_Music',
+      userDataPathValue: 'C:\\Users\\[Username]\\AppData\\Roaming\\GL_Music',
       // Other
       other: 'Other',
       resetSettings: 'Reset Settings',

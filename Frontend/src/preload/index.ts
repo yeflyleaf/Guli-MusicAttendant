@@ -384,13 +384,15 @@ const electronAPI = {
       'shortcut:next',
       'shortcut:previous',
       'shortcut:stop',
+      'shortcut:volumeUp',
+      'shortcut:volumeDown',
       'window:miniPlayerMode',
       'window:hidden',   // 内存优化：窗口隐藏（最小化或托盘）
       'window:shown'     // 内存优化：窗口显示
     ]
 
     if (validChannels.includes(channel)) {
-      ipcRenderer.on(channel, (_event, ...args) => callback(...args))
+      ipcRenderer.on(channel, (_event, ...args: unknown[]) => callback(...args))
     }
   },
 

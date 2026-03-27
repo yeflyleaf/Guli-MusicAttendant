@@ -3,6 +3,7 @@
  * 封装与主进程的通信
  */
 import { usePlayerStore } from '@/store/player.store'
+import { useSettingsStore } from '@/store/settings.store'
 import { onMounted, onUnmounted } from 'vue'
 
 export function useIpc() {
@@ -29,6 +30,22 @@ export function useIpc() {
     window.electron.on('shortcut:stop', () => {
       playerStore.stop()
     })
+
+    // 音量增大（蓝牙耳机/媒体键）
+    window.electron.on('shortcut:volumeUp', () => {
+      playerStore.volumeUp()
+      // 同步音量到设置持久化
+      const settingsStore = useSettingsStore()
+      settingsStore.setVolume(playerStore.volume)
+    })
+
+    // 音量减小（蓝牙耳机/媒体键）
+    window.electron.on('shortcut:volumeDown', () => {
+      playerStore.volumeDown()
+      // 同步音量到设置持久化
+      const settingsStore = useSettingsStore()
+      settingsStore.setVolume(playerStore.volume)
+    })
   }
 
   // 清理监听器
@@ -37,6 +54,8 @@ export function useIpc() {
     window.electron.removeAllListeners('shortcut:next')
     window.electron.removeAllListeners('shortcut:previous')
     window.electron.removeAllListeners('shortcut:stop')
+    window.electron.removeAllListeners('shortcut:volumeUp')
+    window.electron.removeAllListeners('shortcut:volumeDown')
   }
 
   // 选择文件夹
@@ -115,7 +134,7 @@ export function useIpc() {
     switchToMiniPlayer,
     switchToFullPlayer,
     isMiniPlayer
-  }
+  } as const
 }
 
 /**

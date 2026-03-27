@@ -3,8 +3,8 @@
  * 封装 HTML5 Audio API，提供播放控制功能
  * 使用单例模式确保全局只有一个 Audio 实例
  */
-import { usePlayerStore } from '@/store/player.store'
-import { useSettingsStore } from '@/store/settings.store'
+import { usePlayerStore } from '../store/player.store'
+import { useSettingsStore } from '../store/settings.store'
 import { storeToRefs } from 'pinia'
 import { ref, watch, type Ref } from 'vue'
 
@@ -113,7 +113,7 @@ function setupWatchers(
   const { currentSong, isPlaying, volume, isMuted } = storeToRefs(playerStore)
 
   // 监听当前歌曲变化
-  watch(currentSong, (newSong, oldSong) => {
+  watch(() => currentSong.value, (newSong, oldSong) => {
     // 如果歌曲 ID 没有变化，说明只是更新了元数据（如收藏状态），不需要重新加载音频
     if (newSong && oldSong && newSong.id === oldSong.id) {
       return
@@ -146,11 +146,14 @@ function setupWatchers(
         }
         globalAudio.addEventListener('canplay', onCanPlay)
       }
+
+      // 更新 MediaSession 元数据（蓝牙耳机/系统媒体控件显示曲目信息）
+      updateMediaSessionMetadata(newSong)
     }
   }, { immediate: true })
 
   // 监听播放状态变化
-  watch(isPlaying, (playing) => {
+  watch(isPlaying, (playing: boolean) => {
     if (globalAudio) {
       if (playing) {
         globalAudio.play().catch(console.error)
@@ -161,14 +164,14 @@ function setupWatchers(
   })
 
   // 监听音量变化
-  watch(volume, (vol) => {
+  watch(volume, (vol: number) => {
     if (globalAudio) {
       globalAudio.volume = isMuted.value ? 0 : vol
     }
   })
 
   // 监听静音变化
-  watch(isMuted, (muted) => {
+  watch(isMuted, (muted: boolean) => {
     if (globalAudio) {
       globalAudio.volume = muted ? 0 : volume.value
     }
@@ -192,7 +195,112 @@ function setupWatchers(
     })
   }
 
+  // ============ MediaSession API（蓝牙耳机/系统媒体控件支持）============
+  setupMediaSession(playerStore)
+
   console.log('[Audio] Watchers set up')
+}
+
+/**
+ * 设置 MediaSession API（蓝牙耳机/系统媒体控件支持）
+ * 蓝牙耳机通过 AVRCP 协议 → 操作系统媒体传输控制（Windows SMTC）→ Chromium MediaSession
+ * 这是接收蓝牙耳机信号的核心机制
+ */
+function setupMediaSession(playerStore: ReturnType<typeof usePlayerStore>): void {
+  if (!('mediaSession' in navigator)) {
+    console.warn('[Audio] MediaSession API not supported')
+    return
+  }
+
+  // 播放
+  navigator.mediaSession.setActionHandler('play', () => {
+    console.log('[MediaSession] play action received (蓝牙/系统媒体控件)')
+    playerStore.togglePlay()
+  })
+
+  // 暂停
+  navigator.mediaSession.setActionHandler('pause', () => {
+    console.log('[MediaSession] pause action received (蓝牙/系统媒体控件)')
+    playerStore.pause()
+  })
+
+  // 上一曲
+  navigator.mediaSession.setActionHandler('previoustrack', () => {
+    console.log('[MediaSession] previoustrack action received (蓝牙/系统媒体控件)')
+    playerStore.previous()
+  })
+
+  // 下一曲
+  navigator.mediaSession.setActionHandler('nexttrack', () => {
+    console.log('[MediaSession] nexttrack action received (蓝牙/系统媒体控件)')
+    playerStore.next()
+  })
+
+  // 停止
+  navigator.mediaSession.setActionHandler('stop', () => {
+    console.log('[MediaSession] stop action received (蓝牙/系统媒体控件)')
+    playerStore.stop()
+  })
+
+  // 快进/快退（部分蓝牙设备支持长按跳转）
+  navigator.mediaSession.setActionHandler('seekforward', () => {
+    if (globalAudio && globalAudio.duration) {
+      globalAudio.currentTime = Math.min(globalAudio.duration, globalAudio.currentTime + 10)
+    }
+  })
+
+  navigator.mediaSession.setActionHandler('seekbackward', () => {
+    if (globalAudio) {
+      globalAudio.currentTime = Math.max(0, globalAudio.currentTime - 10)
+    }
+  })
+
+  // 精确跳转（部分系统媒体控件支持）
+  try {
+    navigator.mediaSession.setActionHandler('seekto', (details) => {
+      if (globalAudio && details.seekTime !== undefined) {
+        globalAudio.currentTime = details.seekTime
+      }
+    })
+  } catch {
+    // seekto 可能不被支持，忽略
+  }
+
+  console.log('[Audio] MediaSession handlers registered (蓝牙耳机支持已启用)')
+}
+
+/**
+ * 更新 MediaSession 元数据
+ * 让蓝牙耳机、Windows 系统媒体控件等显示当前播放的曲目信息
+ */
+function updateMediaSessionMetadata(song: { title: string; artist: string; album: string; cover_path?: string | null }): void {
+  if (!('mediaSession' in navigator)) return
+
+  try {
+    // 构建封面图列表
+    const artwork: MediaImage[] = []
+
+    if (song.cover_path) {
+      // 使用自定义协议加载封面
+      const normalizedCoverPath = song.cover_path.replace(/\\/g, '/')
+      artwork.push({
+        src: `local-audio://${normalizedCoverPath}`,
+        sizes: '512x512',
+        type: 'image/png'
+      })
+    }
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: song.title || '未知曲目',
+      artist: song.artist || '未知艺术家',
+      album: song.album || '未知专辑',
+      artwork
+    })
+
+    console.log('[MediaSession] Metadata updated:', song.title, '-', song.artist)
+  } catch (e) {
+    console.error('[MediaSession] Failed to update metadata:', e)
+  }
 }
 
 /**

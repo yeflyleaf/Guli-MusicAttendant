@@ -224,8 +224,9 @@ watch(
       // 彻底杜绝"先显示主页再显示过场"的闪烁问题
       setTimeout(() => {
         // 安全调用 show 方法
-        if (window.electron?.window?.show) {
-          window.electron.window.show()
+        const electron = window.electron
+        if (electron?.window?.show) {
+          electron.window.show()
         }
         console.log('[App] Window shown')
       }, 100)
@@ -256,12 +257,13 @@ window.addEventListener('show-splash-screen', () => {
 })
 
 // 处理音乐路径验证失败事件
-const handleMusicPathValidationFailed = async (event: CustomEvent<{
-  song: Music
-  fileExists?: boolean
-  musicFolders?: string[]
-}>) => {
-  const { song, fileExists, musicFolders } = event.detail
+const handleMusicPathValidationFailed = async (event: Event) => {
+  const customEvent = event as CustomEvent<{
+    song: Music
+    fileExists?: boolean
+    musicFolders?: string[]
+  }>
+  const { song, fileExists, musicFolders } = customEvent.detail
 
   // 构建 HTML 格式的警告消息
   let message = `<div style="line-height: 1.8;">`

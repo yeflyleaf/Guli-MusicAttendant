@@ -1,24 +1,29 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "target": "ESNext",
+    "useDefineForClassFields": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "composite": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+
+    /* ESM mode */
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "jsx": "preserve",
+
+    /* Linting */
+    "strict": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
     "baseUrl": ".",
+    "typeRoots": ["node_modules/@types", "node_modules"],
+    "types": ["node", "debug", "http-cache-semantics", "keyv", "ms", "responselike"],
     "paths": {
       "@/*": ["src/renderer/src/*"]
     }
@@ -27,6 +32,7 @@
     "src/renderer/src/**/*.ts",
     "src/renderer/src/**/*.d.ts",
     "src/renderer/src/**/*.tsx",
-    "src/renderer/src/**/*.vue"
+    "src/renderer/src/**/*.vue",
+    "src/renderer/src/env.d.ts"
   ]
 }

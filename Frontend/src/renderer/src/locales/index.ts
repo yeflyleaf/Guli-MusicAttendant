@@ -1,17 +1,16 @@
 /**
  * Vue I18n 国际化配置
- * 使用自定义消息编译器避免 Electron CSP 限制
+ * 使用构建时预编译消息，避免 Electron CSP 限制并提升性能
  */
-import type { MessageContext } from 'vue-i18n'
 import { createI18n } from 'vue-i18n'
 
 // 导入语言包
-import arSA from './ar-SA'
-import enUS from './en-US'
-import esES from './es-ES'
-import frFR from './fr-FR'
-import ruRU from './ru-RU'
-import zhCN from './zh-CN'
+import arSA from './messages/ar-SA'
+import enUS from './messages/en-US'
+import esES from './messages/es-ES'
+import frFR from './messages/fr-FR'
+import ruRU from './messages/ru-RU'
+import zhCN from './messages/zh-CN'
 
 // 支持的语言列表
 export const supportedLocales = [
@@ -25,27 +24,6 @@ export const supportedLocales = [
 
 export type LocaleCode = (typeof supportedLocales)[number]['code']
 
-/**
- * 自定义消息编译器
- * 避免使用 eval/new Function，符合 Electron CSP 策略
- *
- * 注意：此功能为实验性特性，会显示警告信息
- * 但这是在 Electron 环境下避免 CSP 限制的必要方案
- */
-function customMessageCompiler(message: unknown) {
-  if (typeof message === 'string') {
-    // 返回一个简单的函数，处理 {key} 占位符
-    return (ctx: MessageContext<unknown>) => {
-      return message.replace(/\{(\w+)\}/g, (_, key: string) => {
-        const value = ctx.named(key)
-        return value !== undefined ? String(value) : `{${key}}`
-      })
-    }
-  }
-  // 对于非字符串消息（如嵌套对象），返回空字符串
-  return () => ''
-}
-
 // 创建 i18n 实例
 export const i18n = createI18n({
   legacy: false,
@@ -54,7 +32,6 @@ export const i18n = createI18n({
   globalInjection: true,
   missingWarn: false,
   fallbackWarn: false,
-  messageCompiler: customMessageCompiler,
   messages: {
     'zh-CN': zhCN,
     'en-US': enUS,

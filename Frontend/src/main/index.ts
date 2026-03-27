@@ -171,5 +171,21 @@ function registerGlobalShortcuts(): void {
     }
   })
 
+  // 音量增大
+  globalShortcut.register('VolumeUp', () => {
+    const mainWindow = getMainWindow()
+    if (mainWindow) {
+      mainWindow.webContents.send('shortcut:volumeUp')
+    }
+  })
+
+  // 音量减小
+  globalShortcut.register('VolumeDown', () => {
+    const mainWindow = getMainWindow()
+    if (mainWindow) {
+      mainWindow.webContents.send('shortcut:volumeDown')
+    }
+  })
+
   console.log('[Main] Global media shortcuts registered')
 }

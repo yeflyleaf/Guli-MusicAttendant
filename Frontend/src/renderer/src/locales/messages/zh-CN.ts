@@ -165,7 +165,7 @@ export default {
       licenseDesc: '项目采用的开源许可证',
       userDataPath: '用户数据存储路径',
       userDataPathDesc: '应用程序数据（数据库、封面缓存等）的存储位置',
-      userDataPathValue: 'C:\\Users\\<用户名>\\AppData\\Roaming\\GL_Music',
+      userDataPathValue: 'C:\\Users\\[用户名]\\AppData\\Roaming\\GL_Music',
       // 其他
       other: '其他',
       resetSettings: '重置设置',

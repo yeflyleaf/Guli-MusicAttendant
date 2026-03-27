@@ -2,9 +2,8 @@
  * 播放器状态管理
  * 管理当前播放状态、播放队列、音量等
  */
-import type { Music } from '@/types/music'
+import type { Music } from '../types/music'
 import { defineStore } from 'pinia'
-
 // 播放模式
 export type PlayMode = 'sequence' | 'loop' | 'single' | 'random'
 
@@ -56,13 +55,13 @@ export const usePlayerStore = defineStore('player', {
 
   getters: {
     // 播放进度百分比
-    progress: (state): number => {
+    progress: (state: PlayerState): number => {
       if (state.duration === 0) return 0
       return (state.currentTime / state.duration) * 100
     },
 
     // 是否有上一首
-    hasPrevious: (state): boolean => {
+    hasPrevious: (state: PlayerState): boolean => {
       if (state.playMode === 'random') {
         return state.playHistory.length > 0
       }
@@ -70,7 +69,7 @@ export const usePlayerStore = defineStore('player', {
     },
 
     // 是否有下一首
-    hasNext: (state): boolean => {
+    hasNext: (state: PlayerState): boolean => {
       if (state.playMode === 'loop' || state.playMode === 'random') {
         return state.queue.length > 0
       }
@@ -78,10 +77,10 @@ export const usePlayerStore = defineStore('player', {
     },
 
     // 队列中的歌曲数量
-    queueLength: (state): number => state.queue.length,
+    queueLength: (state: PlayerState): number => state.queue.length,
 
     // 当前歌曲是否收藏
-    isFavorite: (state): boolean => {
+    isFavorite: (state: PlayerState): boolean => {
       return state.currentSong?.is_favorite === 1
     }
   },
@@ -392,6 +391,20 @@ export const usePlayerStore = defineStore('player', {
     },
 
     /**
+     * 音量增大（蓝牙耳机/媒体键控制）
+     */
+    volumeUp(step = 0.05) {
+      this.setVolume(Math.min(1, this.volume + step))
+    },
+
+    /**
+     * 音量减小（蓝牙耳机/媒体键控制）
+     */
+    volumeDown(step = 0.05) {
+      this.setVolume(Math.max(0, this.volume - step))
+    },
+
+    /**
      * 切换播放模式
      */
     togglePlayMode() {
@@ -465,7 +478,7 @@ export const usePlayerStore = defineStore('player', {
     _recordPlay(musicId: number) {
       window.electron?.music?.incrementPlayCount(musicId).then(() => {
         // 延迟导入避免循环依赖
-        import('@/store/library.store').then(({ useLibraryStore }) => {
+        import('./library.store').then(({ useLibraryStore }) => {
           const libraryStore = useLibraryStore()
           libraryStore.refreshRecentlyPlayed()
         })
@@ -510,7 +523,7 @@ export const usePlayerStore = defineStore('player', {
       console.log('[Player] Attempting to restore playback status, found:', !!statusStr)
 
       // 获取 libraryStore 来访问最近播放
-      const { useLibraryStore } = await import('@/store/library.store')
+      const { useLibraryStore } = await import('./library.store')
       const libraryStore = useLibraryStore()
 
       if (!statusStr) {

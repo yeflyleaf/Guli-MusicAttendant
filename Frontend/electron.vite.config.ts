@@ -1,6 +1,8 @@
 import vue from '@vitejs/plugin-vue'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import { resolve } from 'path'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
+
 
 export default defineConfig({
   // 主进程配置
@@ -50,7 +52,12 @@ export default defineConfig({
       __VUE_I18N_LEGACY_API__: false,
       __INTLIFY_PROD_DEVTOOLS__: false
     },
-    plugins: [vue()],
+    plugins: [
+      vue(),
+      VueI18nPlugin({
+        include: [resolve(__dirname, './src/renderer/src/locales/messages/**')]
+      })
+    ],
     resolve: {
       alias: {
         '@': resolve('src/renderer/src')

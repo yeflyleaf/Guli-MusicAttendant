@@ -34,7 +34,7 @@ export function createMainWindow(): BrowserWindow {
     titleBarStyle: 'hidden',        // macOS 上隐藏标题栏但保留红绿灯
     backgroundColor: '#1a1a2e',     // 背景色，避免白屏闪烁
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: join(__dirname, '../preload/index.mjs'),
       nodeIntegration: false,       // 禁用 Node 集成（安全）
       contextIsolation: true,       // 启用上下文隔离（安全）
       sandbox: false,               // 需要禁用沙盒以使用 preload
