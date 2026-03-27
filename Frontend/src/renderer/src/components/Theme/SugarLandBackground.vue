@@ -149,6 +149,8 @@ defineProps<{
   embedded?: boolean
 }>()
 
+const cleanupFunctions: Array<() => void> = []
+
 const containerRef = ref<HTMLElement | null>(null)
 const candyCanvas = ref<HTMLCanvasElement | null>(null)
 const sprinklesCanvas = ref<HTMLCanvasElement | null>(null)
@@ -204,6 +206,7 @@ const initCandyCanvas = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 糖果颜色 - 马卡龙色系
   const candyColors = [
@@ -378,6 +381,7 @@ const initSprinklesCanvas = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 糖针颜色
   const sprinkleColors = [
@@ -469,6 +473,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  cleanupFunctions.forEach(fn => fn())
   if (containerRef.value) {
     containerRef.value.removeEventListener('mousemove', handleMouseMove)
   }

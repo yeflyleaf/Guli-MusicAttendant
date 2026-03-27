@@ -68,6 +68,8 @@ defineProps<{
   embedded?: boolean
 }>()
 
+const cleanupFunctions: Array<() => void> = []
+
 const probabilityCanvas = ref<HTMLCanvasElement | null>(null)
 const virtualParticleCanvas = ref<HTMLCanvasElement | null>(null)
 
@@ -133,6 +135,7 @@ const initProbabilityClouds = () => {
 
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 帧率限制
   let lastFrameTime = 0
@@ -278,6 +281,7 @@ const initVirtualParticles = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 帧率限制
   let lastFrameTime = 0
@@ -380,6 +384,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  cleanupFunctions.forEach(fn => fn())
   if (probabilityAnimationId) {
     cancelAnimationFrame(probabilityAnimationId)
   }

@@ -204,6 +204,8 @@ defineProps<{
   embedded?: boolean
 }>()
 
+const cleanupFunctions: Array<() => void> = []
+
 const containerRef = ref<HTMLElement | null>(null)
 const sandstormCanvas = ref<HTMLCanvasElement | null>(null)
 const embersCanvas = ref<HTMLCanvasElement | null>(null)
@@ -256,6 +258,7 @@ const initSandstormCanvas = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 沙尘颜色 - 黄褐色系
   const sandColors = [
@@ -363,6 +366,7 @@ const initEmbersCanvas = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 创建余烬粒子
   const emberCount = 25
@@ -465,6 +469,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  cleanupFunctions.forEach(fn => fn())
   if (containerRef.value) {
     containerRef.value.removeEventListener('mousemove', handleMouseMove)
   }

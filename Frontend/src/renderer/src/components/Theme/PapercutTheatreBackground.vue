@@ -755,6 +755,8 @@ defineProps<{
   embedded?: boolean
 }>()
 
+const cleanupFunctions: Array<() => void> = []
+
 const containerRef = ref<HTMLElement | null>(null)
 const particleCanvas = ref<HTMLCanvasElement | null>(null)
 
@@ -822,6 +824,7 @@ const initParticleSystem = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 创建粒子
   const createParticle = (): Particle => {
@@ -924,6 +927,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  cleanupFunctions.forEach(fn => fn())
   if (animationId) {
     cancelAnimationFrame(animationId)
   }

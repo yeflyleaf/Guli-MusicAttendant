@@ -133,6 +133,8 @@ defineProps<{
   embedded?: boolean
 }>()
 
+const cleanupFunctions: Array<() => void> = []
+
 const containerRef = ref<HTMLElement | null>(null)
 const stardustCanvas = ref<HTMLCanvasElement | null>(null)
 const dataRainCanvas = ref<HTMLCanvasElement | null>(null)
@@ -204,6 +206,7 @@ const initStardust = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 星星颜色
   const starColors = ['#ffffff', '#00f2fe', '#4facfe', '#a78bfa', '#f472b6']
@@ -335,6 +338,7 @@ const initDataRain = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 创建数据雨滴 - 增加到 80
   const dropCount = 80
@@ -424,6 +428,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  cleanupFunctions.forEach(fn => fn())
+
   if (stardustAnimationId) {
     cancelAnimationFrame(stardustAnimationId)
   }

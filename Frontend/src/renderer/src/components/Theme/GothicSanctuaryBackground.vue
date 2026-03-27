@@ -277,6 +277,8 @@ defineProps<{
   embedded?: boolean
 }>()
 
+const cleanupFunctions: Array<() => void> = []
+
 const containerRef = ref<HTMLElement | null>(null)
 const dustCanvas = ref<HTMLCanvasElement | null>(null)
 const fireflyCanvas = ref<HTMLCanvasElement | null>(null)
@@ -371,6 +373,7 @@ const initDustSystem = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 光柱区域 - 更多烛光区域
   const lightZones = [
@@ -588,6 +591,7 @@ const initFireflySystem = () => {
   }
   resize()
   window.addEventListener('resize', resize)
+  cleanupFunctions.push(() => window.removeEventListener('resize', resize))
 
   // 创建流萤
   const createFirefly = (): Firefly => {
@@ -757,6 +761,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  cleanupFunctions.forEach(fn => fn())
   if (dustAnimationId) {
     cancelAnimationFrame(dustAnimationId)
   }
