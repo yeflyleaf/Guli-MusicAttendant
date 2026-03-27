@@ -2,7 +2,7 @@
  * 预加载脚本
  * 在渲染进程加载之前执行，作为主进程和渲染进程之间的安全桥梁
  */
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webFrame } from 'electron'
 import type { Music, MusicQueryParams, ScanResult } from '../main/types/music'
 import type { Playlist, PlaylistCreateDTO } from '../main/types/playlist'
 import type { SettingKey, Settings } from '../main/types/settings'
@@ -226,7 +226,12 @@ const electronAPI = {
 
     // 检查是否为迷你播放器模式
     isMiniPlayer: (): Promise<boolean> =>
-      ipcRenderer.invoke('window:isMiniPlayer')
+      ipcRenderer.invoke('window:isMiniPlayer'),
+
+    // 清理渲染器及 WebFrame 缓存（主动释放图片和页面缓存内存）
+    clearMemoryCache: (): void => {
+      webFrame.clearCache()
+    }
   },
 
   // ==================== 设置相关 ====================

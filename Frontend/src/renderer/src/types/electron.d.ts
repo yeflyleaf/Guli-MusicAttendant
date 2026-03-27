@@ -102,6 +102,7 @@ declare global {
         switchToMiniPlayer: () => void
         switchToFullPlayer: () => void
         isMiniPlayer: () => Promise<boolean>
+        clearMemoryCache?: () => void
       }
 
       // 设置相关

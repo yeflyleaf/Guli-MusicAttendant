@@ -88,6 +88,17 @@ onMounted(() => {
 onUnmounted(() => {
   // 移除事件监听
   window.removeEventListener('memory-optimization:restore-ui', handleRestoreUI)
+  if (scrollTimeout) clearTimeout(scrollTimeout)
+  
+  // 释放大数据，帮助 GC 回收内存
+  lyrics.value = []
+  lyricLineRefs.value = []
+  
+  // 退出歌词页后释放 WebFrame 缓存（特别是大型专辑封面图片缓存）
+  if (window.electron?.window?.clearMemoryCache) {
+    console.log('[Lyrics] Unmounted, triggering memory cache cleanup')
+    window.electron.window.clearMemoryCache()
+  }
 })
 
 // 是否显示模糊背景：只有在使用默认主题（dark/light）时才显示
@@ -172,6 +183,11 @@ const loadLyrics = async () => {
   lyrics.value = []
   currentLineIndex.value = -1
   lyricLineRefs.value = []
+
+  // 在切换歌曲时清理前一张长驻的图片缓存，防止歌词页不断常驻导致内存泄露
+  if (window.electron?.window?.clearMemoryCache) {
+    window.electron.window.clearMemoryCache()
+  }
 
   // 如果没有路径，直接返回并确保 UI 清空
   if (!playerStore.currentSong?.lyrics_path) {

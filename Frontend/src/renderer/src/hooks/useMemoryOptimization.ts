@@ -307,6 +307,12 @@ function triggerGarbageCollection(): void {
     (globalThis as { gc: () => void }).gc()
     console.log('[MemoryOptimization] Manual GC triggered')
   }
+
+  // 清除 Renderer Cache（Image Cache, WebFrame Cache 等）
+  if (window.electron?.window?.clearMemoryCache) {
+    window.electron.window.clearMemoryCache()
+    console.log('[MemoryOptimization] WebFrame memory cache cleared')
+  }
 }
 
 /**
