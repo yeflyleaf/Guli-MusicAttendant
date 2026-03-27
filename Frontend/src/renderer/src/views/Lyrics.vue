@@ -113,33 +113,30 @@ const setLyricLineRef = (el: Element | ComponentPublicInstance | null, index: nu
 }
 
 // 滚动到当前行
-const scrollToCurrentLine = () => {
+const scrollToCurrentLine = (immediate = false) => {
   if (isUserScrolling.value || !lyricsContainerRef.value || currentLineIndex.value < 0) return
 
   const activeLine = lyricLineRefs.value[currentLineIndex.value]
   if (activeLine) {
     const container = lyricsContainerRef.value
 
-    // 使用 getBoundingClientRect 进行更精确的计算
-    const containerRect = container.getBoundingClientRect()
-    const lineRect = activeLine.getBoundingClientRect()
-
-    // 计算当前行相对于容器中心的偏移量
-    const offset = lineRect.top - containerRect.top - (containerRect.height / 2) + (lineRect.height / 2)
-
-    // 加上当前的滚动位置
-    const targetScrollTop = container.scrollTop + offset
+    // 使用 offsetTop 进行更可靠的 content-relative 计算，避免视口坐标干扰
+    const targetScrollTop = activeLine.offsetTop - (container.clientHeight / 2) + (activeLine.clientHeight / 2)
 
     isAutoScrolling = true
     container.scrollTo({
       top: targetScrollTop,
-      behavior: 'smooth'
+      behavior: immediate ? 'auto' : 'smooth'
     })
 
     // 滚动结束后重置自动滚动标志
-    setTimeout(() => {
+    if (immediate) {
       isAutoScrolling = false
-    }, 500)
+    } else {
+      setTimeout(() => {
+        isAutoScrolling = false
+      }, 500)
+    }
   }
 }
 
@@ -185,12 +182,17 @@ const loadLyrics = async () => {
       // 歌词加载完成后，立即根据当前播放时间定位到正确位置
       // 使用 nextTick 确保 DOM 已更新
       await nextTick()
-      // 给 DOM 一点时间完成渲染
-      setTimeout(() => {
-        updateCurrentLine(playerStore.currentTime)
-        // 强制滚动到当前行（即使 index 没变）
-        scrollToCurrentLine()
-      }, 50)
+      // 给 DOM 极短时间完成渲染后立即定位
+      requestAnimationFrame(() => {
+        updateCurrentLine(playerStore.currentTime, true)
+        // 强制触发滚动（即使 index 没变）来确保初始位置正确
+        if (currentLineIndex.value >= 0) {
+          scrollToCurrentLine(true)
+        } else if (lyrics.value.length > 0) {
+          currentLineIndex.value = 0
+          scrollToCurrentLine(true)
+        }
+      })
     }
   } catch (error) {
     console.error('加载歌词失败:', error)
@@ -198,14 +200,14 @@ const loadLyrics = async () => {
 }
 
 // 更新当前行
-const updateCurrentLine = (time: number) => {
+const updateCurrentLine = (time: number, immediate = false) => {
   if (lyrics.value.length === 0) return
 
   // 特殊处理：如果只有一行歌词（通常是纯音乐），始终高亮这一行
   if (lyrics.value.length === 1) {
     if (currentLineIndex.value !== 0) {
       currentLineIndex.value = 0
-      scrollToCurrentLine()
+      scrollToCurrentLine(immediate)
     }
     return
   }
@@ -220,9 +222,14 @@ const updateCurrentLine = (time: number) => {
     }
   }
 
+  // 如果是在第一行歌词之前，默认定位到第一行
+  if (index === -1 && lyrics.value.length > 0) {
+    index = 0
+  }
+
   if (index !== currentLineIndex.value) {
     currentLineIndex.value = index
-    scrollToCurrentLine()
+    scrollToCurrentLine(immediate)
   }
 }
 
@@ -241,7 +248,7 @@ const handleSeekToLine = (time: number) => {
 watch(() => playerStore.currentSong, loadLyrics, { immediate: true })
 
 // 监听播放时间变化
-watch(() => playerStore.currentTime, updateCurrentLine)
+watch(() => playerStore.currentTime, (time) => updateCurrentLine(time))
 </script>
 
 <style lang="scss" scoped>
@@ -315,8 +322,6 @@ watch(() => playerStore.currentTime, updateCurrentLine)
 
 .lyrics-content {
   flex: 1;
-  display: flex;
-  justify-content: center;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
