@@ -93,6 +93,11 @@ export interface ElectronAPI {
     reset: () => Promise<boolean>
   }
 
+  // 媒体控件相关
+  media: {
+    getCoverDataUrl: (filePath: string) => Promise<string | null>
+  }
+
   // 事件监听
   on: (channel: string, callback: (...args: unknown[]) => void) => void
   off: (channel: string, callback: (...args: unknown[]) => void) => void

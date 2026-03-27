@@ -218,6 +218,11 @@ declare global {
         getLoaded: () => Promise<Array<{ id: string; name: string }>>
       }
 
+      // 媒体控件相关
+      media: {
+        getCoverDataUrl: (filePath: string) => Promise<string | null>
+      }
+
       // 事件监听
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       on: (channel: string, callback: (...args: any[]) => void) => void

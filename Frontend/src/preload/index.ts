@@ -374,6 +374,13 @@ const electronAPI = {
       ipcRenderer.invoke('source:getLoaded')
   },
 
+  // ==================== 媒体控件相关 ====================
+  media: {
+    // 获取封面图片的 data URL（base64），用于系统媒体控件
+    getCoverDataUrl: (filePath: string): Promise<string | null> =>
+      ipcRenderer.invoke('media:getCoverDataUrl', filePath)
+  },
+
   // ==================== 事件监听 ====================
   on: (channel: string, callback: (...args: unknown[]) => void) => {
     // 白名单：只允许监听特定频道

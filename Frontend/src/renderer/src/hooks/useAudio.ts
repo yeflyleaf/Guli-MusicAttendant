@@ -277,32 +277,49 @@ function setupMediaSession(playerStore: ReturnType<typeof usePlayerStore>): void
 /**
  * 更新 MediaSession 元数据
  * 让蓝牙耳机、Windows 系统媒体控件等显示当前播放的曲目信息
+ * 封面图通过 IPC 从主进程读取为 data URL，确保 Windows SMTC 可以正确显示
  */
 function updateMediaSessionMetadata(song: { title: string; artist: string; album: string; cover_path?: string | null }): void {
   if (!('mediaSession' in navigator)) return
 
   try {
-    // 构建封面图列表
-    const artwork: MediaImage[] = []
-
-    if (song.cover_path) {
-      // 使用自定义协议加载封面
-      const normalizedCoverPath = song.cover_path.replace(/\\/g, '/')
-      artwork.push({
-        src: `local-audio://${normalizedCoverPath}`,
-        sizes: '512x512',
-        type: 'image/png'
-      })
-    }
-
+    // 先设置不带封面的元数据（确保曲目信息立即生效）
     navigator.mediaSession.metadata = new MediaMetadata({
       title: song.title || '未知曲目',
       artist: song.artist || '未知艺术家',
       album: song.album || '未知专辑',
-      artwork
+      artwork: []
     })
 
     console.log('[MediaSession] Metadata updated:', song.title, '-', song.artist)
+
+    // 异步加载封面图并更新 artwork
+    if (song.cover_path && song.cover_path.length > 5 && window.electron?.media) {
+      window.electron.media.getCoverDataUrl(song.cover_path)
+        .then(dataUrl => {
+          if (!dataUrl) {
+            console.warn('[MediaSession] No cover data returned for:', song.cover_path)
+            return
+          }
+
+          // 用 data URL 设置封面（data URL 是自包含的，SMTC 可以直接解析）
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.title || '未知曲目',
+            artist: song.artist || '未知艺术家',
+            album: song.album || '未知专辑',
+            artwork: [
+              { src: dataUrl, sizes: '96x96', type: 'image/png' },
+              { src: dataUrl, sizes: '128x128', type: 'image/png' },
+              { src: dataUrl, sizes: '256x256', type: 'image/png' },
+              { src: dataUrl, sizes: '512x512', type: 'image/png' }
+            ]
+          })
+          console.log('[MediaSession] Artwork loaded for:', song.title)
+        })
+        .catch(e => {
+          console.warn('[MediaSession] Failed to load artwork via IPC:', e)
+        })
+    }
   } catch (e) {
     console.error('[MediaSession] Failed to update metadata:', e)
   }

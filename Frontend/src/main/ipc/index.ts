@@ -3,6 +3,7 @@
  * 聚合所有 IPC 处理器
  */
 import { setupDialogIpc } from './dialog.ipc'
+import { setupMediaIpc } from './media.ipc'
 import { setupMusicIpc } from './music.ipc'
 import { setupOnlineIpc } from './online.ipc'
 import { setupPlaylistIpc } from './playlist.ipc'
@@ -23,12 +24,13 @@ export function setupAllIpc(): void {
   setupSettingsIpc()
   setupOnlineIpc()  // 在线音乐模块
   setupSourceIpc()  // 自定义音乐源模块
+  setupMediaIpc()   // 媒体控件（封面等）
 
   console.log('[IPC] All IPC handlers initialized')
 }
 
 export {
-  setupDialogIpc, setupMusicIpc, setupOnlineIpc,
+  setupDialogIpc, setupMediaIpc, setupMusicIpc, setupOnlineIpc,
   setupPlaylistIpc, setupSettingsIpc, setupSourceIpc, setupWindowIpc
 }
 
