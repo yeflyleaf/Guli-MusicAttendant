@@ -22,7 +22,7 @@
       </div>
 
       <!-- 歌词显示 -->
-      <div class="lyrics-content" ref="lyricsContainerRef" @scroll="handleScroll">
+      <div class="lyrics-content" ref="lyricsContainerRef" @scroll="handleScroll" :key="playerStore.currentSong?.id">
         <div v-if="lyrics.length > 0" class="lyrics-scroll">
           <div v-for="(line, index) in lyrics" :key="index" class="lyric-line" :ref="(el) => setLyricLineRef(el, index)"
             :class="{ active: index === currentLineIndex, 'has-translation': !!line.translation }"
@@ -165,10 +165,15 @@ const coverBgStyle = computed(() => {
 
 // 加载歌词
 const loadLyrics = async () => {
+  // 切换歌曲时强制重置所有中间状态
+  isUserScrolling.value = false
+  if (scrollTimeout) clearTimeout(scrollTimeout)
+  
   lyrics.value = []
   currentLineIndex.value = -1
   lyricLineRefs.value = []
 
+  // 如果没有路径，直接返回并确保 UI 清空
   if (!playerStore.currentSong?.lyrics_path) {
     return
   }
@@ -179,23 +184,29 @@ const loadLyrics = async () => {
     if (content) {
       lyrics.value = parseLrc(content)
 
-      // 歌词加载完成后，立即根据当前播放时间定位到正确位置
-      // 使用 nextTick 确保 DOM 已更新
+      // 歌词载入后
       await nextTick()
-      // 给 DOM 极短时间完成渲染后立即定位
-      requestAnimationFrame(() => {
-        updateCurrentLine(playerStore.currentTime, true)
-        // 强制触发滚动（即使 index 没变）来确保初始位置正确
-        if (currentLineIndex.value >= 0) {
-          scrollToCurrentLine(true)
-        } else if (lyrics.value.length > 0) {
-          currentLineIndex.value = 0
+      
+      // 第 1 阶段：立即定位
+      updateCurrentLine(playerStore.currentTime, true)
+      if (currentLineIndex.value >= 0) {
+        scrollToCurrentLine(true)
+      } else if (lyrics.value.length > 0) {
+        currentLineIndex.value = 0
+        scrollToCurrentLine(true)
+      }
+      
+      // 第 2 阶段：在 DOM 稳固后（100ms）再次校准，确保由于歌曲信息加载导致的布局变动不会破坏居中
+      setTimeout(() => {
+        if (!isUserScrolling.value) {
+          updateCurrentLine(playerStore.currentTime, true)
           scrollToCurrentLine(true)
         }
-      })
+      }, 100)
     }
   } catch (error) {
     console.error('加载歌词失败:', error)
+    lyrics.value = []
   }
 }
 
@@ -244,8 +255,8 @@ const handleSeekToLine = (time: number) => {
 
 
 
-// 监听歌曲变化
-watch(() => playerStore.currentSong, loadLyrics, { immediate: true })
+// 监听歌曲变化（通过 ID 监听更精确，且能触发容器重建）
+watch(() => playerStore.currentSong?.id, loadLyrics, { immediate: true })
 
 // 监听播放时间变化
 watch(() => playerStore.currentTime, (time) => updateCurrentLine(time))
