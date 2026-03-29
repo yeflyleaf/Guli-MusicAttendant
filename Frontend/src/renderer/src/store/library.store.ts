@@ -482,38 +482,29 @@ export const useLibraryStore = defineStore('library', {
     enterLowMemoryMode() {
       if (this.isLowMemoryMode) return
 
-      console.log('[Library] Entering aggressive low memory mode...')
-      console.log(`[Library] Clearing: allMusic=${this.allMusic.length}, favorites=${this.favorites.length}, recentlyPlayed=${this.recentlyPlayed.length}`)
-
-      // 不再备份大型对象 - 直接丢弃引用以释放渲染进程内存
-      // 下次退出低内存模式时从主进程重新拉取数据
-      // 这样可以确保托盘模式下几乎不占用前端 JS 堆内存
-      this.allMusic = []
-      this.playlists = []
-      this.favorites = []
-      this.recentlyPlayed = []
-      this.filteredMusic = []
-      this.isLoaded = false // 标记为未加载，以便退出时重新加载
+      console.log('[Library] Entering low memory mode - Keeping main lists in RAM for instant restore')
 
       this.isLowMemoryMode = true
-      console.log('[Library] Low memory mode enabled - Data purged from memory')
+      
+      // 仅清除搜索结果缓存，不清除核心数据列表
+      this.filteredMusic = []
+      
+      console.log('[Library] Low memory mode enabled')
     },
 
     /**
      * 退出低内存模式
-     * 重新从主进程异步加载数据
+     * 瞬间恢复核心数据，由于数据一直在内存中，恢复是零延迟的
      */
     async exitLowMemoryMode() {
       if (!this.isLowMemoryMode) return
 
-      console.log('[Library] Exiting low memory mode, re-fetching data...')
+      console.log('[Library] Exiting low memory mode - Instant restoration enabled')
 
       this.isLowMemoryMode = false
       
-      // 触发数据重载
-      await this.loadAll()
-      
-      console.log(`[Library] Low memory mode disabled - Data restored from DB: total=${this.allMusic.length}`)
+      // 完全不再调用 loadAll()，通过内存数据实现“秒开”
+      console.log(`[Library] Low memory mode disabled - Total=${this.allMusic.length}`)
     }
   }
 })

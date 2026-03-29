@@ -19,9 +19,12 @@ let isInitialized = false
 const CONFIG = {
   // 延迟执行内存优化的时间（毫秒）
   OPTIMIZATION_DELAY: 500,
-  // 恢复延迟
-  RESTORE_DELAY: 50,
+  // 增加恢复延迟到 150ms，给予操作系统足够的时间恢复进程优先级和线程调度
+  RESTORE_DELAY: 150,
 }
+
+// 记录所有计划中的 GC 定时器，在退出模式时及时清除
+const gcTimeouts: Set<number> = new Set()
 
 // 防抖定时器
 let optimizationTimer: number | null = null
@@ -105,18 +108,8 @@ function resumeAudioVisualization(): void {
 function triggerGarbageCollection(): void {
   console.log('[MemoryOptimization] Triggering garbage collection...')
 
-  // 创建大量临时对象然后丢弃，以触发 GC
-  // 这是一种启发式方法，不保证一定触发 GC
-  try {
-    const arrays: number[][] = []
-    for (let i = 0; i < 100; i++) {
-      arrays.push(new Array(10000).fill(0))
-    }
-    // 立即丢弃
-    arrays.length = 0
-  } catch {
-    // 忽略内存不足错误
-  }
+  // 移除同步分配大内存块的操作（会引起主线程卡顿）
+  // 现在的内存压力由 Electron 自动通告 V8
 
   // 如果有 gc() 函数可用（需要 --expose-gc 启动参数）
   if (typeof (globalThis as { gc?: () => void }).gc === 'function') {
@@ -162,11 +155,21 @@ function enableMemoryOptimization(): void {
   triggerGarbageCollection()
 
   // 8. 延迟触发多次 GC 以确保彻底释放
-  setTimeout(() => {
+  const t1 = window.setTimeout(() => {
     triggerGarbageCollection()
-    setTimeout(() => triggerGarbageCollection(), 1000)
-    setTimeout(() => triggerGarbageCollection(), 5000)
+    const t2 = window.setTimeout(() => {
+      triggerGarbageCollection()
+      gcTimeouts.delete(t2)
+    }, 1000)
+    gcTimeouts.add(t2)
+    const t3 = window.setTimeout(() => {
+      triggerGarbageCollection()
+      gcTimeouts.delete(t3)
+    }, 5000)
+    gcTimeouts.add(t3)
+    gcTimeouts.delete(t1)
   }, 100)
+  gcTimeouts.add(t1)
 
   const endTime = performance.now()
   console.log(`[MemoryOptimization] Optimization completed in ${(endTime - startTime).toFixed(2)}ms`)
@@ -187,6 +190,10 @@ function disableMemoryOptimization(): void {
 
   isMemoryOptimized.value = false
   isLowMemoryMode.value = false
+
+  // 清除所有还在排队中的 GC 任务，防止恢复后出现莫名卡顿
+  gcTimeouts.forEach(t => clearTimeout(t))
+  gcTimeouts.clear()
 
   // 1. 恢复动画
   resumeAllAnimations()

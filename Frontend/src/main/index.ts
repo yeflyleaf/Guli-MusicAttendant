@@ -15,10 +15,9 @@ import { createMainWindow, getMainWindow } from './services/window.service'
 // 禁用 Windows 7 的 GPU 加速（解决兼容性问题）
 // app.disableHardwareAcceleration()
 
-// 内存优化：平衡 GPU 性能与内存占用
-app.commandLine.appendSwitch('js-flags', '--expose-gc --max-semi-space-size=1 --max-old-space-size=512')
-app.commandLine.appendSwitch('max-active-webgl-contexts', '8') // 增加上限以避免切换冲突
-app.commandLine.appendSwitch('disable-http-cache')
+app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=1024')
+app.commandLine.appendSwitch('max-active-webgl-contexts', '8')
+// 允许 HTTP 缓存以加快图标和图片的重复加载速度
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
 // 设置合理的 GPU 显存限制，避免 "tile memory limits exceeded" 导致的黑屏或刷新
 app.commandLine.appendSwitch('force-gpu-mem-available-mb', '512') 

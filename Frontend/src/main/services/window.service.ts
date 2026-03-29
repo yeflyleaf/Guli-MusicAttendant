@@ -128,18 +128,16 @@ function notifyWindowHidden(): void {
   enterEfficiencyMode()
 }
 
-/**
- * 通知渲染进程窗口已显示
- * 渲染进程收到此通知后会禁用内存优化
- */
 function notifyWindowShown(): void {
   if (!isWindowHidden) return // 避免重复通知
+  
+  // 1. 首先退出效率模式：恢复进程优先级，防止后续窗口渲染过程遭遇卡顿
+  exitEfficiencyMode()
+  
+  // 2. 然后通知渲染进程窗口已显示，并解锁内存优化
   isWindowHidden = false
   mainWindow?.webContents.send('window:shown')
   console.log('[Window] Notified renderer: window shown (memory optimization disabled)')
-  
-  // 退出效率模式：恢复进程优先级
-  exitEfficiencyMode()
 }
 
 /**
