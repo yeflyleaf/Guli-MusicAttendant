@@ -398,6 +398,17 @@ onMounted(() => {
 
 onUnmounted(() => {
   cleanupFunctions.forEach(fn => fn())
+
+  // 释放 WebGL/2D 资源，显式重置画布尺寸
+  if (probabilityCanvas.value) {
+    probabilityCanvas.value.width = 0
+    probabilityCanvas.value.height = 0
+  }
+  if (virtualParticleCanvas.value) {
+    virtualParticleCanvas.value.width = 0
+    virtualParticleCanvas.value.height = 0
+  }
+
   if (probabilityAnimationId) {
     cancelAnimationFrame(probabilityAnimationId)
   }

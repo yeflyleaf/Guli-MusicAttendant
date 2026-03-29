@@ -932,6 +932,13 @@ onMounted(() => {
 
 onUnmounted(() => {
   cleanupFunctions.forEach(fn => fn())
+
+  // 释放 WebGL/2D 资源，显式重置画布尺寸
+  if (particleCanvas.value) {
+    particleCanvas.value.width = 0
+    particleCanvas.value.height = 0
+  }
+
   if (animationId) {
     cancelAnimationFrame(animationId)
   }

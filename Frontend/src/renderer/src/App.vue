@@ -196,13 +196,33 @@ const handleSplashFinish = () => {
   isStartup.value = false
 }
 
-// 调试：监听主题变化
+// 监听主题变化：如果是从动态主题切走，立即触发深度清理释放显存和内存
 watch(
   () => settingsStore.theme,
-  (newTheme) => {
-    console.log('[App] Theme changed to:', newTheme, 'showSplash:', showSplash.value, 'isLoaded:', settingsStore.isLoaded)
+  async (newTheme, oldTheme) => {
+    console.log('[App] Theme transition:', oldTheme, '=>', newTheme)
+
+    const dynamicThemes = [
+      'interstellar',
+      'gothic',
+      'papercut',
+      'quantum',
+      'sugarland',
+      'wasteland'
+    ]
+
+    // 如果原先是动态背景，且现在切走了（特别是切换到 light/dark/custom 等静态模式）
+    if (oldTheme && dynamicThemes.includes(oldTheme) && !dynamicThemes.includes(newTheme)) {
+      console.log('[App] Abandoning dynamic theme - triggering proactive memory cleanup...')
+      
+      // 等待 Vue 完成组件卸载（背景组件使用了 v-if）
+      await nextTick()
+      
+      // 触发内存清理
+      window.dispatchEvent(new CustomEvent('memory-optimization:theme-cleanup'))
+    }
   },
-  { immediate: true }
+  { immediate: false }
 )
 
 // 监听设置加载完成，然后通知主进程显示窗口

@@ -487,6 +487,17 @@ onMounted(() => {
 
 onUnmounted(() => {
   cleanupFunctions.forEach(fn => fn())
+
+  // 释放 WebGL/2D 资源，显式重置画布尺寸
+  if (candyCanvas.value) {
+    candyCanvas.value.width = 0
+    candyCanvas.value.height = 0
+  }
+  if (sprinklesCanvas.value) {
+    sprinklesCanvas.value.width = 0
+    sprinklesCanvas.value.height = 0
+  }
+
   if (containerRef.value) {
     containerRef.value.removeEventListener('mousemove', handleMouseMove)
   }

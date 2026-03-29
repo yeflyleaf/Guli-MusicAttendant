@@ -443,6 +443,16 @@ onMounted(() => {
 onUnmounted(() => {
   cleanupFunctions.forEach(fn => fn())
 
+  // 释放 WebGL/2D 资源，显式重置画布尺寸
+  if (stardustCanvas.value) {
+    stardustCanvas.value.width = 0
+    stardustCanvas.value.height = 0
+  }
+  if (dataRainCanvas.value) {
+    dataRainCanvas.value.width = 0
+    dataRainCanvas.value.height = 0
+  }
+
   if (stardustAnimationId) {
     cancelAnimationFrame(stardustAnimationId)
   }

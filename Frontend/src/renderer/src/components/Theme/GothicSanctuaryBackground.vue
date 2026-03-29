@@ -775,6 +775,17 @@ onMounted(() => {
 
 onUnmounted(() => {
   cleanupFunctions.forEach(fn => fn())
+
+  // 释放 WebGL/2D 资源，显式重置画布尺寸
+  if (dustCanvas.value) {
+    dustCanvas.value.width = 0
+    dustCanvas.value.height = 0
+  }
+  if (fireflyCanvas.value) {
+    fireflyCanvas.value.width = 0
+    fireflyCanvas.value.height = 0
+  }
+
   if (dustAnimationId) {
     cancelAnimationFrame(dustAnimationId)
   }

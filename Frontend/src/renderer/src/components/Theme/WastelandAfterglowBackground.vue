@@ -481,6 +481,17 @@ onMounted(() => {
 
 onUnmounted(() => {
   cleanupFunctions.forEach(fn => fn())
+
+  // 释放 WebGL/2D 资源，显式重置画布尺寸
+  if (sandstormCanvas.value) {
+    sandstormCanvas.value.width = 0
+    sandstormCanvas.value.height = 0
+  }
+  if (embersCanvas.value) {
+    embersCanvas.value.width = 0
+    embersCanvas.value.height = 0
+  }
+
   if (containerRef.value) {
     containerRef.value.removeEventListener('mousemove', handleMouseMove)
   }

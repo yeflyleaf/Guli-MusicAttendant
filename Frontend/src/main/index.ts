@@ -15,16 +15,22 @@ import { createMainWindow, getMainWindow } from './services/window.service'
 // 禁用 Windows 7 的 GPU 加速（解决兼容性问题）
 // app.disableHardwareAcceleration()
 
-app.commandLine.appendSwitch('js-flags', '--expose-gc --max-old-space-size=1024')
+// 设置 V8 引擎参数：允许手动 GC 并增加堆内存上限
+process.env['ELECTRON_JS_FLAGS'] = '--expose-gc --max-old-space-size=1024'
+
 app.commandLine.appendSwitch('max-active-webgl-contexts', '8')
+// 启用更加精确的内存测量 API
+app.commandLine.appendSwitch('enable-precise-memory-info')
 // 允许 HTTP 缓存以加快图标和图片的重复加载速度
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
-// 设置合理的 GPU 显存限制，避免 "tile memory limits exceeded" 导致的黑屏或刷新
+// 设置合理的 GPU 显存限制，提高可用上限以确保复杂动态背景有足够的 Buffer 空间
 app.commandLine.appendSwitch('force-gpu-mem-available-mb', '512') 
 app.commandLine.appendSwitch('disable-2d-canvas-clip-anticipating-effects')
+// 加重后台页面限制，更积极地回收闲置资源
 app.commandLine.appendSwitch('page-visibility-threshold-seconds', '1')
 app.commandLine.appendSwitch('background-done-timer-throttling', '1')
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true')
+app.commandLine.appendSwitch('disable-renderer-backgrounding')
 
 // 强制设置应用名称为 GL_Music，这决定了 userData 的路径
 // 结果路径: C:\Users\<用户名>\AppData\Roaming\GL_Music

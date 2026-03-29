@@ -263,6 +263,15 @@ function initMemoryOptimization(): void {
     window.electron.on('window:shown', handleWindowShown as (...args: unknown[]) => void)
   }
 
+  // 监听主题切换触发的清理请求
+  window.addEventListener('memory-optimization:theme-cleanup', () => {
+    console.log('[MemoryOptimization] Active theme cleanup requested...')
+    triggerGarbageCollection()
+    // 强制进行一次重绘后再次清理，以确保 canvas 对象被完全解构
+    setTimeout(() => triggerGarbageCollection(), 500)
+    setTimeout(() => triggerGarbageCollection(), 2000)
+  })
+
   console.log('[MemoryOptimization] Memory optimization system initialized')
 }
 
@@ -286,10 +295,10 @@ export function useMemoryOptimization() {
   })
 
   return {
-    isMemoryOptimized,
     isLowMemoryMode,
     enableMemoryOptimization,
     disableMemoryOptimization,
+    triggerGarbageCollection,
   }
 }
 
