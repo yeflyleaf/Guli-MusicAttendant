@@ -26,33 +26,8 @@ const CONFIG = {
 // 防抖定时器
 let optimizationTimer: number | null = null
 let restoreTimer: number | null = null
-let periodicGCTimer: number | null = null // 周期性 GC 计时器
 
-// 保存的状态
-interface SavedState {
-  // 保存的图片数据
-  images: Map<HTMLImageElement, { src: string; loading: string }>
-  // 保存的 Canvas 上下文
-  canvasContexts: Map<HTMLCanvasElement, ImageData | null>
-  // 保存的 store 数据
-  storeData: {
-    libraryMusic: unknown[] | null
-    favorites: unknown[] | null
-    recentlyPlayed: unknown[] | null
-    playlists: unknown[] | null
-  }
-}
-
-const savedState: SavedState = {
-  images: new Map(),
-  canvasContexts: new Map(),
-  storeData: {
-    libraryMusic: null,
-    favorites: null,
-    recentlyPlayed: null,
-    playlists: null,
-  },
-}
+// savedState 已移除，因为图片和画布清理改为组件内部逻辑
 
 /**
  * 暂停所有 CSS 动画
@@ -84,174 +59,10 @@ function resumeAllAnimations(): void {
   }
 }
 
-/**
- * 销毁所有 Canvas 上下文以释放 GPU 内存
- */
-function destroyCanvasContexts(): void {
-  console.log('[MemoryOptimization] Destroying canvas contexts...')
+// Canvas 和图片清理逻辑已移除，由组件内部的 isLowMemoryMode 状态处理
+// 这样可以避免从托盘恢复时出现的画布重置和闪烁情况
 
-  const canvases = document.querySelectorAll<HTMLCanvasElement>('canvas')
-
-  canvases.forEach(canvas => {
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      // 保存当前内容（如果需要恢复的话）
-      try {
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-        savedState.canvasContexts.set(canvas, imageData)
-      } catch {
-        savedState.canvasContexts.set(canvas, null)
-      }
-
-      // 清空画布
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-    }
-
-    // 重置画布尺寸为 1x1 以释放内存
-    const originalWidth = canvas.width
-    const originalHeight = canvas.height
-    canvas.dataset.originalWidth = String(originalWidth)
-    canvas.dataset.originalHeight = String(originalHeight)
-    canvas.width = 1
-    canvas.height = 1
-  })
-
-  console.log(`[MemoryOptimization] Destroyed ${canvases.length} canvas contexts`)
-}
-
-/**
- * 恢复 Canvas 上下文
- */
-function restoreCanvasContexts(): void {
-  console.log('[MemoryOptimization] Restoring canvas contexts...')
-
-  const canvases = document.querySelectorAll<HTMLCanvasElement>('canvas')
-
-  canvases.forEach(canvas => {
-    // 恢复原始尺寸
-    const originalWidth = parseInt(canvas.dataset.originalWidth || '0')
-    const originalHeight = parseInt(canvas.dataset.originalHeight || '0')
-
-    if (originalWidth > 0 && originalHeight > 0) {
-      canvas.width = originalWidth
-      canvas.height = originalHeight
-      delete canvas.dataset.originalWidth
-      delete canvas.dataset.originalHeight
-    }
-  })
-
-  savedState.canvasContexts.clear()
-}
-
-/**
- * 清理所有图片以释放内存
- */
-function clearAllImages(): void {
-  console.log('[MemoryOptimization] Clearing all images...')
-
-  const images = document.querySelectorAll<HTMLImageElement>('img')
-  let clearedCount = 0
-
-  images.forEach(img => {
-    if (img.src && !img.src.startsWith('data:')) {
-      // 保存原始状态
-      savedState.images.set(img, {
-        src: img.src,
-        loading: img.loading,
-      })
-
-      // 完全清空图片以彻底释放显存
-      img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' // 1x1 透明图
-      img.removeAttribute('srcset')
-      img.style.visibility = 'hidden' 
-      clearedCount++
-    }
-  })
-
-  console.log(`[MemoryOptimization] Cleared ${clearedCount} images`)
-}
-
-/**
- * 恢复所有图片
- * 注意：不再使用保存的旧 src，而是让 Vue 自然重新渲染
- * 这样当窗口隐藏期间歌曲变化时，恢复后能正确显示新歌曲的信息
- */
-function restoreAllImages(): void {
-  console.log('[MemoryOptimization] Restoring all images...')
-
-  // 清空保存的图片状态（不再恢复旧的 src）
-  // 因为在窗口隐藏期间，用户可能通过托盘切换了歌曲
-  // Vue 的响应式系统会自然从 playerStore 读取最新的 currentSong
-  savedState.images.forEach((_state, img) => {
-    img.style.visibility = ''
-  })
-  savedState.images.clear()
-
-  // 触发刷新事件，通知播放栏组件需要刷新
-  // Vue 会自动从 store 读取最新的歌曲信息并重新渲染图片
-  window.dispatchEvent(new CustomEvent('memory-optimization:restore-ui'))
-  console.log('[MemoryOptimization] Triggered UI restore event')
-}
-
-/**
- * 完全移除动态背景 DOM 元素
- */
-function removeAnimatedBackgrounds(): void {
-  console.log('[MemoryOptimization] Removing animated backgrounds from DOM...')
-
-  const backgroundSelectors = [
-    '.interstellar-cruise-background',
-    '.gothic-sanctuary-background',
-    '.papercut-theatre-background',
-    '.quantum-foam-background',
-    '.sugar-land-background',
-    '.wasteland-afterglow-background',
-  ]
-
-  backgroundSelectors.forEach(selector => {
-    const elements = document.querySelectorAll<HTMLElement>(selector)
-    elements.forEach(el => {
-      // 完全隐藏并清空内容
-      el.style.display = 'none'
-      el.style.visibility = 'hidden'
-
-      // 移除所有子元素以释放内存
-      const savedHTML = el.innerHTML
-      el.dataset.savedHtml = savedHTML
-      el.innerHTML = ''
-    })
-  })
-}
-
-/**
- * 恢复动态背景
- */
-function restoreAnimatedBackgrounds(): void {
-  console.log('[MemoryOptimization] Restoring animated backgrounds...')
-
-  const backgroundSelectors = [
-    '.interstellar-cruise-background',
-    '.gothic-sanctuary-background',
-    '.papercut-theatre-background',
-    '.quantum-foam-background',
-    '.sugar-land-background',
-    '.wasteland-afterglow-background',
-  ]
-
-  backgroundSelectors.forEach(selector => {
-    const elements = document.querySelectorAll<HTMLElement>(selector)
-    elements.forEach(el => {
-      // 恢复内容
-      if (el.dataset.savedHtml) {
-        el.innerHTML = el.dataset.savedHtml
-        delete el.dataset.savedHtml
-      }
-
-      el.style.display = ''
-      el.style.visibility = ''
-    })
-  })
-}
+// 图片清理逻辑已移除，Vue 会自然保持响应式状态
 
 /**
  * 通知 Store 进入低内存模式
@@ -321,30 +132,7 @@ function triggerGarbageCollection(): void {
   }
 }
 
-/**
- * 启动周期性垃圾回收
- * 当窗口长时间隐藏时，每隔几十秒触发一次以确保内存不会回弹
- */
-function startPeriodicGC(): void {
-  if (periodicGCTimer) return
-  
-  console.log('[MemoryOptimization] Starting periodic GC...')
-  periodicGCTimer = window.setInterval(() => {
-    console.log('[MemoryOptimization] Periodic memory sweep...')
-    triggerGarbageCollection()
-  }, 10000) // 每 10 秒扫描一次
-}
-
-/**
- * 停止周期性垃圾回收
- */
-function stopPeriodicGC(): void {
-  if (periodicGCTimer) {
-    clearInterval(periodicGCTimer)
-    periodicGCTimer = null
-    console.log('[MemoryOptimization] Stopped periodic GC')
-  }
-}
+// 周期性 GC 逻辑已移除
 
 /**
  * 执行激进的内存优化
@@ -367,20 +155,11 @@ function enableMemoryOptimization(): void {
   // 2. 暂停可视化
   pauseAudioVisualization()
 
-  // 3. 移除动态背景
-  removeAnimatedBackgrounds()
-
-  // 4. 销毁 Canvas 上下文
-  destroyCanvasContexts()
-
-  // 5. 清理图片
-  clearAllImages()
-
-  // 6. 通知 Store 进入低内存模式
+  // 3. 通知 Store 进入低内存模式
   notifyStoresEnterLowMemory()
 
-  // 7. 开启周期性 GC
-  startPeriodicGC()
+  // 4. 开启单次 GC
+  triggerGarbageCollection()
 
   // 8. 延迟触发多次 GC 以确保彻底释放
   setTimeout(() => {
@@ -415,20 +194,8 @@ function disableMemoryOptimization(): void {
   // 2. 通知 Store 退出低内存模式（先恢复数据）
   notifyStoresExitLowMemory()
 
-  // 3. 恢复图片
-  restoreAllImages()
-
-  // 4. 恢复 Canvas
-  restoreCanvasContexts()
-
-  // 5. 恢复动态背景
-  restoreAnimatedBackgrounds()
-
-  // 6. 恢复可视化
+  // 3. 恢复可视化
   resumeAudioVisualization()
-
-  // 7. 停止周期性 GC
-  stopPeriodicGC()
 
   const endTime = performance.now()
   console.log(`[MemoryOptimization] Restoration completed in ${(endTime - startTime).toFixed(2)}ms`)

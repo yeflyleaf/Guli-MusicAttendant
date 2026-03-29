@@ -15,13 +15,13 @@ import { createMainWindow, getMainWindow } from './services/window.service'
 // 禁用 Windows 7 的 GPU 加速（解决兼容性问题）
 // app.disableHardwareAcceleration()
 
-// 内存优化：限制 GPU 缓存并强制 GC
-// 这些开关有助于在托盘模式下降低内存占用
+// 内存优化：平衡 GPU 性能与内存占用
 app.commandLine.appendSwitch('js-flags', '--expose-gc --max-semi-space-size=1 --max-old-space-size=512')
-app.commandLine.appendSwitch('max-active-webgl-contexts', '1')
+app.commandLine.appendSwitch('max-active-webgl-contexts', '8') // 增加上限以避免切换冲突
 app.commandLine.appendSwitch('disable-http-cache')
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
-app.commandLine.appendSwitch('force-gpu-mem-available-mb', '64')
+// 设置合理的 GPU 显存限制，避免 "tile memory limits exceeded" 导致的黑屏或刷新
+app.commandLine.appendSwitch('force-gpu-mem-available-mb', '512') 
 app.commandLine.appendSwitch('disable-2d-canvas-clip-anticipating-effects')
 app.commandLine.appendSwitch('page-visibility-threshold-seconds', '1')
 app.commandLine.appendSwitch('background-done-timer-throttling', '1')

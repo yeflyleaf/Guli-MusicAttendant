@@ -62,6 +62,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/store/settings.store';
 import { onMounted, onUnmounted, ref } from 'vue';
+import { isLowMemoryMode } from '@/hooks/useMemoryOptimization';
 
 // Props
 defineProps<{
@@ -145,6 +146,12 @@ const initProbabilityClouds = () => {
   }
 
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化：如果处于低内存模式，停止重绘以节省 CPU/GPU
+    if (isLowMemoryMode.value) {
+      probabilityAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       probabilityAnimationId = requestAnimationFrame(animate)
@@ -307,6 +314,12 @@ const initVirtualParticles = () => {
   }
 
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化：如果处于低内存模式，停止重绘
+    if (isLowMemoryMode.value) {
+      virtualParticleAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       virtualParticleAnimationId = requestAnimationFrame(animate)

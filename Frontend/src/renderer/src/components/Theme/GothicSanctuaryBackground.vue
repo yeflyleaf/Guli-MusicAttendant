@@ -271,6 +271,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { isLowMemoryMode } from '@/hooks/useMemoryOptimization';
 
 // Props
 defineProps<{
@@ -434,6 +435,12 @@ const initDustSystem = () => {
 
   // 动画循环
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化
+    if (isLowMemoryMode.value) {
+      dustAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       dustAnimationId = requestAnimationFrame(animate)
@@ -640,6 +647,12 @@ const initFireflySystem = () => {
 
   // 动画循环
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化
+    if (isLowMemoryMode.value) {
+      fireflyAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       fireflyAnimationId = requestAnimationFrame(animate)

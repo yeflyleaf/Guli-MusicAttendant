@@ -127,6 +127,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { isLowMemoryMode } from '@/hooks/useMemoryOptimization';
 
 // Props
 defineProps<{
@@ -232,6 +233,12 @@ const initStardust = () => {
   }
 
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化：如果处于低内存模式，停止重绘以节省 CPU/GPU
+    if (isLowMemoryMode.value) {
+      stardustAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       stardustAnimationId = requestAnimationFrame(animate)
@@ -362,6 +369,12 @@ const initDataRain = () => {
   }
 
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化：如果处于低内存模式，停止重绘
+    if (isLowMemoryMode.value) {
+      dataRainAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       dataRainAnimationId = requestAnimationFrame(animate)

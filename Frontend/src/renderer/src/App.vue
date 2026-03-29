@@ -69,13 +69,9 @@
       <!-- 页面内容 -->
       <main class="app-content" :class="{ 'queue-visible': playerStore.showQueue }">
         <router-view v-slot="{ Component }">
-          <!-- 低内存模式下禁用 keep-alive 以释放缓存的组件内存 -->
-          <keep-alive v-if="!isLowMemoryMode" :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']"
-            :max="10">
+          <keep-alive :include="['LocalMusic', 'Favorites', 'RecentlyPlayed', 'PlaylistDetail']" :max="10">
             <component :is="Component" :key="route.fullPath" />
           </keep-alive>
-          <!-- 低内存模式下不缓存任何组件 -->
-          <component v-else :is="Component" :key="route.fullPath" />
         </router-view>
       </main>
 
@@ -135,7 +131,7 @@ import { useAudio } from '@/hooks/useAudio'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useShortcuts } from '@/hooks/useIpc'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls'
-import { isLowMemoryMode, useMemoryOptimization } from '@/hooks/useMemoryOptimization'
+import { useMemoryOptimization } from '@/hooks/useMemoryOptimization'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import { useSettingsStore } from '@/store/settings.store'
@@ -167,32 +163,32 @@ const isMiniPlayerMode = ref(false)
 
 // 星际巡航动态背景显示控制
 const showInterstellarBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'interstellar' && !showSplash.value && !isLowMemoryMode.value
+  return settingsStore.isLoaded && settingsStore.theme === 'interstellar' && !showSplash.value
 })
 
 // 暗夜哥特动态背景显示控制
 const showGothicBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'gothic' && !showSplash.value && !isLowMemoryMode.value
+  return settingsStore.isLoaded && settingsStore.theme === 'gothic' && !showSplash.value
 })
 
 // 剪纸戏梦动态背景显示控制
 const showPapercutBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'papercut' && !showSplash.value && !isLowMemoryMode.value
+  return settingsStore.isLoaded && settingsStore.theme === 'papercut' && !showSplash.value
 })
 
 // 量子泡沫动态背景显示控制
 const showQuantumBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'quantum' && !showSplash.value && !isLowMemoryMode.value
+  return settingsStore.isLoaded && settingsStore.theme === 'quantum' && !showSplash.value
 })
 
 // 糖果乐园动态背景显示控制
 const showSugarLandBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'sugarland' && !showSplash.value && !isLowMemoryMode.value
+  return settingsStore.isLoaded && settingsStore.theme === 'sugarland' && !showSplash.value
 })
 
 // 废土余晖动态背景显示控制
 const showWastelandBackground = computed(() => {
-  return settingsStore.isLoaded && settingsStore.theme === 'wasteland' && !showSplash.value && !isLowMemoryMode.value
+  return settingsStore.isLoaded && settingsStore.theme === 'wasteland' && !showSplash.value
 })
 
 const handleSplashFinish = () => {

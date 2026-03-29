@@ -143,6 +143,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { isLowMemoryMode } from '@/hooks/useMemoryOptimization';
 
 // Props
 defineProps<{
@@ -272,6 +273,12 @@ const initCandyCanvas = () => {
   }
 
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化
+    if (isLowMemoryMode.value) {
+      candyAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       candyAnimationId = requestAnimationFrame(animate)
@@ -418,6 +425,12 @@ const initSprinklesCanvas = () => {
   }
 
   const animate = (currentTime: number) => {
+    // 效率模式与内存优化
+    if (isLowMemoryMode.value) {
+      sprinklesAnimationId = requestAnimationFrame(animate)
+      return
+    }
+
     const frameInterval = getFrameInterval()
     if (currentTime - lastFrameTime < frameInterval) {
       sprinklesAnimationId = requestAnimationFrame(animate)

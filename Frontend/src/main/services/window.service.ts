@@ -4,6 +4,7 @@
  */
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
+import os from 'os'
 import { cache, getDatabase } from '../db'
 import { getAllSettings } from '../db/repositories/setting.repo'
 import { isForceQuit } from './tray.service'
@@ -315,20 +316,11 @@ export function triggerMainGC(): void {
   }
 }
 
-interface PriorityProcess {
-  setPriority: (pid: number, priority: number) => void
-  pid: number
-}
-
-/**
- * 进入“效率模式”：降低进程优先级
- * 10 对应 Windows 的 BELOW_NORMAL_PRIORITY_CLASS
- */
 export function enterEfficiencyMode(): void {
   try {
     // 降低优先级，减少 CPU 争抢，提升系统整体响应速度
-    (process as unknown as PriorityProcess).setPriority(process.pid, 10)
-    console.log('[Main/Efficiency] Process priority lowered to 10 (Below Normal)')
+    os.setPriority(process.pid, os.constants.priority.PRIORITY_BELOW_NORMAL)
+    console.log('[Main/Efficiency] Process priority lowered to Below Normal')
   } catch (e) {
     console.warn('[Main/Efficiency] Failed to lower priority', e)
   }
@@ -340,8 +332,8 @@ export function enterEfficiencyMode(): void {
  */
 export function exitEfficiencyMode(): void {
   try {
-    (process as unknown as PriorityProcess).setPriority(process.pid, 0)
-    console.log('[Main/Efficiency] Process priority restored to 0 (Normal)')
+    os.setPriority(process.pid, os.constants.priority.PRIORITY_NORMAL)
+    console.log('[Main/Efficiency] Process priority restored to Normal')
   } catch (e) {
     console.error('[Main/Efficiency] Failed to restore priority', e)
   }

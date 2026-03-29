@@ -749,6 +749,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/store/settings.store';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { isLowMemoryMode } from '@/hooks/useMemoryOptimization';
 
 // Props
 defineProps<{
@@ -860,6 +861,9 @@ const initParticleSystem = () => {
 
   const animate = (currentTime: number) => {
     animationId = requestAnimationFrame(animate)
+
+    // 效率模式与内存优化
+    if (isLowMemoryMode.value) return
 
     // 帧率限制：跳过不需要渲染的帧
     const frameInterval = getFrameInterval()
