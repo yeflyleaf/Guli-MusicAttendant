@@ -60,6 +60,10 @@ class MemoryCache {
     this.cache.clear()
   }
 
+  size(): number {
+    return this.cache.size
+  }
+
   has(key: string): boolean {
     return this.get(key) !== null
   }
@@ -123,7 +127,7 @@ export function initDatabase(): Database.Database {
   // 优化性能设置
   db.pragma('journal_mode = WAL') // 写入性能提升
   db.pragma('synchronous = NORMAL') // 平衡安全与性能
-  db.pragma('cache_size = 10000') // 增加缓存大小
+  db.pragma('cache_size = 2000') // 降低缓存大小，减少内存占用 (8MB)
   db.pragma('temp_store = MEMORY') // 临时表存储在内存中
 
   // 执行建表语句

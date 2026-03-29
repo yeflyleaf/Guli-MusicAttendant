@@ -479,60 +479,41 @@ export const useLibraryStore = defineStore('library', {
       }
     },
 
-    /**
-     * 进入低内存模式
-     * 备份并清空大型数组以释放内存
-     * 仅在窗口最小化或隐藏到托盘时调用
-     */
     enterLowMemoryMode() {
       if (this.isLowMemoryMode) return
 
-      console.log('[Library] Entering low memory mode...')
-      console.log(`[Library] Before: allMusic=${this.allMusic.length}, favorites=${this.favorites.length}, recentlyPlayed=${this.recentlyPlayed.length}`)
+      console.log('[Library] Entering aggressive low memory mode...')
+      console.log(`[Library] Clearing: allMusic=${this.allMusic.length}, favorites=${this.favorites.length}, recentlyPlayed=${this.recentlyPlayed.length}`)
 
-      // 备份当前数据
-      this._lowMemoryBackup = {
-        allMusic: this.allMusic,
-        playlists: this.playlists,
-        favorites: this.favorites,
-        recentlyPlayed: this.recentlyPlayed,
-        filteredMusic: this.filteredMusic,
-      }
-
-      // 清空大型数组
+      // 不再备份大型对象 - 直接丢弃引用以释放渲染进程内存
+      // 下次退出低内存模式时从主进程重新拉取数据
+      // 这样可以确保托盘模式下几乎不占用前端 JS 堆内存
       this.allMusic = []
       this.playlists = []
       this.favorites = []
       this.recentlyPlayed = []
       this.filteredMusic = []
+      this.isLoaded = false // 标记为未加载，以便退出时重新加载
 
       this.isLowMemoryMode = true
-      console.log('[Library] Low memory mode enabled - arrays cleared')
+      console.log('[Library] Low memory mode enabled - Data purged from memory')
     },
 
     /**
      * 退出低内存模式
-     * 从备份恢复数据
+     * 重新从主进程异步加载数据
      */
-    exitLowMemoryMode() {
+    async exitLowMemoryMode() {
       if (!this.isLowMemoryMode) return
 
-      console.log('[Library] Exiting low memory mode...')
-
-      // 从备份恢复数据
-      if (this._lowMemoryBackup) {
-        this.allMusic = this._lowMemoryBackup.allMusic || []
-        this.playlists = this._lowMemoryBackup.playlists || []
-        this.favorites = this._lowMemoryBackup.favorites || []
-        this.recentlyPlayed = this._lowMemoryBackup.recentlyPlayed || []
-        this.filteredMusic = this._lowMemoryBackup.filteredMusic || []
-
-        // 清除备份
-        this._lowMemoryBackup = null
-      }
+      console.log('[Library] Exiting low memory mode, re-fetching data...')
 
       this.isLowMemoryMode = false
-      console.log(`[Library] Low memory mode disabled - data restored: allMusic=${this.allMusic.length}`)
+      
+      // 触发数据重载
+      await this.loadAll()
+      
+      console.log(`[Library] Low memory mode disabled - Data restored from DB: total=${this.allMusic.length}`)
     }
   }
 })

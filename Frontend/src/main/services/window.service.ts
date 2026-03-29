@@ -4,6 +4,7 @@
  */
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'path'
+import { cache, getDatabase } from '../db'
 import { getAllSettings } from '../db/repositories/setting.repo'
 import { isForceQuit } from './tray.service'
 
@@ -121,6 +122,9 @@ function notifyWindowHidden(): void {
   isWindowHidden = true
   mainWindow?.webContents.send('window:hidden')
   console.log('[Window] Notified renderer: window hidden (memory optimization enabled)')
+  
+  // 进入效率模式：降低进程优先级
+  enterEfficiencyMode()
 }
 
 /**
@@ -132,6 +136,9 @@ function notifyWindowShown(): void {
   isWindowHidden = false
   mainWindow?.webContents.send('window:shown')
   console.log('[Window] Notified renderer: window shown (memory optimization disabled)')
+  
+  // 退出效率模式：恢复进程优先级
+  exitEfficiencyMode()
 }
 
 /**
@@ -269,4 +276,73 @@ export function switchToFullPlayer(): void {
  */
 export function getIsMiniPlayer(): boolean {
   return isMiniPlayerMode
+}
+
+/**
+ * 激进内存优化：清空主进程缓存并触发 GC
+ */
+export function clearMainMemoryCache(): void {
+  if (cache && typeof cache.clear === 'function') {
+    const size = cache.size()
+    cache.clear()
+    console.log(`[Main/Memory] MemoryCache cleared (${size} items released)`)
+  }
+
+  // 同时也建议触发同步 WAL Checkpoint 并收缩内存
+  try {
+    const db = getDatabase()
+    db.pragma('wal_checkpoint(TRUNCATE)')
+    db.pragma('shrink_memory') // 告诉 SQLite 尽可能释放内存
+    console.log('[Main/Memory] SQLite WAL truncated and memory shrunk')
+  } catch (e) {
+    console.error('[Main/Memory] Failed to shrink SQLite memory', e)
+  }
+
+  triggerMainGC()
+}
+
+/**
+ * 手动触发主进程垃圾回收
+ * 需要启动时传入 --js-flags="--expose-gc"
+ */
+export function triggerMainGC(): void {
+  const globalWithGC = globalThis as typeof globalThis & { gc?: () => void }
+  if (typeof globalWithGC.gc === 'function') {
+    globalWithGC.gc()
+    console.log('[Main/Memory] Manual main-process GC triggered')
+  } else {
+    console.warn('[Main/Memory] Manual GC not available (missing --expose-gc flag?)')
+  }
+}
+
+interface PriorityProcess {
+  setPriority: (pid: number, priority: number) => void
+  pid: number
+}
+
+/**
+ * 进入“效率模式”：降低进程优先级
+ * 10 对应 Windows 的 BELOW_NORMAL_PRIORITY_CLASS
+ */
+export function enterEfficiencyMode(): void {
+  try {
+    // 降低优先级，减少 CPU 争抢，提升系统整体响应速度
+    (process as unknown as PriorityProcess).setPriority(process.pid, 10)
+    console.log('[Main/Efficiency] Process priority lowered to 10 (Below Normal)')
+  } catch (e) {
+    console.warn('[Main/Efficiency] Failed to lower priority', e)
+  }
+}
+
+/**
+ * 退出“效率模式”：恢复进程优先级
+ * 0 对应正常的优先级
+ */
+export function exitEfficiencyMode(): void {
+  try {
+    (process as unknown as PriorityProcess).setPriority(process.pid, 0)
+    console.log('[Main/Efficiency] Process priority restored to 0 (Normal)')
+  } catch (e) {
+    console.error('[Main/Efficiency] Failed to restore priority', e)
+  }
 }

@@ -15,6 +15,18 @@ import { createMainWindow, getMainWindow } from './services/window.service'
 // 禁用 Windows 7 的 GPU 加速（解决兼容性问题）
 // app.disableHardwareAcceleration()
 
+// 内存优化：限制 GPU 缓存并强制 GC
+// 这些开关有助于在托盘模式下降低内存占用
+app.commandLine.appendSwitch('js-flags', '--expose-gc --max-semi-space-size=1 --max-old-space-size=512')
+app.commandLine.appendSwitch('max-active-webgl-contexts', '1')
+app.commandLine.appendSwitch('disable-http-cache')
+app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
+app.commandLine.appendSwitch('force-gpu-mem-available-mb', '64')
+app.commandLine.appendSwitch('disable-2d-canvas-clip-anticipating-effects')
+app.commandLine.appendSwitch('page-visibility-threshold-seconds', '1')
+app.commandLine.appendSwitch('background-done-timer-throttling', '1')
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true')
+
 // 强制设置应用名称为 GL_Music，这决定了 userData 的路径
 // 结果路径: C:\Users\<用户名>\AppData\Roaming\GL_Music
 app.setName('GL_Music')

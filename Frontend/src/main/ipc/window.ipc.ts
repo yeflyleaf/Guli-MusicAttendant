@@ -53,6 +53,11 @@ export function setupWindowIpc(): void {
     return windowService.getIsMiniPlayer()
   })
 
+  // 清除主进程内存缓存并触发 GC
+  ipcMain.on('window:clearMemoryCache', () => {
+    windowService.clearMainMemoryCache()
+  })
+
   console.log('[IPC] Window control handler registered')
 }
 

@@ -26,6 +26,7 @@ const CONFIG = {
 // 防抖定时器
 let optimizationTimer: number | null = null
 let restoreTimer: number | null = null
+let periodicGCTimer: number | null = null // 周期性 GC 计时器
 
 // 保存的状态
 interface SavedState {
@@ -159,9 +160,10 @@ function clearAllImages(): void {
         loading: img.loading,
       })
 
-      // 清空图片
-      img.src = ''
-      img.removeAttribute('src')
+      // 完全清空图片以彻底释放显存
+      img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' // 1x1 透明图
+      img.removeAttribute('srcset')
+      img.style.visibility = 'hidden' 
       clearedCount++
     }
   })
@@ -180,6 +182,9 @@ function restoreAllImages(): void {
   // 清空保存的图片状态（不再恢复旧的 src）
   // 因为在窗口隐藏期间，用户可能通过托盘切换了歌曲
   // Vue 的响应式系统会自然从 playerStore 读取最新的 currentSong
+  savedState.images.forEach((_state, img) => {
+    img.style.visibility = ''
+  })
   savedState.images.clear()
 
   // 触发刷新事件，通知播放栏组件需要刷新
@@ -310,8 +315,34 @@ function triggerGarbageCollection(): void {
 
   // 清除 Renderer Cache（Image Cache, WebFrame Cache 等）
   if (window.electron?.window?.clearMemoryCache) {
+    // 这将清除 WebFrame 缓存和主进程的部分缓存并触发主进程 GC
     window.electron.window.clearMemoryCache()
-    console.log('[MemoryOptimization] WebFrame memory cache cleared')
+    console.log('[MemoryOptimization] Renderer and Main memory caches cleared')
+  }
+}
+
+/**
+ * 启动周期性垃圾回收
+ * 当窗口长时间隐藏时，每隔几十秒触发一次以确保内存不会回弹
+ */
+function startPeriodicGC(): void {
+  if (periodicGCTimer) return
+  
+  console.log('[MemoryOptimization] Starting periodic GC...')
+  periodicGCTimer = window.setInterval(() => {
+    console.log('[MemoryOptimization] Periodic memory sweep...')
+    triggerGarbageCollection()
+  }, 10000) // 每 10 秒扫描一次
+}
+
+/**
+ * 停止周期性垃圾回收
+ */
+function stopPeriodicGC(): void {
+  if (periodicGCTimer) {
+    clearInterval(periodicGCTimer)
+    periodicGCTimer = null
+    console.log('[MemoryOptimization] Stopped periodic GC')
   }
 }
 
@@ -348,14 +379,14 @@ function enableMemoryOptimization(): void {
   // 6. 通知 Store 进入低内存模式
   notifyStoresEnterLowMemory()
 
-  // 7. 延迟触发 GC
+  // 7. 开启周期性 GC
+  startPeriodicGC()
+
+  // 8. 延迟触发多次 GC 以确保彻底释放
   setTimeout(() => {
     triggerGarbageCollection()
-
-    // 再次触发以确保效果
-    setTimeout(() => {
-      triggerGarbageCollection()
-    }, 500)
+    setTimeout(() => triggerGarbageCollection(), 1000)
+    setTimeout(() => triggerGarbageCollection(), 5000)
   }, 100)
 
   const endTime = performance.now()
@@ -395,6 +426,9 @@ function disableMemoryOptimization(): void {
 
   // 6. 恢复可视化
   resumeAudioVisualization()
+
+  // 7. 停止周期性 GC
+  stopPeriodicGC()
 
   const endTime = performance.now()
   console.log(`[MemoryOptimization] Restoration completed in ${(endTime - startTime).toFixed(2)}ms`)

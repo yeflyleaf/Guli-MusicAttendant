@@ -230,7 +230,10 @@ const electronAPI = {
 
     // 清理渲染器及 WebFrame 缓存（主动释放图片和页面缓存内存）
     clearMemoryCache: (): void => {
+      // 1. 清除渲染进程 WebFrame 缓存
       webFrame.clearCache()
+      // 2. 发送消息给主进程清除其内存缓存并触发 GC
+      ipcRenderer.send('window:clearMemoryCache')
     }
   },
 
