@@ -78,19 +78,56 @@ export function createTray(): Tray | null {
 }
 
 /**
+ * 格式化字符串，超出长度则截断并添加省略号
+ */
+function truncate(str: string, maxLength: number): string {
+  if (!str) return ''
+  if (str.length <= maxLength) return str
+  return str.substring(0, maxLength) + '...'
+}
+
+/**
  * 更新托盘菜单
  */
 export function updateTrayMenu(): void {
   if (!tray || tray.isDestroyed()) return
 
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: currentTitle ? `正在播放: ${currentTitle}${currentArtist ? ' - ' + currentArtist : ''}` : '故里音乐助手',
-      enabled: false
-    },
-    {
-      type: 'separator'
-    },
+  // 进一步缩短截断长度，并准备多行显示的文字
+  const displayTitle = truncate(currentTitle || '', 20)
+  const displayArtist = truncate(currentArtist || '', 15)
+
+  // 构建菜单模板
+  const menuTemplate: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] = []
+
+  // 如果正在播放，显示歌曲和歌手（分行显示）
+  if (currentTitle) {
+    menuTemplate.push(
+      {
+        label: `正在播放: ${displayTitle}`,
+        enabled: false
+      },
+      {
+        label: `(＠_＠) 歌手: ${displayArtist || '未知'}`,
+        enabled: false
+      },
+      {
+        type: 'separator'
+      }
+    )
+  } else {
+    menuTemplate.push(
+      {
+        label: '故里音乐助手',
+        enabled: false
+      },
+      {
+        type: 'separator'
+      }
+    )
+  }
+
+  // 添加常规控制项
+  menuTemplate.push(
     {
       label: '显示主窗口',
       click: () => {
@@ -137,13 +174,14 @@ export function updateTrayMenu(): void {
         forceQuitApp()
       }
     }
-  ])
+  )
 
+  const contextMenu = Menu.buildFromTemplate(menuTemplate)
   tray.setContextMenu(contextMenu)
 
-  // 更新 ToolTip
+  // 更新 ToolTip (也采用多行显示)
   if (currentTitle) {
-    tray.setToolTip(`故里音乐助手\n正在播放: ${currentTitle}${currentArtist ? ' - ' + currentArtist : ''}`)
+    tray.setToolTip(`故里音乐助手\n曲名: ${displayTitle}\n歌手: ${displayArtist || '未知'}`)
   } else {
     tray.setToolTip('故里音乐助手')
   }
