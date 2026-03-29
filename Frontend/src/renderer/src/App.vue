@@ -447,6 +447,19 @@ watch(
   }
 )
 
+// 监听播放状态和歌曲变化，更新系统托盘
+watch(
+  [() => playerStore.isPlaying, () => playerStore.currentSong],
+  ([isPlaying, currentSong]) => {
+    window.electron?.tray?.updateStatus({
+      isPlaying,
+      title: currentSong?.title || '',
+      artist: currentSong?.artist || ''
+    })
+  },
+  { immediate: true }
+)
+
 // 窗口关闭时保存播放状态
 window.addEventListener('beforeunload', () => {
   if (settingsStore.rememberPlaybackStatus && playerStore.currentSong) {

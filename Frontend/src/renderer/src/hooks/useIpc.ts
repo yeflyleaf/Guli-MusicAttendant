@@ -3,12 +3,38 @@
  * 封装与主进程的通信
  */
 import { onMounted, onUnmounted } from 'vue'
+import { usePlayerStore } from '../store/player.store'
 
 export function useIpc() {
+  const playerStore = usePlayerStore()
 
   // 监听全局快捷键（现在已委托给 MediaSession 处理蓝牙信号）
   const setupShortcutListeners = () => {
     // 可以在这里添加常规非媒体键的自定义逻辑
+
+    // 播放/暂停
+    window.electron.on('shortcut:playPause', () => {
+      console.log('[IPC] Received shortcut:playPause')
+      playerStore.togglePlay()
+    })
+
+    // 下一曲
+    window.electron.on('shortcut:next', () => {
+      console.log('[IPC] Received shortcut:next')
+      playerStore.next()
+    })
+
+    // 上一曲
+    window.electron.on('shortcut:previous', () => {
+      console.log('[IPC] Received shortcut:previous')
+      playerStore.previous()
+    })
+
+    // 停止
+    window.electron.on('shortcut:stop', () => {
+      console.log('[IPC] Received shortcut:stop')
+      playerStore.pause()
+    })
   }
 
   // 清理监听器

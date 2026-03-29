@@ -29,6 +29,10 @@ export interface ElectronAPI {
       coverPath: string
       lyricsPath: string
     }>) => Promise<boolean>
+    hideFromLocal: (id: number) => Promise<boolean>
+    hideFromLocalBatch: (ids: number[]) => Promise<number>
+    unhideFromLocal: (id: number) => Promise<boolean>
+    unhideAllFromLocal: () => Promise<number>
   }
 
   // 歌单相关
@@ -66,6 +70,28 @@ export interface ElectronAPI {
       buttons?: string[]
     }) => Promise<number>
     confirm: (message: string, title?: string) => Promise<boolean>
+    validateMusicPath: (filePath: string) => Promise<{
+      valid: boolean
+      inFolder: boolean
+      fileExists?: boolean
+      musicFolders?: string[]
+    }>
+    checkFileExists: (filePath: string) => Promise<boolean>
+    checkFilesExist: (filePaths: string[]) => Promise<Record<string, boolean>>
+    selectScriptFile: () => Promise<{
+      filePath: string
+      content?: string
+      name?: string
+      version?: string
+      icon?: string
+      error?: string
+    } | null>
+    fetchUrlContent: (url: string) => Promise<{
+      content: string
+      name?: string
+      version?: string
+      icon?: string
+    } | null>
   }
 
   // 窗口控制
@@ -79,6 +105,7 @@ export interface ElectronAPI {
     switchToMiniPlayer: () => void
     switchToFullPlayer: () => void
     isMiniPlayer: () => Promise<boolean>
+    clearMemoryCache: () => void
   }
 
   // 设置相关
@@ -96,6 +123,11 @@ export interface ElectronAPI {
   // 媒体控件相关
   media: {
     getCoverDataUrl: (filePath: string) => Promise<string | null>
+  }
+
+  // 托盘相关
+  tray: {
+    updateStatus: (status: { isPlaying: boolean; title?: string; artist?: string }) => void
   }
 
   // 事件监听

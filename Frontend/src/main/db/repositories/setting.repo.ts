@@ -29,23 +29,7 @@ export function getAllSettings(): Settings {
     showTrayIcon: true,
     minimizeToTray: false,
     closeToTray: false,
-    quickSwitchThemes: ['dark', 'light'],
-    // 下载设置
-    downloadEnabled: true,
-    downloadSkipExisting: true,
-    downloadPath: '',
-    downloadConcurrent: 3,
-    downloadNamingRule: 'name-artist',
-    downloadEmbedCover: true,
-    downloadEmbedLyrics: false,
-    downloadEmbedTranslation: false,
-    downloadEmbedRomaji: false,
-    downloadLyricsEnabled: false,
-    downloadLyricsTranslation: false,
-    downloadLyricsRomaji: false,
-    downloadLyricsEncoding: 'utf-8',
-    // 音乐来源
-    musicSources: []
+    quickSwitchThemes: ['dark', 'light']
   }
 
   for (const row of rows) {
@@ -118,52 +102,6 @@ export function getAllSettings(): Settings {
         } catch {
           settings.quickSwitchThemes = ['dark', 'light']
         }
-        break
-      case 'musicSources':
-        try {
-          settings.musicSources = JSON.parse(row.value)
-        } catch {
-          settings.musicSources = []
-        }
-        break
-      case 'downloadEnabled':
-        settings.downloadEnabled = row.value === 'true'
-        break
-      case 'downloadSkipExisting':
-        settings.downloadSkipExisting = row.value === 'true'
-        break
-      case 'downloadPath':
-        settings.downloadPath = row.value
-        break
-      case 'downloadConcurrent':
-        settings.downloadConcurrent = parseInt(row.value) || 3
-        break
-      case 'downloadNamingRule':
-        settings.downloadNamingRule = row.value as Settings['downloadNamingRule']
-        break
-      case 'downloadEmbedCover':
-        settings.downloadEmbedCover = row.value === 'true'
-        break
-      case 'downloadEmbedLyrics':
-        settings.downloadEmbedLyrics = row.value === 'true'
-        break
-      case 'downloadEmbedTranslation':
-        settings.downloadEmbedTranslation = row.value === 'true'
-        break
-      case 'downloadEmbedRomaji':
-        settings.downloadEmbedRomaji = row.value === 'true'
-        break
-      case 'downloadLyricsEnabled':
-        settings.downloadLyricsEnabled = row.value === 'true'
-        break
-      case 'downloadLyricsTranslation':
-        settings.downloadLyricsTranslation = row.value === 'true'
-        break
-      case 'downloadLyricsRomaji':
-        settings.downloadLyricsRomaji = row.value === 'true'
-        break
-      case 'downloadLyricsEncoding':
-        settings.downloadLyricsEncoding = row.value as Settings['downloadLyricsEncoding']
         break
     }
   }
@@ -284,21 +222,7 @@ export function resetSettings(): boolean {
     ['showTrayIcon', 'true'],
     ['minimizeToTray', 'false'],
     ['closeToTray', 'false'],
-    ['quickSwitchThemes', '["dark","light"]'],
-    ['musicSources', '[]'],
-    ['downloadEnabled', 'true'],
-    ['downloadSkipExisting', 'true'],
-    ['downloadPath', ''],
-    ['downloadConcurrent', '3'],
-    ['downloadNamingRule', 'name-artist'],
-    ['downloadEmbedCover', 'true'],
-    ['downloadEmbedLyrics', 'false'],
-    ['downloadEmbedTranslation', 'false'],
-    ['downloadEmbedRomaji', 'false'],
-    ['downloadLyricsEnabled', 'false'],
-    ['downloadLyricsTranslation', 'false'],
-    ['downloadLyricsRomaji', 'false'],
-    ['downloadLyricsEncoding', 'utf-8']
+    ['quickSwitchThemes', '["dark","light"]']
   ]
 
   return transaction(() => {

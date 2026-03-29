@@ -117,111 +117,18 @@ declare global {
         reset: () => Promise<boolean>
       }
 
-      // 在线音乐相关
-      online: {
-        search: (params: {
-          keyword: string
-          source: string
-          page?: number
-          pageSize?: number
-        }) => Promise<{
-          list: Array<{
-            id: string
-            name: string
-            artist: string
-            album?: string
-            duration?: number
-            cover?: string
-            source: string
-            quality?: string
-            playUrl?: string
-            size?: number
-            extra?: Record<string, unknown>
-          }>
-          total: number
-          source: string
-          page?: number
-          pageSize?: number
-        }>
-        getPlayUrl: (params: {
-          id: string
-          source: string
-          quality?: string
-          extra?: Record<string, unknown>
-        }) => Promise<string>
-        download: (params: {
-          music: {
-            id: string
-            name: string
-            artist: string
-            album?: string
-            duration?: number
-            cover?: string
-            source: string
-            quality?: string
-            playUrl?: string
-            size?: number
-          }
-          targetDir?: string
-        }) => Promise<{
-          success: boolean
-          localPath?: string
-          error?: string
-        }>
-      }
-
-      // 音乐源管理
-      source: {
-        getAll: () => Promise<Array<{
-          id: string
-          name: string
-          version: string
-          description?: string
-          icon?: string
-          author?: string
-          enabled: boolean
-          supports: {
-            search?: boolean
-            getPlayUrl?: boolean
-            getLyrics?: boolean
-          }
-          importedAt: string
-          updatedAt: string
-        }>>
-        getEnabled: () => Promise<Array<{
-          id: string
-          name: string
-          version: string
-          description?: string
-          icon?: string
-          author?: string
-          enabled: boolean
-          supports: {
-            search?: boolean
-            getPlayUrl?: boolean
-            getLyrics?: boolean
-          }
-          importedAt: string
-          updatedAt: string
-        }>>
-        import: (scriptContent: string) => Promise<{
-          success: boolean
-          error?: string
-          source?: {
-            id: string
-            name: string
-            version: string
-          }
-          isUpdate?: boolean
-        }>
-        delete: (sourceId: string) => Promise<boolean>
-        toggle: (sourceId: string) => Promise<boolean>
-        getLoaded: () => Promise<Array<{ id: string; name: string }>>
-      }
-
       // 媒体控件相关
       media: {
         getCoverDataUrl: (filePath: string) => Promise<string | null>
+      }
+
+      // 托盘相关
+      tray: {
+        updateStatus: (status: {
+          isPlaying: boolean
+          title?: string
+          artist?: string
+        }) => void
       }
 
       // 事件监听

@@ -10,6 +10,11 @@ import { getMainWindow } from './window.service'
 // 系统托盘实例
 let tray: Tray | null = null
 
+// 播放状态缓存
+let isPlaying = false
+let currentTitle = ''
+let currentArtist = ''
+
 /**
  * 创建系统托盘
  */
@@ -80,6 +85,13 @@ export function updateTrayMenu(): void {
 
   const contextMenu = Menu.buildFromTemplate([
     {
+      label: currentTitle ? `正在播放: ${currentTitle}${currentArtist ? ' - ' + currentArtist : ''}` : '故里音乐助手',
+      enabled: false
+    },
+    {
+      type: 'separator'
+    },
+    {
       label: '显示主窗口',
       click: () => {
         showMainWindow()
@@ -89,7 +101,7 @@ export function updateTrayMenu(): void {
       type: 'separator'
     },
     {
-      label: '播放/暂停',
+      label: isPlaying ? '暂停' : '播放',
       click: () => {
         const mainWindow = getMainWindow()
         if (mainWindow) {
@@ -128,6 +140,23 @@ export function updateTrayMenu(): void {
   ])
 
   tray.setContextMenu(contextMenu)
+
+  // 更新 ToolTip
+  if (currentTitle) {
+    tray.setToolTip(`故里音乐助手\n正在播放: ${currentTitle}${currentArtist ? ' - ' + currentArtist : ''}`)
+  } else {
+    tray.setToolTip('故里音乐助手')
+  }
+}
+
+/**
+ * 更新托盘状态
+ */
+export function updateTrayStatus(status: { isPlaying: boolean; title?: string; artist?: string }): void {
+  isPlaying = status.isPlaying
+  if (status.title !== undefined) currentTitle = status.title
+  if (status.artist !== undefined) currentArtist = status.artist
+  updateTrayMenu()
 }
 
 /**

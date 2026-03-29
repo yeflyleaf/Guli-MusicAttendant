@@ -2,7 +2,7 @@
   <div class="settings-view">
     <h1 class="page-title">{{ $t('settings.title') }}</h1>
 
-    <el-tabs tab-position="left" class="settings-tabs" :before-leave="handleBeforeTabLeave">
+    <el-tabs tab-position="left" class="settings-tabs">
       <!-- 外观设置 -->
       <el-tab-pane :label="$t('settings.appearance.title')">
         <template #label>
@@ -428,17 +428,6 @@ const libraryStore = useLibraryStore()
 const { selectFolder, resetAndScanAllFolders } = useIpc()
 
 const isScanning = ref(false)
-
-const handleBeforeTabLeave = (activeName: string) => {
-  if (activeName === 'download') {
-    ElMessage.warning({
-      message: '功能未开放，敬请期待',
-      duration: 3000
-    })
-    return false
-  }
-  return true
-}
 
 // 外观设置
 const theme = ref<Theme>('dark')
