@@ -232,6 +232,7 @@ export default {
   },
   player: {
     play: 'Reproducir',
+    playNext: 'Reproducir a continuación',
     pause: 'Pausar',
     previous: 'Anterior',
     next: 'Siguiente',

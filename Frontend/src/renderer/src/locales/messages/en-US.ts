@@ -253,6 +253,7 @@ export default {
   // Player
   player: {
     play: 'Play',
+    playNext: 'Play Next',
     pause: 'Pause',
     previous: 'Previous',
     next: 'Next',

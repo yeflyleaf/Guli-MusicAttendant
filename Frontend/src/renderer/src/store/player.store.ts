@@ -7,6 +7,16 @@ import { defineStore } from 'pinia'
 // 播放模式
 export type PlayMode = 'sequence' | 'loop' | 'single' | 'random'
 
+// 辅助函数：Fisher-Yates 随机打乱数组
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array]
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
+
 interface PlayerState {
   // 当前播放的歌曲
   currentSong: Music | null
@@ -24,6 +34,8 @@ interface PlayerState {
   playMode: PlayMode
   // 播放队列
   queue: Music[]
+  // 原始播放队列（非随机排序）
+  originalQueue: Music[]
   // 当前播放索引
   currentIndex: number
   // 历史播放记录（用于随机播放时回退）
@@ -46,6 +58,7 @@ export const usePlayerStore = defineStore('player', {
     isMuted: false,
     playMode: 'sequence',
     queue: [],
+    originalQueue: [],
     currentIndex: -1,
     playHistory: [],
     showLyrics: false,
@@ -62,8 +75,8 @@ export const usePlayerStore = defineStore('player', {
 
     // 是否有上一首
     hasPrevious: (state: PlayerState): boolean => {
-      if (state.playMode === 'random') {
-        return state.playHistory.length > 0
+      if (state.playMode === 'loop' || state.playMode === 'random') {
+        return state.queue.length > 0
       }
       return state.currentIndex > 0
     },
@@ -134,9 +147,19 @@ export const usePlayerStore = defineStore('player', {
       }
 
       // 如果需要添加到队列
-      if (addToQueue && !this.queue.find(s => s.id === song.id)) {
-        this.queue.push(song)
-        this.currentIndex = this.queue.length - 1
+      if (addToQueue) {
+        if (!this.originalQueue.find(s => s.id === song.id)) {
+          this.originalQueue.push(song)
+        }
+        if (!this.queue.find(s => s.id === song.id)) {
+          this.queue.push(song)
+          this.currentIndex = this.queue.length - 1
+        } else {
+          const index = this.queue.findIndex(s => s.id === song.id)
+          if (index !== -1) {
+            this.currentIndex = index
+          }
+        }
       } else {
         // 找到歌曲在队列中的位置
         const index = this.queue.findIndex(s => s.id === song.id)
@@ -212,21 +235,10 @@ export const usePlayerStore = defineStore('player', {
     previous() {
       if (this.queue.length === 0) return
 
-      if (this.playMode === 'random' && this.playHistory.length > 0) {
-        // 随机模式下，返回历史记录
-        const prevIndex = this.playHistory.pop()!
-        this.currentIndex = prevIndex
-        this.currentSong = this.queue[prevIndex]
-        this.isPlaying = true
-        // 记录播放并刷新最近播放
-        this._recordPlay(this.currentSong.id)
-        return
-      }
-
       if (this.currentIndex > 0) {
         this.currentIndex--
-      } else if (this.playMode === 'loop') {
-        // 循环模式，跳到最后一首
+      } else if (this.playMode === 'loop' || this.playMode === 'random') {
+        // 循环模式或随机模式，跳到最后一首
         this.currentIndex = this.queue.length - 1
       } else {
         return
@@ -245,33 +257,16 @@ export const usePlayerStore = defineStore('player', {
     next() {
       if (this.queue.length === 0) return
 
-      // 记录当前位置到历史
-      if (this.currentIndex >= 0) {
-        this.playHistory.push(this.currentIndex)
-        // 限制历史记录长度
-        if (this.playHistory.length > 50) {
-          this.playHistory.shift()
-        }
-      }
-
-      if (this.playMode === 'random') {
-        // 随机播放
-        let randomIndex: number
-        do {
-          randomIndex = Math.floor(Math.random() * this.queue.length)
-        } while (randomIndex === this.currentIndex && this.queue.length > 1)
-
-        this.currentIndex = randomIndex
-      } else if (this.playMode === 'single') {
+      if (this.playMode === 'single') {
         // 单曲循环，保持当前歌曲
         this.currentTime = 0
         this.isPlaying = true
         return
       } else {
-        // 顺序播放或列表循环
+        // 顺序播放、列表循环或随机播放
         if (this.currentIndex < this.queue.length - 1) {
           this.currentIndex++
-        } else if (this.playMode === 'loop') {
+        } else if (this.playMode === 'loop' || this.playMode === 'random') {
           this.currentIndex = 0
         } else {
           // 顺序播放完毕
@@ -291,12 +286,25 @@ export const usePlayerStore = defineStore('player', {
      * 设置播放队列
      */
     setQueue(songs: Music[], startIndex = 0) {
-      this.queue = [...songs]
-      this.currentIndex = startIndex
+      this.originalQueue = [...songs]
       this.playHistory = []
 
       if (songs.length > 0 && startIndex < songs.length) {
-        this.play(songs[startIndex], false)
+        const startSong = songs[startIndex]
+        if (this.playMode === 'random') {
+          // 随机播放模式下，生成随机排序的播放列表，但保证被点击的歌曲处于第一首
+          const remaining = songs.filter(s => s.id !== startSong.id)
+          const shuffled = shuffleArray(remaining)
+          this.queue = [startSong, ...shuffled]
+          this.currentIndex = 0
+        } else {
+          this.queue = [...songs]
+          this.currentIndex = startIndex
+        }
+        this.play(startSong, false)
+      } else {
+        this.queue = []
+        this.currentIndex = -1
       }
     },
 
@@ -304,9 +312,62 @@ export const usePlayerStore = defineStore('player', {
      * 添加到队列
      */
     addToQueue(song: Music) {
+      if (!this.originalQueue.find(s => s.id === song.id)) {
+        this.originalQueue.push(song)
+      }
       if (!this.queue.find(s => s.id === song.id)) {
         this.queue.push(song)
       }
+    },
+
+    /**
+     * 下一首播放（插队播放）
+     */
+    insertPlayNext(song: Music) {
+      // 1. 如果队列为空
+      if (this.queue.length === 0) {
+        this.originalQueue = [song]
+        this.queue = [song]
+        this.currentIndex = 0
+        this.play(song, false)
+        return
+      }
+
+      // 2. 如果歌曲已经是当前播放曲目，不做动作
+      if (this.currentSong && this.currentSong.id === song.id) {
+        return
+      }
+
+      // 3. 处理活跃播放队列
+      const oldIndex = this.queue.findIndex(s => s.id === song.id)
+      if (oldIndex !== -1) {
+        // 从旧位置移除
+        this.queue.splice(oldIndex, 1)
+        // 如果旧位置在当前播放曲目之前，由于元素移除，currentIndex会向前移，需要递减 currentIndex 保持同步
+        if (oldIndex < this.currentIndex) {
+          this.currentIndex--
+        }
+      }
+      // 插入到当前播放索引的下一位
+      const targetIndex = this.currentIndex + 1
+      this.queue.splice(targetIndex, 0, song)
+
+      // 4. 处理原始队列
+      let currentOrigIndex = -1
+      if (this.currentSong) {
+        currentOrigIndex = this.originalQueue.findIndex(s => s.id === this.currentSong!.id)
+      }
+      
+      const oldOrigIndex = this.originalQueue.findIndex(s => s.id === song.id)
+      if (oldOrigIndex !== -1) {
+        this.originalQueue.splice(oldOrigIndex, 1)
+        if (oldOrigIndex < currentOrigIndex) {
+          currentOrigIndex--
+        }
+      }
+
+      const targetOrigIndex = currentOrigIndex !== -1 ? currentOrigIndex + 1 : this.originalQueue.length
+      this.originalQueue.splice(targetOrigIndex, 0, song)
     },
 
     /**
@@ -314,6 +375,9 @@ export const usePlayerStore = defineStore('player', {
      */
     addToQueueBatch(songs: Music[]) {
       for (const song of songs) {
+        if (!this.originalQueue.find(s => s.id === song.id)) {
+          this.originalQueue.push(song)
+        }
         if (!this.queue.find(s => s.id === song.id)) {
           this.queue.push(song)
         }
@@ -324,6 +388,13 @@ export const usePlayerStore = defineStore('player', {
      * 从队列中移除
      */
     removeFromQueue(songId: number) {
+      // 从 originalQueue 中移除
+      const origIndex = this.originalQueue.findIndex(s => s.id === songId)
+      if (origIndex !== -1) {
+        this.originalQueue.splice(origIndex, 1)
+      }
+
+      // 从 active queue 中移除
       const index = this.queue.findIndex(s => s.id === songId)
       if (index === -1) return
 
@@ -352,6 +423,7 @@ export const usePlayerStore = defineStore('player', {
      */
     clearQueue() {
       this.queue = []
+      this.originalQueue = []
       this.currentSong = null
       this.currentIndex = -1
       this.isPlaying = false
@@ -410,14 +482,49 @@ export const usePlayerStore = defineStore('player', {
     togglePlayMode() {
       const modes: PlayMode[] = ['sequence', 'loop', 'single', 'random']
       const currentIndex = modes.indexOf(this.playMode)
-      this.playMode = modes[(currentIndex + 1) % modes.length]
+      const nextMode = modes[(currentIndex + 1) % modes.length]
+      this.setPlayMode(nextMode)
     },
 
     /**
      * 设置播放模式
      */
     setPlayMode(mode: PlayMode) {
+      const oldMode = this.playMode
       this.playMode = mode
+
+      if (mode === 'random' && oldMode !== 'random') {
+        // 进入随机播放模式：打乱当前队列
+        if (this.originalQueue.length === 0 && this.queue.length > 0) {
+          this.originalQueue = [...this.queue]
+        }
+        if (this.queue.length > 0) {
+          const current = this.currentSong
+          if (current) {
+            const remaining = this.queue.filter(s => s.id !== current.id)
+            const shuffled = shuffleArray(remaining)
+            this.queue = [current, ...shuffled]
+            this.currentIndex = 0
+          } else {
+            this.queue = shuffleArray(this.queue)
+            this.currentIndex = 0
+          }
+        }
+      } else if (oldMode === 'random' && mode !== 'random') {
+        // 退出随机播放模式：恢复原始队列
+        if (this.originalQueue.length > 0) {
+          const current = this.currentSong
+          this.queue = [...this.originalQueue]
+          if (current) {
+            const index = this.queue.findIndex(s => s.id === current.id)
+            if (index !== -1) {
+              this.currentIndex = index
+            } else {
+              this.currentIndex = 0
+            }
+          }
+        }
+      }
     },
 
     /**
@@ -491,9 +598,11 @@ export const usePlayerStore = defineStore('player', {
     savePlaybackStatus() {
       // 限制保存的队列长度，防止 localStorage 溢出
       const queueToSave = this.queue.length > 1000 ? this.queue.slice(0, 1000) : this.queue
+      const originalQueueToSave = this.originalQueue.length > 1000 ? this.originalQueue.slice(0, 1000) : this.originalQueue
 
       const status = {
         queue: queueToSave,
+        originalQueue: originalQueueToSave,
         currentIndex: this.currentIndex,
         currentTime: this.currentTime,
         playMode: this.playMode,
@@ -504,6 +613,7 @@ export const usePlayerStore = defineStore('player', {
         localStorage.setItem('player_status', JSON.stringify(status))
         console.log('[Player] Saved playback status:', {
           queueLength: queueToSave.length,
+          originalQueueLength: originalQueueToSave.length,
           currentIndex: this.currentIndex,
           currentTime: this.currentTime,
           playMode: this.playMode,
@@ -532,6 +642,7 @@ export const usePlayerStore = defineStore('player', {
           const recentSong = libraryStore.recentlyPlayed[0]
           this.currentSong = recentSong
           this.queue = [recentSong]
+          this.originalQueue = [recentSong]
           this.currentIndex = 0
           this.currentTime = 0
           console.log('[Player] No saved status, using most recent song:', recentSong.title)
@@ -543,6 +654,7 @@ export const usePlayerStore = defineStore('player', {
         const status = JSON.parse(statusStr)
         console.log('[Player] Parsed status:', {
           queueLength: status.queue?.length,
+          originalQueueLength: status.originalQueue?.length,
           currentIndex: status.currentIndex,
           currentTime: status.currentTime,
           playMode: status.playMode,
@@ -580,8 +692,19 @@ export const usePlayerStore = defineStore('player', {
             }
           }
 
+          // 恢复 originalQueue
+          const originalQueue = (status.originalQueue || status.queue) as Music[]
+          const validOriginalQueue: Music[] = []
+          for (const savedSong of originalQueue) {
+            const librarySong = libraryMap.get(savedSong.file_path)
+            if (librarySong) {
+              validOriginalQueue.push(librarySong)
+            }
+          }
+
           if (validQueue.length > 0) {
             this.queue = validQueue
+            this.originalQueue = validOriginalQueue.length > 0 ? validOriginalQueue : [...validQueue]
 
             // 尝试恢复当前播放位置
             let newIndex = 0
@@ -617,7 +740,8 @@ export const usePlayerStore = defineStore('player', {
             console.log('[Player] Restored playback status successfully:', {
               currentSong: this.currentSong?.title,
               currentTime: this.currentTime,
-              queueLength: this.queue.length
+              queueLength: this.queue.length,
+              originalQueueLength: this.originalQueue.length
             })
             return
           } else {
@@ -630,6 +754,7 @@ export const usePlayerStore = defineStore('player', {
           const recentSong = libraryStore.recentlyPlayed[0]
           this.currentSong = recentSong
           this.queue = [recentSong]
+          this.originalQueue = [recentSong]
           this.currentIndex = 0
           this.currentTime = 0
           console.log('[Player] Falling back to most recent song:', recentSong.title)
@@ -642,6 +767,7 @@ export const usePlayerStore = defineStore('player', {
           const recentSong = libraryStore.recentlyPlayed[0]
           this.currentSong = recentSong
           this.queue = [recentSong]
+          this.originalQueue = [recentSong]
           this.currentIndex = 0
           this.currentTime = 0
         }

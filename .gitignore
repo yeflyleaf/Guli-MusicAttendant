@@ -139,7 +139,7 @@ $RECYCLE.BIN/
 *.user
 *.userprefs
 *.vcxproj.user
-.vs/
+.vscode/
 
 # Sublime Text
 *.sublime-project

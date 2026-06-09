@@ -254,6 +254,7 @@ export default {
   // Player
   player: {
     play: 'تشغيل',
+    playNext: 'تشغيل التالي',
     pause: 'إيقاف مؤقت',
     previous: 'السابق',
     next: 'التالي',

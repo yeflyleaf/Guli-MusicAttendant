@@ -107,6 +107,7 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="play">{{ $t('player.play') || '播放' }}</el-dropdown-item>
+                <el-dropdown-item command="playNext">{{ $t('player.playNext') || '下一首播放' }}</el-dropdown-item>
                 <el-dropdown-item command="addToQueue">{{ $t('player.addToQueue') }}</el-dropdown-item>
                 <el-dropdown-item command="addToPlaylist">{{ $t('playlist.addToPlaylist') }}</el-dropdown-item>
               </el-dropdown-menu>
@@ -298,6 +299,10 @@ const handleCommand = (command: string, song: Music) => {
   switch (command) {
     case 'play':
       playerStore.play(song)
+      break
+    case 'playNext':
+      playerStore.insertPlayNext(song)
+      ElMessage.success('已设置为下一首播放')
       break
     case 'addToQueue':
       playerStore.addToQueue(song)

@@ -119,11 +119,25 @@
           <span class="col-duration">{{ formatDuration(song.duration) }}</span>
 
           <div class="col-actions">
-            <el-tooltip content="从歌单移除" placement="top">
-              <el-icon class="action-btn remove-btn" @click.stop="handleRemoveSong(song.id)">
-                <Delete />
+            <el-icon class="action-btn" :class="{ active: song.is_favorite }"
+              @click.stop="handleToggleFavorite(song.id)">
+              <StarFilled v-if="song.is_favorite" />
+              <Star v-else />
+            </el-icon>
+            <el-dropdown trigger="click" @command="handleCommand($event, song, index)">
+              <el-icon class="action-btn" @click.stop>
+                <MoreFilled />
               </el-icon>
-            </el-tooltip>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="play">{{ $t('player.play') || '播放' }}</el-dropdown-item>
+                  <el-dropdown-item command="playNext">{{ $t('player.playNext') || '下一首播放' }}</el-dropdown-item>
+                  <el-dropdown-item command="addToQueue">{{ $t('player.addToQueue') }}</el-dropdown-item>
+                  <el-dropdown-item command="addToPlaylist">{{ $t('playlist.addToPlaylist') }}</el-dropdown-item>
+                  <el-dropdown-item command="removeFromPlaylist" divided class="danger-item">{{ $t('playlist.removeFromPlaylist') || '从歌单中移除' }}</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
         </div>
       </div>
@@ -205,6 +219,9 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 添加到歌单对话框 -->
+    <AddToPlaylistDialog v-model="showAddToPlaylistDialog" :song="selectedSongForPlaylist" />
   </div>
 
   <!-- 加载中 -->
@@ -217,13 +234,14 @@
 </template>
 
 <script setup lang="ts">
+import AddToPlaylistDialog from '@/components/Base/AddToPlaylistDialog.vue'
 import { showConfirm } from '@/hooks/useConfirm'
 import { useLibraryStore } from '@/store/library.store'
 import { usePlayerStore } from '@/store/player.store'
 import type { Music } from '@/types/music'
 import type { Playlist } from '@/types/playlist'
 import { formatDate, formatDuration } from '@/utils/format'
-import { Delete, Edit, Headset, Loading, Menu, Plus, Search, Setting, Tickets, VideoPlay, WarningFilled } from '@element-plus/icons-vue'
+import { Delete, Edit, Headset, Loading, Menu, Plus, Search, Setting, Tickets, VideoPlay, WarningFilled, MoreFilled, Star, StarFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import Sortable from 'sortablejs'
 import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -245,6 +263,10 @@ const playlist = ref<Playlist | null>(null)
 const songs = ref<Music[]>([])
 const showEditDialog = ref(false)
 const editForm = ref({ name: '', description: '' })
+
+// 添加到歌单对话框状态
+const showAddToPlaylistDialog = ref(false)
+const selectedSongForPlaylist = ref<Music | null>(null)
 
 // 导入歌曲对话框状态
 const showImportDialog = ref(false)
@@ -419,6 +441,43 @@ const handleRemoveSong = async (musicId: number) => {
   selectedIds.value.delete(musicId)
   await libraryStore.refreshPlaylists()
   ElMessage.success('已从歌单移除')
+}
+
+// 切换收藏状态
+const handleToggleFavorite = async (id: number) => {
+  await libraryStore.toggleFavorite(id)
+  // 手动更新列表中对应歌曲的收藏状态
+  const index = songs.value.findIndex(s => s.id === id)
+  if (index !== -1) {
+    songs.value[index] = {
+      ...songs.value[index],
+      is_favorite: songs.value[index].is_favorite === 1 ? 0 : 1
+    }
+  }
+}
+
+// 处理下拉菜单命令
+const handleCommand = async (command: string, song: Music, index: number) => {
+  switch (command) {
+    case 'play':
+      handlePlay(index)
+      break
+    case 'playNext':
+      playerStore.insertPlayNext(song)
+      ElMessage.success('已设置为下一首播放')
+      break
+    case 'addToQueue':
+      playerStore.addToQueue(song)
+      ElMessage.success('已添加到播放队列')
+      break
+    case 'addToPlaylist':
+      selectedSongForPlaylist.value = song
+      showAddToPlaylistDialog.value = true
+      break
+    case 'removeFromPlaylist':
+      await handleRemoveSong(song.id)
+      break
+  }
 }
 
 // 全选
@@ -891,29 +950,44 @@ const handleImportSongs = async () => {
 }
 
 .col-actions {
-  width: 60px;
+  width: 80px;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: $spacing-sm;
 
   .action-btn {
-    font-size: 34px;
+    font-size: 24px;
     color: $text-muted;
     cursor: pointer;
-    padding: 8px;
+    padding: 4px;
     border-radius: 50%;
     opacity: 0;
     transition: all $transition-fast;
 
     &:hover {
       opacity: 1;
-      color: $error-color;
-      background: rgba($error-color, 0.15);
+      color: $primary-color;
+      background: rgba($primary-color, 0.1);
+    }
+
+    &.active {
+      opacity: 1;
+      color: #f7ba2a;
     }
   }
 }
 
 .list-item:hover .col-actions .action-btn {
   opacity: 1;
+}
+
+:deep(.danger-item) {
+  color: var(--el-color-danger) !important;
+  &:hover {
+    color: white !important;
+    background-color: var(--el-color-danger) !important;
+  }
 }
 
 .empty-state,

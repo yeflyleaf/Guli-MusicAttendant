@@ -255,6 +255,7 @@ export default {
   // 播放器
   player: {
     play: '播放',
+    playNext: '下一首播放',
     pause: '暂停',
     previous: '上一首',
     next: '下一首',

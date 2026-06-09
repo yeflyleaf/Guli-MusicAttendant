@@ -213,15 +213,16 @@
               <el-select v-model="splashTheme" style="width: 140px" @change="handleSplashThemeChange">
                 <el-option :label="$t('settings.behavior.splashThemeCosmic')" value="cosmic" />
                 <el-option :label="$t('settings.behavior.splashThemeEthereal')" value="ethereal" />
-                <el-option :label="$t('settings.behavior.splashThemeMolten')" value="molten" />
-                <el-option :label="$t('settings.behavior.splashThemeCyber')" value="cyber" />
-                <el-option :label="$t('settings.behavior.splashThemeAbyss')" value="abyss" />
-                <el-option :label="$t('settings.behavior.splashThemePrism')" value="prism" />
+                <!-- 隐藏以下六个过场动画主题，不删除代码，前端不显示 -->
+                <el-option v-if="false" :label="$t('settings.behavior.splashThemeMolten')" value="molten" />
+                <el-option v-if="false" :label="$t('settings.behavior.splashThemeCyber')" value="cyber" />
+                <el-option v-if="false" :label="$t('settings.behavior.splashThemeAbyss')" value="abyss" />
+                <el-option v-if="false" :label="$t('settings.behavior.splashThemePrism')" value="prism" />
                 <el-option :label="$t('settings.behavior.splashThemeEmerald')" value="emerald" />
-                <el-option :label="$t('settings.behavior.splashThemeBrass')" value="brass" />
+                <el-option v-if="false" :label="$t('settings.behavior.splashThemeBrass')" value="brass" />
                 <el-option :label="$t('settings.behavior.splashThemeSanctum')" value="sanctum" />
                 <el-option :label="$t('settings.behavior.splashThemeSilicon')" value="silicon" />
-                <el-option :label="$t('settings.behavior.splashThemeSakura')" value="sakura" />
+                <el-option v-if="false" :label="$t('settings.behavior.splashThemeSakura')" value="sakura" />
                 <el-option :label="$t('settings.behavior.splashThemeChronos')" value="chronos" />
               </el-select>
             </div>
